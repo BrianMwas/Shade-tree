@@ -8,8 +8,11 @@ module.exports = {
     '@vue/standard'
   ],
   rules: {
-    'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'
+    'no-console': 'off',
+    'no-debugger': 'off',
+    'no-mixed-spaces-and-tabs': 0,
+    error: 'smart-tabs',
+    'no-tabs': 0
   },
   parserOptions: {
     parser: 'babel-eslint'
