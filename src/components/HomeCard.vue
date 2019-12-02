@@ -4,26 +4,29 @@
     close-delay="200">
     <v-card
       :elevation="hover ? 12 : 2"
-      class="mx-auto"
+      class="mx-auto rounded"
       color="white lighten-5"
-      max-width="350"
-      min-width="280"
+      min-width="300"
+      max-width="325"
+      min-height="325"
     >
       <v-img
         :aspect-ratio="16/9"
-        src="@/assets/home.jpg"
+        src="@/assets/seat.jpg"
       >
       </v-img>
       <v-card-title
-        class="pb-0 font-weight-medium"
+        class="pb-0 mb-2 font-weight-bold card-price"
       >
-        <span class="mr-2">
-          <v-icon class="red--text">{{ road }}</v-icon>
-        </span>
-          James Gichuru Rd
+          Ksh 40000
+          <span class="term">
+            pm
+          </span>
       </v-card-title>
-
-      <div class="mx-2">
+      <v-card-subtitle class="card-street mt-2" style="dimgray">
+        James Gichuru rd
+      </v-card-subtitle>
+      <v-card-text>
           <v-chip-group
             mandatory
             text-color="white"
@@ -32,7 +35,7 @@
             color="white"
             >
               <v-avatar left>
-                <v-icon class="teal--text text-lighten-4">{{ bed }}</v-icon>
+                <v-icon class="grey--text text-lighten-4">{{ bed }}</v-icon>
               </v-avatar>
               2
             </v-chip>
@@ -40,29 +43,21 @@
               color="white"
             >
               <v-avatar left>
-                <v-icon class="teal--text text-lighten-4">{{ areaSpace }}</v-icon>
+                <v-icon class="grey--text text-lighten-4">{{ areaSpace }}</v-icon>
               </v-avatar>
-              200 
+              200
+              <sup>sq</sup>
             </v-chip>
             <v-chip
               color="white"
             >
               <v-avatar left>
-                <v-icon class="teal--text text-lighten-4">{{ bathrooms }}</v-icon>
+                <v-icon class="grey--text text-lighten-4">{{ bathrooms }}</v-icon>
               </v-avatar>
               1
             </v-chip>
           </v-chip-group>
-      </div>
-      
-      <v-card-actions>
-        <v-btn depressed small>
-          see more
-          <span class="ml-3">
-            <v-icon class="teal--text">{{ arrowRight }}</v-icon>
-          </span>
-        </v-btn>
-      </v-card-actions>
+      </v-card-text>
     </v-card>
   </v-hover>
 </template>
@@ -97,5 +92,26 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  @import '@/scss/global.scss';
+  
+  .card-price {
+    color: color(green, 2) !important;
+    font-family: 'Nunito' sans-serif !important;
+    font-size: 1.25rem;
+  }
 
+  .term {
+    color: dimgray;
+    font-size: .75rem;
+    font-weight: 300;
+  }
+
+  .card-street {
+    color: color(typography, 4);
+    font-size: 1.2rem;
+  }
+
+  .rounded {
+    border-radius: 10px !important;
+  }
 </style>

@@ -23,7 +23,7 @@
                         <div class="hero-copy">
                             <h1 class="hero-title mt-0 text-darkblue">Welcome to Shade tree</h1>
                             <p class="hero-paragraph text-darkgrey">Finding the right home to move to can be really daunting and that's why we are here to help you find one at your convinience..</p>
-                            <div class="hero-cta"><router-link class="button button-primary" to="/single-unit">browse</router-link><router-link class="button" to="/units">Get in touch</router-link></div>
+                            <div class="hero-cta"><router-link class="button button-primary" to="/units">browse</router-link><router-link class="button" to="/units">Get in touch</router-link></div>
                         </div>
                         </div>
                     </div>

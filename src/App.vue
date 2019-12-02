@@ -23,7 +23,7 @@ export default {
   }
 
   body {
-    background: azure;
+    background: color(typography, 1);
   }
   .v-application {
     font-family: 'PT sans', sans-serif;
