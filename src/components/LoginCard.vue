@@ -35,7 +35,7 @@
                     @click:append="passwordShow = !passwordShow"
                     required
                 ></v-text-field>
-                <v-btn depressed color="success" type="submit" :disabled="submitStatus == 'OKAY' && submitStatus !== 'ERROR'" :loading="submitStatus === 'PENDING'">Login</v-btn>
+                <v-btn depressed color="success" type="submit" :disabled="submitStatus !== 'OKAY' && submitStatus === 'ERROR'" :loading="submitStatus === 'PENDING'">Login</v-btn>
             </form>
         </v-card-text>
   </v-card>

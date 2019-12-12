@@ -3,6 +3,7 @@
           class="mx-auto rounded"
           max-width="450"
           min-width="290"
+          flat
         >
           <v-img
               src="@/assets/Kander.png"
@@ -53,8 +54,20 @@
                     autocomplete="on"
                     required
                   ></v-text-field>
-                
-                <v-btn outlined color="primary" dark type="submit" :disabled="submitStatus == 'OKAY' && submitStatus !== 'ERROR'" :loading="submitStatus === 'PENDING'">Register</v-btn>
+
+                 <v-checkbox
+                  v-model="termsCheck"
+                  label="Do you agree?"
+                  color="primary"
+                 ></v-checkbox>
+          
+                   <v-radio-group v-model="userTypes" row>
+                    <v-radio label="Agent" value="agent"></v-radio>
+                    <v-radio label="Company" value="owner"></v-radio>
+                  </v-radio-group>
+
+                <v-btn outlined color="primary" dark type="submit" 
+                :disabled="submitStatus == 'OKAY' && submitStatus !== 'ERROR'" :loading="submitStatus === 'PENDING'">Register</v-btn>
               </v-form>
           </v-card-text>
         </v-card>
@@ -72,14 +85,16 @@ export default {
             email: "",
             password: "",
             confirmation: "",
+            termsCheck: false,
             submitStatus: null,
             passwordShow: false,
             confirmPassword: false,
             passwordShowIcon: mdiEye,
-            passwordEyeCancel: mdiEyeCheck
+            passwordEyeCancel: mdiEyeCheck,
+            userTypes: null
         };
     },
-    mixins:[validationMixin],
+    mixins: [validationMixin],
     validations: {
       email: {
         required,
@@ -93,6 +108,9 @@ export default {
         required, 
         same: sameAs('password'),
         min: minLength(7)
+      },
+      termsCheck : {
+        required
       }
     },
     methods: {
@@ -164,7 +182,20 @@ export default {
         }
 
         return errors;
+      },
+      checkboxErrors () {
+        const errors = [];
+        if(!this.$v.termsCheck.$dirty) {
+          return errors;
+        }
+
+        if(!this.$v.termsCheck.required) {
+          errors.push("You must agree to continue")
+        }
+
+        return errors;
       }
+      
     }
 }
 </script>

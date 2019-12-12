@@ -1,28 +1,52 @@
 <template>
-    <div>
-      <NavBar/>
+    <div>      
+        <!-- Routes only visible when user is logged in -->
+        <NavBar v-if="loggedIn" #loggedInRoutes>
+          <v-btn text>
+           <router-link to="/map" class="link">map</router-link>
+          </v-btn>
+          <v-btn text>
+            <router-link to="/logout" class="link">Log out</router-link>
+          </v-btn>
+          <v-btn text>
+            <router-link to="/logout" class="link">Add Unit</router-link>
+          </v-btn>
+        </NavBar>
+        <NavBar v-else #default>
+            <v-btn text>
+              <router-link to="/units" class="link">units</router-link>
+            </v-btn>
+            <v-btn text>
+              <router-link to="/products" class="link">products</router-link>
+            </v-btn>
+            
+            <v-btn text>
+              <router-link to="/login" class="link">log in</router-link>
+            </v-btn>
+            <v-btn text>
+              <router-link to="/signup" class="link">Sign up</router-link>
+            </v-btn>
+        </NavBar>
+
       <v-content app>
         <AdvertHeader/>
         <v-container
           style="min-height: 100vh;"
         >
           <v-row
-          class="d-flex"
-           justify="space-around"
+           justify="center"
+           class="d-flex flex-sm-column"
           >
             <v-col
-              lg="7"
-              md="6"
               sm="12"
-              xs="12"
+              lg="4"
             >
-              <Search/>
+              <Search style="width: 100%"/>
             </v-col>
+
             <v-col
-              lg="5"
-              md="6"
               sm="12"
-              xs="12"
+              class="d-sm-none"
             >
               <v-select
                 label="Sort"
@@ -58,8 +82,8 @@
           <v-pagination
             v-model="page"
             :length="4"
-            prev-icon="mdi-menu-left"
-            next-icon="mdi-menu-right"
+            :prev-icon="menuLeft"
+            :next-icon="menuRight"
           ></v-pagination>
         </div>
       </v-content>
@@ -72,7 +96,7 @@ import NavBar from '@/components/NavBar.vue'
 import Footer from '@/components/Footer.vue'
 import Card from '@/components/HomeCard.vue'
 import AdvertHeader from '@/components/AdvertHeader.vue'
-import { mdiMagnify, mdiClose, mdiSortDescending } from '@mdi/js';
+import { mdiMagnify, mdiClose, mdiSortDescending, mdiMenuLeft, mdiMenuRight } from '@mdi/js';
 import Search from '@/components/Search.vue'
 import FilterQ from '@/components/FilterComponent.vue'
 
@@ -93,7 +117,10 @@ export default {
       mdiClose,
       page : 1,
       sortIcon: mdiSortDescending,
-      items: ["Date", "Rating", "Price", "Location"]
+      menuLeft: mdiMenuLeft,
+      menuRight: mdiMenuRight,
+      items: ["Date", "Rating", "Price", "Location"],
+      loggedIn: false
     }
   },
   methods : {
@@ -108,6 +135,10 @@ export default {
 <style lang="scss" scoped>
   @import '@/scss/global.scss';
 
+.v-btn a {
+  text-transform: uppercase;
+}
+
   .text-dark {
     color: color(typography, 4);
   }
@@ -116,6 +147,22 @@ export default {
     float: right;
   }
 
+  .d-sm-none {
+    @include media('>small') {
+      display: none !important;
+    }
+  }
+  .row {
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 1em;
+
+     @include media('>small') {
+       flex-direction: column !important;
+    }
+  }
+ 
+
   @supports (display: grid) {
     .grid {
       display: grid;
@@ -123,6 +170,10 @@ export default {
       grid-auto-rows: 300px;
       grid-gap: 50px;
       margin: 3em auto;
+
+      @include media('>medium') {
+        grid-template-columns: repeat(auto-fill, minmax(325px, 1fr));
+      }
     }
   }
 
@@ -144,6 +195,10 @@ export default {
 
   .selection {
     position: relative;
+
+    h2 {
+      margin-top: 0; 
+    }
 
     &::after {
       display: block;

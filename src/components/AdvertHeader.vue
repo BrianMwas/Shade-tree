@@ -69,9 +69,12 @@ header {
         position: relative;
         z-index: 1;
         min-width: 40%;
-        padding: 5em 2em;
         margin: auto;
         height: auto;
+
+        @include media('>medium') {
+            padding: 5em 2em;
+        }
 
         @supports (display: grid) {
             display: grid;

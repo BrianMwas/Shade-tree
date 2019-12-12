@@ -1,7 +1,11 @@
 <template>
-    <div class="blog-card">
+    <div class="blog-card my-4">
+        <div class="blog-img">
+            <img src="@/assets/big-leaf.jpg" alt="Big leaf">
+        </div>
+        <div class="blog-card-info">
         <div class="title">
-            <h2 class="h2">{{title}}</h2>
+            <h2 class="h3">{{title}}</h2>
         </div>
         <div class="tags">
             <ul>
@@ -22,17 +26,14 @@
         </div>
 
     </div>
+    </div>
+    
 </template>
 
 <script>
 export default {
     name: 'BlogCard',
-    props: ['title'],
-    data () {
-        return {
-            title: this.title
-        }
-    }
+    props: ['title']
 }
 </script>
 
@@ -41,10 +42,26 @@ export default {
     @import '@/scss/global.scss';
 
     .blog-card {
-        position: relative;
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .blog-img {
+        flex-grow: 1;
+    
+         img {
+             width: 400px;
+             height: 200px;
+         }
+    }
+
+    .blog-card-info {
+        position: relative;
+        display: block;
         transition: background-color ease-in 150ms;
+        flex-grow: 2;
+        height: 200px;
 
         &:hover {
             background-color: color(typography, 3);
@@ -72,7 +89,6 @@ export default {
             padding: 0 10px;
 
             h2 {
-                font-weight: bold;
                 color: color(typography, 2);
                 margin: 25px 0;
                 text-transform: capitalize;

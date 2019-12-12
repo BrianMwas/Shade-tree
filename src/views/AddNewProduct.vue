@@ -1,6 +1,5 @@
 <template>
     <div>
-        <!-- Routes only visible when user is logged in -->
         <NavBar v-if="loggedIn" #loggedInRoutes>
           <v-btn text>
            <router-link to="/map" class="link">map</router-link>
@@ -19,7 +18,9 @@
             <v-btn text>
               <router-link to="/products" class="link">products</router-link>
             </v-btn>
-            
+            <v-btn text>
+              <router-link to="/blogs" class="link">blogs</router-link>
+            </v-btn>
             <v-btn text>
               <router-link to="/login" class="link">log in</router-link>
             </v-btn>
@@ -28,36 +29,28 @@
             </v-btn>
         </NavBar>
         <v-content app>
-            <v-container>
-                <div class="d-flex"
-                    justify="center"
-                    style="margin: 4.6em auto;"
-                >
-                    <LoginCard/>
-                </div>
-            </v-container>
+            <div class="my-16 mx-a container" justify="center">
+                <AddProduct/>
+            </div>
         </v-content>
         <Footer/>
     </div>
 </template>
 
 <script>
-import { mdiShieldLock } from '@mdi/js'
 import NavBar from '@/components/NavBar.vue'
+import AddProduct from '@/components/AddProduct.vue'
 import Footer from '@/components/Footer.vue'
-import LoginCard from '@/components/LoginCard.vue'
-
 
 export default {
-    name: 'LogIn',
-    components:{
+    name: 'add-product',
+    components: {
         NavBar,
-        LoginCard,
+        AddProduct,
         Footer
     },
     data () {
-        return {
-            mdiShieldLock,
+        return  {
             loggedIn: false
         }
     }
@@ -65,7 +58,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-    .h-100 {
-        min-height: 100%;
+    @import '@/scss/global.scss';
+
+    .my-16 {
+        margin: 16 auto;
+    }
+
+    .mx-a {
+        margin-left: auto;
+        margin-right: auto; 
     }
 </style>

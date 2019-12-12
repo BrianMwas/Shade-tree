@@ -14,30 +14,32 @@
             <v-img
                 :aspect-ratio="16/9"
                 src="@/assets/green pot.jpg"
+                pa-5
             >
             </v-img>
             
             <v-card-title
                 class="green--text text--darken-3 font-weight-bold"
+                style="position: relative"
             >
                 KSH 600
-            </v-card-title>
-            <v-card-subtitle class="font-weight-bold">
-                RoseMary flower
-            </v-card-subtitle>
-            <v-card-text class="font-weight-regular text-truncated">
-                <template v-slot:extension>
                 <v-btn
                     fab
-                    color="green accent-2"
-                    bottom
+                    color="grey darken-2"
+                    top
                     right
                     absolute
+                    
                 >
-                    <v-icon>{{ shop }}</v-icon>
+                    <v-icon color="white">{{ shop }}</v-icon>
                 </v-btn>
-            </template>
-            <p>The rosemary plant is a herbal plant used for seasoning meat and adding flavour to drinks</p>
+            </v-card-title>
+            <v-card-subtitle class="font-weight-bold" >
+                RoseMary flower
+            </v-card-subtitle>
+        
+            <v-card-text class="font-weight-regular text-truncated" >
+                <p>The rosemary plant is a herbal plant used for seasoning meat and adding flavour to drinks</p>
             </v-card-text>
         </v-card>
     </v-hover>

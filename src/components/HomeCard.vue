@@ -6,7 +6,7 @@
       :elevation="hover ? 12 : 2"
       class="mx-auto rounded"
       color="white lighten-5"
-      min-width="300"
+      min-width="290"
       max-width="325"
       min-height="325"
     >
@@ -17,11 +17,23 @@
       </v-img>
       <v-card-title
         class="pb-0 mb-2 font-weight-bold card-price"
+        style="position: relative"
       >
           Ksh 40000
           <span class="term">
             pm
           </span>
+          <v-btn
+                    fab
+                    color="green darken-2"
+                    top
+                    right
+                    absolute
+                    to="/single-unit"
+                    
+                >
+                    <v-icon color="white">{{ arrowRight }}</v-icon>
+                </v-btn>
       </v-card-title>
       <v-card-subtitle class="card-street mt-2" style="dimgray">
         James Gichuru rd

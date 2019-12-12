@@ -1,85 +1,36 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
-import SingleUnit from '../views/SingleUnit.vue'
-import Units from '../views/Units.vue'
-import SignUp from '../views/SignUp.vue'
-import LogIn from '../views/Login.vue'
-import Admin from '../views/Admin.vue'
-import Products from '../views/Products.vue'
-import Maps from '../views/Map.vue'
+import paths from './paths'
 
 Vue.use(VueRouter)
 
-const routes = [
-  {
-    path: '/',
-    name: 'home',
-    component: Home
-  },
-  {
-    path: '/dashboard',
-    name: 'dashboard',
-    component: () => import('../views/DashBoard'),
-    meta: {
-      requiresAuth: true
-    }
-  },
-  {
-    path: '/units',
-    name: 'units',
-    component: Units
-  },
-  {
-    path: '/single-unit',
-    name: 'single-unit',
-    component: SingleUnit
-  },
-  {
-    path: '/map',
-    name: 'Maps',
-    component: Maps
-  },
-  {
-    path: '/products',
-    name: 'Products',
-    component: Products
-  },
-  {
-    path: '/products/:id',
-    name: 'single-product',
-    component: Products
-  },
-  {
-    path: '/blogs',
-    name: 'Blog',
-    component: () => import('../views/Blog')
-  },
-  {
-    path: '/blogs/:slug',
-    name: 'single-blog',
-    component: () => import('../views/Blog')
-  },
-  {
-    path: '/signup',
-    name: 'SignUp',
-    component: SignUp
-  },
-  {
-    path: '/login',
-    name: 'LogIn',
-    component: LogIn
-  },
-  {
-    path: '/admin',
-    name: 'Admin',
-    component: Admin
+
+
+function route(path, view, name) {
+  return {
+    name: name || view,
+    path,
+    component: (resolve) => import(
+      `@/views/${view}.vue`
+    ).then(resolve)
   }
-]
+}
+
 
 const router = new VueRouter({
   mode: 'history',
-  routes
+  routes: paths.map(path => route(path.path, path.view, path.name)).concat([
+    { path: '*', redirect: '/' }
+  ]),
+  scrollBehavior (to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    }
+    if (to.hash) {
+      return { selector: to.hash }
+    }
+    return { x: 0, y: 0 }
+  }
 })
 
 export default router

@@ -1,6 +1,34 @@
 <template>
     <div>
-        <NavBar/>
+        <!-- Routes only visible when user is logged in -->
+        <NavBar v-if="loggedIn" #loggedInRoutes>
+          <v-btn text>
+           <router-link to="/map" class="link">map</router-link>
+         </v-btn>
+         <v-btn text>
+           <router-link to="/logout" class="link">Log out</router-link>
+         </v-btn>
+         <v-btn text>
+           <router-link to="/logout" class="link">Add Unit</router-link>
+         </v-btn>
+        </NavBar>
+        <NavBar v-else #default>
+            <v-btn text>
+              <router-link to="/units" class="link">units</router-link>
+            </v-btn>
+            <v-btn text>
+              <router-link to="/products" class="link">products</router-link>
+            </v-btn>
+            <v-btn text>
+              <router-link to="/blogs" class="link">blogs</router-link>
+            </v-btn>
+            <v-btn text>
+              <router-link to="/login" class="link">log in</router-link>
+            </v-btn>
+            <v-btn text>
+              <router-link to="/signup" class="link">Sign up</router-link>
+            </v-btn>
+        </NavBar>
         <v-content app>
             <header
             >
@@ -18,22 +46,22 @@
             </v-img>
             </header>
             <v-container height="auto">
-                <v-row
-          class="d-flex"
-           justify="space-around"
-          >
-            <v-col
-              lg="7"
-              md="6"
-              sm="6"
-            >
+              <v-row
+                class="d-flex"
+                justify="space-around"
+              >
+              <v-col
+                lg="7"
+                md="6"
+                sm="6"
+              >
               <Search/>
-            </v-col>
-            <v-col
-              lg="5"
-              md="6"
-              sm="6"
-            >
+              </v-col>
+              <v-col
+                lg="5"
+                md="6"
+                sm="6"
+              >
               <v-select
                 label="Sort"
                 dense
@@ -53,7 +81,7 @@
           <div class="selection">
             <h2 class="grey--text text--darken-3 my-5">Popular</h2>
           </div>
-            <div class="grid">
+            <div class="grid" transition="slide-y-transition">
                 <ProductCard/>
                 <ProductCard/>
                 <ProductCard/>
@@ -62,6 +90,14 @@
                 <ProductCard/>
             </div>
             </v-container>
+            <div class="text-center my-8">
+          <v-pagination
+            v-model="page"
+            :length="4"
+            :prev-icon="menuLeft"
+            :next-icon="menuRight"
+          ></v-pagination>
+        </div>
         </v-content>
         <Footer/>
     </div>
@@ -72,7 +108,7 @@ import ProductCard from '@/components/ProductCard.vue';
 import NavBar from '@/components/NavBar.vue';
 import Footer from '@/components/Footer.vue';
 import Search from '@/components/Search.vue'
-import { mdiSortDescending } from '@mdi/js'
+import { mdiSortDescending, mdiMenuLeft, mdiMenuRight } from '@mdi/js'
 
 export default {
     name: 'Products',
@@ -85,7 +121,11 @@ export default {
     data () {
         return {
             items: ['Popular', 'new', 'Highest rated'],
-            sortIcon: mdiSortDescending
+            page: 1,
+            loggedIn: false,
+            sortIcon: mdiSortDescending,
+            menuLeft: mdiMenuLeft,
+            menuRight: mdiMenuRight
         }
     }
 }
@@ -104,6 +144,10 @@ header {
   padding: 2em;
 }
 
+.v-btn a {
+  text-transform: uppercase;
+}
+
 @supports (display: grid) {
     .grid {
       display: grid;
@@ -111,6 +155,10 @@ header {
       grid-auto-rows: 300px;
       grid-gap: 50px;
       margin: 3em auto;
+
+      @include media('>medium') {
+        grid-template-columns: repeat(auto-fill, minmax(325px, 1fr));
+      }
     }
   }
 
