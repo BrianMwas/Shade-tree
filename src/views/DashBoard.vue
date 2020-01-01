@@ -1,12 +1,12 @@
 <template>
     <div>
         <!-- Routes only visible when user is logged in -->
-        <NavBar v-if="loggedIn" #loggedInRoutes>
+        <NavBar loggedIn="loggedIn" :user="loggedInUser.username" v-if="loggedIn" #loggedInRoutes>
           <v-btn text>
            <router-link to="/map" class="link">map</router-link>
          </v-btn>
-         <v-btn text>
-           <router-link to="/logout" class="link">Log out</router-link>
+         <v-btn text @click="logOutUser">
+           Log Out
          </v-btn>
          <v-btn text>
            <router-link to="/logout" class="link">Add Unit</router-link>
@@ -16,9 +16,7 @@
             <v-btn text>
               <router-link to="/units" class="link">units</router-link>
             </v-btn>
-            <v-btn text>
-              <router-link to="/products" class="link">products</router-link>
-            </v-btn>
+           
             <v-btn text>
               <router-link to="/blogs" class="link">blogs</router-link>
             </v-btn>
@@ -29,8 +27,22 @@
               <router-link to="/signup" class="link">Sign up</router-link>
             </v-btn>
         </NavBar>
-        <v-content app>
+        <v-content dark transition="fade-transition" app>
             <v-container>
+              <div v-if="Messages.length > 0">
+                <v-alert 
+                  class="my-5 mx-3" 
+                  border="left" 
+                  close-label="Close alert" 
+                  :type="message.type" 
+                  dismissible
+                  v-for="message in Messages"
+                  :key="message.message"
+                >
+                  {{message.message}}
+                </v-alert>
+              </div>      
+              <div v-if="loggedInUserType == 'owner'">
                 <v-card class="mx-2e">
                   <v-img
                     height="150"
@@ -45,14 +57,14 @@
                     Kijani Hills Apartments
                   </v-card-title>
                   <v-card-subtitle>
-                    Signed in as Brian Mwangi
+                    Signed in as <strong>{{ loggedInUser.username }}</strong>
                   </v-card-subtitle>
                   <v-card-actions>
                     <v-btn color="green" depressed class="white--text">ADD Unit</v-btn>
                     <v-btn color="primary" text>EDIT Company</v-btn>
                   </v-card-actions>
                 </v-card>
-                <v-row>
+                <v-row v-if="loggedInUser.roles[0] !== 'user'">
                   <v-col cols="12" sm="12" md="6" lg="6" xl="6">
                     <h2 class="grey--text text--darken-2 mb-3">Agents</h2>
                     <v-simple-table fixed-header height="300" width="400">
@@ -90,16 +102,15 @@
                       <v-card-text>
                         <v-sheet color="rgba(0, 0, 0, .12)">
                           <v-sparkline
+                            :labels="labels"
                             :value="value"
                             color="rgba(255, 255, 255, .7)"
                             height="100"
                             padding="24"
                             stroke-linecap="round"
                             smooth
+                            line-width="2"
                           >
-                            <template v-slot:label="item">
-                              ${{ item.value }}
-                            </template>
                           </v-sparkline>
                         </v-sheet>
                       </v-card-text>
@@ -180,6 +191,74 @@
                     <v-btn color="primary" @click="initialize">Reset</v-btn>
                   </template>
                 </v-data-table>
+              </div>
+              <div v-if="loggedInUserType == 'user'">
+                <v-row>
+                  <v-col
+                    cols="12"
+                    xs="12"
+                    md="7"
+                    lg="8"
+                  >
+                  
+                  <v-card class="mb-2">
+                    <v-card-title class="display-1">{{loggedInUser.username}}</v-card-title>
+                    <v-card-text>
+                      <p>This is my profile box</p>
+                    </v-card-text>
+                  </v-card>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    xs="12"
+                    md="5"
+                    lg="4">
+                      <v-card class="mb-2">
+                        <v-card-title class="display-1">
+                          Profile
+                        </v-card-title>
+                        <v-card-text>
+                          <p>This is my profile box</p>
+                        </v-card-text>
+                  </v-card>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col
+                    cols="12"
+                    sm="12"
+                    md="5"
+                    lg="5"
+                  >
+                    
+                    <v-card class="mb-2">
+                      <v-card-title class="display-1">{{loggedInUser.username}}</v-card-title>
+                      <v-card-text>
+                        <p>This is my saved units box</p>
+                      </v-card-text>
+                    </v-card>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    sm="12"
+                    md="7"
+                    lg="7"
+                  >
+                    <v-card class="mb-2">
+                    <v-card-title class="display-1">{{loggedInUser.username}}</v-card-title>
+                    <v-card-text>
+                      
+                    </v-card-text>
+                    <v-card-actions>
+                      <v-btn icon color="accent">
+                        <v-icon>{{ refreshIcon }}</v-icon>
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+
+                  </v-col>
+                </v-row>
+              </div>                
             </v-container>
         </v-content>
         
@@ -190,9 +269,9 @@
 <script>
 import NavBar from '@/components/NavBar.vue'
 import Footer from '@/components/Footer.vue'
-import { mdiPencil, mdiDelete, mdiArrowUp, mdiArrowDown } from '@mdi/js'
-
-
+import { mdiPencil, mdiDelete, mdiArrowUp, mdiArrowDown, mdiRefresh } from '@mdi/js'
+import { mapState, mapActions, createNamespacedHelpers } from 'vuex';
+const { mapGetters } = createNamespacedHelpers('auth');
 
 export default {
     name: 'Dashboard',
@@ -202,12 +281,12 @@ export default {
     },
     data () {
         return {
-            loggedIn: false,
             dialog: false,
             edit : mdiPencil,
             bin: mdiDelete,
             up: mdiArrowUp,
             down: mdiArrowDown,
+            refreshIcon: mdiRefresh,
             headers: [
               {
                 text: 'Dessert (100g serving)',
@@ -221,6 +300,20 @@ export default {
               { text: 'Protein (g)', value: 'protein' },
               { text: 'Actions', value: 'action', sortable: false },
             ],
+            labels: [
+                "Jan",
+                "Feb",
+                "Mar",
+                "Apr",
+                "May",
+                "Jun",
+                "Jul",
+                "Aug",
+                "Sep",
+                "Oct",
+                "Nov",
+                "Dec"
+            ],
             value: [
               423,
               446,
@@ -228,7 +321,12 @@ export default {
               510,
               590,
               610,
-              760
+              760,
+              678,
+              456,
+              567,
+              780,
+              400
             ],
             agents: [
               {
@@ -281,9 +379,8 @@ export default {
       },
     },
     methods: {
-        showParam () {
-            console.log(this.$router.params)
-        },
+      ...mapActions('alert', ['errorAlert']),
+      ...mapActions('auth', ['logOutUser']),
         initialize () {
         this.desserts = [
           {
@@ -364,40 +461,45 @@ export default {
           this.dialog = true
         },
 
-      deleteItem (item) {
-        const index = this.desserts.indexOf(item)
-        confirm('Are you sure you want to delete this item?') && this.desserts.splice(index, 1)
-      },
+        deleteItem (item) {
+          const index = this.desserts.indexOf(item)
+          confirm('Are you sure you want to delete this item?') && this.desserts.splice(index, 1)
+        },
 
-      close () {
-        this.dialog = false
-        setTimeout(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
-        }, 300)
-      },
+        close () {
+          this.dialog = false
+          setTimeout(() => {
+            this.editedItem = Object.assign({}, this.defaultItem)
+            this.editedIndex = -1
+          }, 300)
+        },
 
-      save () {
-        if (this.editedIndex > -1) {
-          Object.assign(this.desserts[this.editedIndex], this.editedItem)
-        } else {
-          this.desserts.push(this.editedItem)
+        save () {
+          if (this.editedIndex > -1) {
+            Object.assign(this.desserts[this.editedIndex], this.editedItem)
+          } else {
+            this.desserts.push(this.editedItem)
+          }
+          this.close()
         }
-        this.close()
-      },
     },
     computed : {
-        paramer () {
-            return this.$route.params.username
+      ...mapState({
+        loggedIn: state => state.auth.status,
+        Messages: state => state.alert.Messages.map(n => n.Raw),
+        Agents: state => state.agents
+      }),
+      ...mapGetters(['loggedInUser', 'loggedInUserType']),
+      paramer () {
+          return this.$route.params.username
+      },
+      formTitle () {
+        return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
         },
-        formTitle () {
-          return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
-         },
     },
     created() {
       this.initialize()
-    },
-
+    }
 }
 </script>
 

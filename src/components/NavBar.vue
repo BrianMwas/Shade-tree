@@ -24,7 +24,7 @@
                   <v-spacer></v-spacer>
 
                   <v-card-title class="white--text pl-12 pt-12">
-                    <div class="pt-12 ">Brian Mwangi</div>
+                    <div class="pt-12 ">{{user}}</div>
                   </v-card-title>
                 </v-row>
               </v-img>
@@ -82,7 +82,7 @@
                         <v-icon>{{ mdiLogout }}</v-icon>
                       </v-list-item-icon>
                       <v-list-item-content>
-                        <v-list-item-title to="/logout">Log out</v-list-item-title>
+                        <v-list-item-title @click="logOutUser">Log out</v-list-item-title>
                       </v-list-item-content>
                     </v-list-item>
                 </div>
@@ -107,6 +107,15 @@
                 </v-list-item>
                 </div>
             </v-list>
+            <v-spacer></v-spacer>
+            <v-list-item to="/about-us">
+                  <v-list-item-icon>
+                    <v-icon>{{ mdiPhone }}</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title>Get in touch</v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
       </v-navigation-drawer>
 
       <v-app-bar
@@ -133,10 +142,14 @@
 import { mdiMagnify, 
 mdiShopping, mdiPencil, mdiMenu, 
 mdiMapMarker, mdiEqualizerOutline, mdiPhoneAlert, mdiNewspaper, 
-mdiAccount, mdiLogin, mdiLogout, mdiShoppingSearch, mdiPlusBox  } from '@mdi/js'
+mdiAccount, mdiLogin, mdiLogout, mdiShoppingSearch, mdiPlusBox, mdiPhone  } from '@mdi/js'
+import { mapState } from 'vuex'
+import { createNamespacedHelpers } from 'vuex'
+const { mapActions } = createNamespacedHelpers('auth')
 
 export default {
   name: 'NavBar',
+  props: ['loggedIn', 'user'],
   data () {
     return {
       title: 'Shade tree',
@@ -148,7 +161,7 @@ export default {
       mdiAccount,
       mdiShoppingSearch,
       mdiLogout,
-      loggedIn: false,
+      mdiPhone,
       items: [
           {
             action: mdiEqualizerOutline,
@@ -164,18 +177,18 @@ export default {
               { title: 'Workspaces', link: 'workspaces' }
             ],
           },
-          {
-            action: mdiShopping,
-            show: true,
-            title: 'Products',
-            items: [
-              {title : 'Garden flowers'},
-              {title: 'Green plants' },
-              {title : 'Wallpapers' },
-              { title: 'Paint' },
-              { title: 'Plant pots' }
-            ]
-          },
+          // {
+          //   action: mdiShopping,
+          //   show: true,
+          //   title: 'Products',
+          //   items: [
+          //     {title : 'Garden flowers'},
+          //     {title: 'Green plants' },
+          //     {title : 'Wallpapers' },
+          //     { title: 'Paint' },
+          //     { title: 'Plant pots' }
+          //   ]
+          // },
           {
             action: mdiNewspaper,
             show: true,
@@ -188,6 +201,7 @@ export default {
     }
   },
   methods : {
+    ...mapActions(['logOutUser']),
     goto(link) {
       let route = link.toLowerCase();
       if(route === 'log in') {
@@ -204,7 +218,13 @@ export default {
     showR () {
       return this.loggedIn;
     }
-  }
+  },
+  // computed: {
+  //   ...mapState({
+  //     loggedIn: state => state.auth.status.loggedIn,
+  //     loggedInUser: state => state.auth.user
+  //   })
+  // }
 }
 </script>
 

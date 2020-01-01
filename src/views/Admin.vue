@@ -16,9 +16,7 @@
             <v-btn text>
               <router-link to="/units" class="link">units</router-link>
             </v-btn>
-            <v-btn text>
-              <router-link to="/products" class="link">products</router-link>
-            </v-btn>
+            
             <v-btn text>
               <router-link to="/blogs" class="link">blogs</router-link>
             </v-btn>
@@ -29,7 +27,7 @@
               <router-link to="/signup" class="link">Sign up</router-link>
             </v-btn>
         </NavBar>
-        <v-content app>
+        <v-content dark app transition="fade-transition">
                 <v-container>
                     <v-row transition="slide-y-reverse-transition">
                         <v-col cols="12" sm="12" md="4">
@@ -94,14 +92,7 @@
                             </v-card>
                         </v-col>
                         <v-col cols="12" sm="12" md="6" lg="4" xl="4">
-                            <!-- <v-card min-width="300" max-width="400">
-                                <v-card-title primary-title>
-                                    User visits Weekly
-                                </v-card-title>
-                                <v-card-text>
-                                    <chartist ratio="ct-major-second" type="Line" :data="chartData" :options="ChartOptions"></chartist>
-                                </v-card-text>
-                            </v-card> -->
+                        
                             <v-card min-width="300" max-width="400"
                                 class="mt-4 mx-auto"
                             >
@@ -127,14 +118,6 @@
                             </v-card>
                         </v-col>
                         <v-col cols="12" sm="12" md="6" lg="4" xl="4">
-                            <!-- <v-card min-width="300" max-width="400">
-                                <v-card-title primary-title>
-                                    User visits Weekly
-                                </v-card-title>
-                                <v-card-text>
-                                    <chartist ratio="ct-major-second" type="Line" :data="chartData" :options="ChartOptions"></chartist>
-                                </v-card-text>
-                            </v-card> -->
                             <v-card min-width="300" max-width="400"
                                 class="mt-4 mx-auto"
                             >

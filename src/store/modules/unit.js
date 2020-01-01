@@ -1,7 +1,14 @@
 const unit = {
-    store: {},
+    namespaced: true,
+    store: {
+    	units: []
+    },
     mutations: {},
-    actions: {},
+    actions: {
+    	async initStore({ state, commit }) {
+    		
+    	}
+    },
     getters: {}
 }
 

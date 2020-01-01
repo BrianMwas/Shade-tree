@@ -1,7 +1,7 @@
 <template>
     <div>
         <NavBar/>
-        <v-content app>
+        <v-content app transition="fade-transition">
             <div class="my-16 mx-a container" justify="center">
                 <AddUnit/>
             </div>

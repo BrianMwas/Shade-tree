@@ -11,6 +11,18 @@
         <v-card-title class="title font-weight-regular justify-space-between">
             Login    
         </v-card-title>
+        <v-alert 
+        class="my-5 mx-3" 
+        border="left" 
+        close-label="Close alert" 
+        v-if="Messages.length > 0" 
+        :type="message.type" 
+        dismissible
+        v-for="message in Messages"
+        :key="message.mKey"
+        >
+            {{message.message}}
+        </v-alert>
         <v-card-text>
             <form @submit.prevent="login">
                 <v-text-field
@@ -36,6 +48,10 @@
                     required
                 ></v-text-field>
                 <v-btn depressed color="success" type="submit" :disabled="submitStatus !== 'OKAY' && submitStatus === 'ERROR'" :loading="submitStatus === 'PENDING'">Login</v-btn>
+                 <div class="text-left">
+                    <router-link to="signup">Don't have an account? Sign Up here</router-link>
+                    <router-link to="change-password-request">Forgot password? Change It here</router-link>
+                </div>
             </form>
         </v-card-text>
   </v-card>
@@ -45,7 +61,11 @@
 import { mdiEye, mdiEyeCheck } from '@mdi/js'
 import { validationMixin } from 'vuelidate'
 const { required, minLength, email } = require('vuelidate/lib/validators')
+import { createNamespacedHelpers } from 'vuex';
 
+const { mapGetters } = createNamespacedHelpers('alert');
+
+import { mapActions } from 'vuex'
 
 export default {
     name: 'Login',
@@ -71,26 +91,27 @@ export default {
         }
     },
     methods: {
+        ...mapActions('auth', ['loginUser']),
         async login () {
             let data = {
                 email: this.email,
                 password: this.password
             };
-            console.log(data);
             this.$v.$touch();
             if(this.$v.$invalid) {
                 this.submitStatus = "ERROR"
             } else {
                 this.submitStatus = "PENDING";
-                setTimeout(() => {
-                    this.submitStatus = "OK"
-                    this.email = this.password = this.confirmation = "";
-                    this.$v.$reset()
-                }, 500)
+                
+                this.submitStatus = "OK"
+                this.loginUser(data)
+                this.email = this.password = this.confirmation = "";
+                this.$v.$reset()
             }
         }
     },
     computed : {
+        ...mapGetters(['Messages']),
         emailErrors () {
             const errors = [];
             if(!this.$v.email.$dirty) {
@@ -106,7 +127,7 @@ export default {
         passwordErrors () {
             const errors = [];
             if(!this.$v.password.$dirty) {
-            return errors
+                return errors
             }
             if(!this.$v.password.required) {
             errors.push('A password is required...')
@@ -128,5 +149,18 @@ export default {
 
     .rounded {
         border-radius: 10px !important;
+    }
+
+    .text-left {
+        text-decoration: underline;
+        display: flex;
+        flex-direction: column;
+        a {
+            margin: 5px 0 7.5px;
+
+            &:hover {
+                color: blue;
+            }
+        }
     }
 </style>

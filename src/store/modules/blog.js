@@ -1,4 +1,5 @@
 const blog = {
+    namespaced: true,
     store: {},
     mutations: {},
     actions: {},

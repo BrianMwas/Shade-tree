@@ -9,12 +9,35 @@
               src="@/assets/Kander.png"
               height="80"
           ></v-img>
+          <v-alert
+          v-if="Messages.length > 0"
+          v-for="message in Messages" 
+          :key="message.type" 
+          :type="message.type" 
+          class="my-5 mx-3" 
+          border="left" 
+          close-label="Close alert" 
+          dismissible>
+            {{message.message}}
+          </v-alert>
           <v-card-title class="title font-weight-regular justify-space-between">
             Register
           </v-card-title>
           <v-card-text>
               <v-form @submit.prevent="register">
-                  
+                    <v-text-field
+                      name="username"
+                      label="Username"
+                      filled
+                      v-model.trim="$v.username.$model"
+                      id="username"
+                      :error-messages="usernameErrors"
+                      @input="$v.username.$touch()"
+                      @blur="$v.username.$touch()"
+                      required
+                      type="text"
+                      autocomplete="on"
+                    ></v-text-field>
                     <v-text-field
                       name="email"
                       label="Email"
@@ -54,20 +77,15 @@
                     autocomplete="on"
                     required
                   ></v-text-field>
-
-                 <v-checkbox
-                  v-model="termsCheck"
-                  label="Do you agree?"
-                  color="primary"
-                 ></v-checkbox>
-          
-                   <v-radio-group v-model="userTypes" row>
-                    <v-radio label="Agent" value="agent"></v-radio>
-                    <v-radio label="Company" value="owner"></v-radio>
-                  </v-radio-group>
-
-                <v-btn outlined color="primary" dark type="submit" 
-                :disabled="submitStatus == 'OKAY' && submitStatus !== 'ERROR'" :loading="submitStatus === 'PENDING'">Register</v-btn>
+                <v-btn 
+                  color="success" 
+                  dark type="submit" 
+                  :disabled="submitStatus == 'OKAY' && submitStatus !== 'ERROR'" 
+                  :loading="submitStatus === 'PENDING' && status.registering"
+                  >Sign Up</v-btn>
+                <div class="text-left">
+                    <router-link to="login" class="text-center">Already a member? <span class="text-bold">Sign Up here</span></router-link>
+                </div>
               </v-form>
           </v-card-text>
         </v-card>
@@ -76,7 +94,10 @@
 <script>
 import { validationMixin } from 'vuelidate'
 import { mdiEye, mdiEyeCheck } from '@mdi/js'
-const { minLength, email, required, sameAs } = require('vuelidate/lib/validators')
+const { minLength, email, required, sameAs, alphaNum, maxLength } = require('vuelidate/lib/validators')
+import { mapState, mapActions } from 'vuex'
+import { createNamespacedHelpers } from 'vuex';
+const { mapGetters } = createNamespacedHelpers('alert')
 
 export default {
     name: 'SignUp',
@@ -84,6 +105,7 @@ export default {
         return {
             email: "",
             password: "",
+            username: "",
             confirmation: "",
             termsCheck: false,
             submitStatus: null,
@@ -91,11 +113,17 @@ export default {
             confirmPassword: false,
             passwordShowIcon: mdiEye,
             passwordEyeCancel: mdiEyeCheck,
-            userTypes: null
+            userType: this.$route.query.userType
         };
     },
     mixins: [validationMixin],
     validations: {
+      username: {
+        required,
+        alphaNum,
+        min: minLength(3),
+        max: maxLength(30)
+      },
       email: {
         required,
         email
@@ -114,11 +142,14 @@ export default {
       }
     },
     methods: {
+      ...mapActions('auth', ['registerUser']),
       async clear() {
         this.email = this.password = this.confirmation = "";
       },
       async register () {
         let data = {
+          username: this.username,
+          userType: this.userType,
           email: this.email,
           password: this.password
         }
@@ -127,20 +158,39 @@ export default {
         if(this.$v.$invalid) {
           this.submitStatus = "ERROR"
         } else {
-          this.submitStatus = "PENDING";
-          setTimeout(() => {
-            this.submitStatus = "OK"
-            console.log(data);
+            this.submitStatus = "PENDING";
+            this.registerUser(data);
+
             this.confirmPassword = false;
             this.passwordShow = false;
             this.email = this.password = this.confirmation = "";
             this.$v.$reset()
-          }, 500)
+          
         }
-        
       }
     },
     computed: {
+      ...mapState({
+          status: state => state.auth.status
+       }),
+      ...mapGetters(['Messages']),
+
+      usernameErrors () {
+        const errors = [];
+        if(!this.$v.username.$dirty) {
+          return errors;
+        } else if(!this.$v.username.alphaNum) {
+          errors.push("Please enter a valid username.eg alpha123")
+        } else if(!this.$v.username.required) {
+          errors.push('Email is required')
+        } else if(!this.$v.username.min) {
+          errors.push('Username requires a minimum of 3 characters')
+        } else if(!this.$v.username.max) {
+          errors.push('Username requires a maximum of 30 characters')
+        }
+
+        return errors;
+      },
       emailErrors () {
         const errors = [];
         if(!this.$v.email.$dirty) {
@@ -205,7 +255,26 @@ export default {
         background: grey;
     }
 
+
+    .text-bold {
+      font-weight: bolder;
+    }
     .rounded {
       border-radius: 10px !important;
+    }
+
+    .text-left {
+      text-align: left;
+      margin: 10px 0 15px;
+      text-decoration: underline;
+
+      a:hover {
+        color: blue !important;
+        text-decoration: underline;
+
+        .text-bold {
+          color: rgb(42, 153, 57);
+        }
+      }
     }
 </style>

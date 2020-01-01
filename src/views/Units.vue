@@ -17,10 +17,6 @@
               <router-link to="/units" class="link">units</router-link>
             </v-btn>
             <v-btn text>
-              <router-link to="/products" class="link">products</router-link>
-            </v-btn>
-            
-            <v-btn text>
               <router-link to="/login" class="link">log in</router-link>
             </v-btn>
             <v-btn text>
@@ -28,7 +24,7 @@
             </v-btn>
         </NavBar>
 
-      <v-content app>
+      <v-content dark transition="fade-transition" app>
         <AdvertHeader/>
         <v-container
           style="min-height: 100vh;"

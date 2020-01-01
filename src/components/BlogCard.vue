@@ -1,31 +1,27 @@
 <template>
-    <div class="blog-card my-4">
+    <div class="blog-card my-4" @click="gotoBlog">
         <div class="blog-img">
             <img src="@/assets/big-leaf.jpg" alt="Big leaf">
         </div>
         <div class="blog-card-info">
-        <div class="title">
-            <h2 class="h3">{{title}}</h2>
+            <div class="title">
+                <h2 class="h3">{{title}}</h2>
+            </div>
+            <div class="tags">
+                <ul>
+                    <li>
+                        <p>decor</p>
+                    </li>
+                    <li>
+                        <p>Paint color</p>
+                    </li>
+                    <li>
+                        <p>Tiles</p>
+                    </li>
+                </ul>
+            </div>
+            <p class="font-italic published">Published on January 23</p>
         </div>
-        <div class="tags">
-            <ul>
-                <li>
-                    <p>decor</p>
-                </li>
-                <li>
-                    <p>Paint color</p>
-                </li>
-                <li>
-                    <p>Tiles</p>
-                </li>
-            </ul>
-        </div>
-        <div class="summary">
-            <p class="h6-mobile d-block text-truncate" style="max-width: 300px">Lorem ipsum dolor sit amet consectetur adipisicing elit. 
-               Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure dolorem unde optio quam, architecto nobis cumque qui debitis neque, labore maxime deleniti. Vitae excepturi placeat rerum quo. Porro, nemo omnis. Minus numquam commodi cumque, laborum doloribus aut sapiente ratione beatae fuga fugit quas provident in nam suscipit illo soluta iure molestias eius.</p>
-        </div>
-
-    </div>
     </div>
     
 </template>
@@ -33,7 +29,12 @@
 <script>
 export default {
     name: 'BlogCard',
-    props: ['title']
+    props: ['title'],
+    methods: {
+        gotoBlog () {
+            this.$router.push('/single-blog')
+        }
+    }
 }
 </script>
 
@@ -43,12 +44,22 @@ export default {
 
     .blog-card {
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         justify-content: space-between;
+        width: 100%;
+
+        @include media('>=medium') {
+            flex-direction: row;
+        }
     }
 
     .blog-img {
         flex-grow: 1;
+        display: none;
+
+        @include media('<=medium') {
+            display: inline-block;
+        }
     
          img {
              width: 400px;
@@ -62,6 +73,8 @@ export default {
         transition: background-color ease-in 150ms;
         flex-grow: 2;
         height: 200px;
+        padding-bottom: 10px; 
+        
 
         &:hover {
             background-color: color(typography, 3);
@@ -90,8 +103,12 @@ export default {
 
             h2 {
                 color: color(typography, 2);
-                margin: 25px 0;
                 text-transform: capitalize;
+                margin: 10px auto;
+
+                @include media('<=medium') {
+                    margin: 15px 0;
+                }
             }
         }
 
@@ -132,14 +149,9 @@ export default {
             width: 100%;
         }
 
-        .summary {
-            width: 100%;
-            padding: 0 10px;
-
-            p {
-                line-height: 2;
-                font-size: 1.15rem;
-            }
+        p.published {
+            padding: 0 10px 15px;
+            margin: 0;
         }
     }
 </style>

@@ -1,17 +1,32 @@
-import axios from './api'
+// import axios from './api'
+import axios from 'axios'
+const baseUrl = "http://localhost:8500/api/v1/"
+const config = {
+    headers: {
+        'Content-Type': 'application/json'
+    }
+}
+
+function buildUrl(url) {
+    return baseUrl + url;
+}
 
 function login(email, password) {
     const body = JSON.stringify({email, password});
-    return axios(false).post('/login', body)
+    let url = buildUrl('auth/signin')
+    return axios.post(url, body, config)
 }
 
 function logout() {
-   return axios(true).get('/logout')
+    let url = buildUrl('auth/signout')
+   return axios.get(url, config)
 }
 
 
-function register(user) {
-   return axios(false).post('/register', user)
+function register(userData) {
+    let data = JSON.stringify(userData)
+    let url = buildUrl(`auth/register?userType=${data.userType}`)
+   return axios.post(url, data, config)
 }
 
 export const authService = {

@@ -9,6 +9,7 @@
       min-width="290"
       max-width="325"
       min-height="325"
+      flat
     >
       <v-img
         :aspect-ratio="16/9"

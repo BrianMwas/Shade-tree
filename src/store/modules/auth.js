@@ -1,98 +1,124 @@
 import  { authService } from '../../services/auth.service';
-import router from '../../router/index'
+import router from '../../router/index';
+import axios from 'axios';
+const MAX_RANDOM_NUM = 20;
+
+// const stateInit = user ? { status: { loggedIn: true }, user } : { status: {}, user: null }
+function getRandomInt () {
+  return Math.floor(Math.random() * Math.floor(MAX_RANDOM_NUM))
+}
+
 
 const auth = {
   namespaced: true,
-  store: {
-    user: null,
-    status: '',
-    loggedIn: false
-  },
-  mutations: {
-    login_request(state) {
-      state.status = 'loggingIn';
+  state: {
+    status: {
+      loggedIn: null
     },
-    login_success(state, user) {
-      state.status = 'success'
-      state.user = user;
-      state.loggedIn = true;
-    },
-    login_error(state) {
-      state.status = 'error';
-      state.loggedIn = false;
-      state.user = null;
-    },
-    register_request(state) {
-      state.status = 'registering';
-    },
-    register_success(state, user) {
-      state.status = '';
-    },
-    register_failure(state, error) {
-      state.status = '';
-    },
-    logout(state) {
-      state.status = '';
-      state.user = null;
-    }
+    user: {}
   },
   actions: {
-    login({ commit }, { email, password }) {
-      // return new Promise((resolve, reject) => {
-      //   commit('auth_request')
-      //   axios(false).post('/signin', user).then(res => {
-      //     const user = res.user;
-      //     commit('auth_success', user);
-      //     resolve(res)
-      //   }).catch(err => {
-      //     commit('auth_error');
-      //     reject(err);
-      //   })
-      // })
-      commit('login_request')
-      authService.login(email, password).then(user => {
-        commit('login_success', user);
-        router.push('/dashboard');
-      })
-    },
-    register ({ dispatch, commit }, user) {
-      // return new Promise((resolve, reject) => {
-      //   commit('auth_request')
-      //   axios(false).post('/register', user).then(res => {
-      //     commit('auth_success');
-      //     resolve(res);
-      //   }).catch(err => {
-      //     commit('auth_error', err);
-      //     reject(err)
-      //   })
-      // })
-      commit('register_request', user);
-      authService.register(user).then(res => {
-        commit('register_success', res);
-        router.push('/login')
-        setTimeout(() => {
-          dispatch('alert/success', res.message, { root: true })
+    loginUser({ dispatch, commit }, { email, password }) {
+      if (!window.$cookies.isKey("user")) {
+
+        commit('loginRequest');
+
+        authService.login(email, password).then(user => {
+              //not logged in, create cookie based on username
+              // this.$cookies.set('user', user, '24h');
+              //save username in store by committing a mutation
+              window.$cookies.set('user', user.data)
+              commit('loginSuccess', window.$cookies.get('user'));
+
+              router.push('/dashboard')
+              setTimeout(() => {
+                 dispatch('alert/successAlert', { mKey: getRandomInt(), message : `Welcome to Shade tree ${user.data.username}`, type : 'success'}, { root: true })
+             }, 1000)
+          
+          
+        }).catch(error => {
+          let errorMessage = error.response.data.message;
+          commit('loginFailure', errorMessage);
+          if(errorMessage) {
+            dispatch('alert/errorAlert', { mKey: getRandomInt(), message: errorMessage, type: 'warning' }, { root: true });
+          } else {
+            dispatch('alert/errorAlert', { mKey: getRandomInt(), message: error, type: 'warning' }, { root: true });
+          }
         })
-      }).catch(err => {
-        commit('register_failure', err);
-        dispatch('alert/error', err, { root: true })
-      })
+      }
     },
-    logout ({ commit }) {
-      return new Promise((resolve, reject) => {
+    logOutUser({ commit }) {
+      if(!window.$cookies.isKey('user')) {
+        dispatch('alert/errorAlert', { mKey: getRandomInt(), message: "You are not logged In", type: 'warning' }, { root: true })
+      } else {
+        authService.logout();
+      //remove cookie
+        router.push('/')
+
+        $cookies.remove('user')
         commit('logout')
-        axios(true).get('/logout').then(res => {
-          commit('logout')
-          resolve();
-        }).catch(err => {
-          reject();
-        })
+      }
+      
+    },
+    registerUser({ dispatch, commit }, user) {
+      commit('registerRequest', user)
+
+
+      authService.register(user)
+      .then(user => {
+        commit('registerSuccess');
+        router.push('/login')
+
+        setTimeout(() => {
+          dispatch('alert/successAlert', { mKey: getRandomInt(), message: 'Registration successful', type: 'success' }, { root: true })
+        }, 1000)
+      })
+      .catch(error => {
+        let errorMessage = error.response.data.message
+
+        commit('registerFailure', errorMessage);
+        console.log("Reg fail", error.response)
+        if(errorMessage) {
+          dispatch('alert/errorAlert', { mKey: getRandomInt(), message: errorMessage, type: 'info' }, { root: true });
+        } else {
+          dispatch('alert/errorAlert', { mKey: getRandomInt(), message: error, type: 'warning' }, { root: true });
+        }
       })
     }
   },
+  mutations: {
+    loginRequest(state) {
+      state.status = { loggingIn: true }
+    },
+    loginSuccess(state, user) {
+      state.status = { loggedIn: true },
+      state.user = user
+      // state.user = user
+    },
+    loginFailure(state) {
+      state.status = {},
+      state.user = null
+    },
+    logout(state) {
+      state.status = {
+        loggedIn: false
+      };
+      state.user = null
+    },
+    registerRequest(state) {
+      state.status = { registering: true };
+    },
+    registerSuccess(state, user) {
+      state.status = {};
+    },
+    registerFailure(state, error) {
+      state.status = {};
+    }
+  }, 
   getters: {
-    isLoggedIn: state => !!state.user,
-    authStatus: state => !!state.status
+    loggedInUser: state => window.$cookies.get('user'),
+    loggedInUserType: state => window.$cookies.get('user').roles[0],
+    loggedIn: state => window.$cookies.isKey('user')
   }
 }
 

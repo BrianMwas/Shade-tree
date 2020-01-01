@@ -16,9 +16,7 @@
             <v-btn text>
               <router-link to="/units" class="link">units</router-link>
             </v-btn>
-            <v-btn text>
-              <router-link to="/products" class="link">products</router-link>
-            </v-btn>
+      
             <v-btn text>
               <router-link to="/blogs" class="link">blogs</router-link>
             </v-btn>

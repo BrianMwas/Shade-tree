@@ -16,9 +16,7 @@
             <v-btn text>
               <router-link to="/units" class="link">units</router-link>
             </v-btn>
-            <v-btn text>
-              <router-link to="/products" class="link">products</router-link>
-            </v-btn>
+           
             
             <v-btn text>
               <router-link to="/login" class="link">log in</router-link>
@@ -27,8 +25,8 @@
               <router-link to="/signup" class="link">Sign up</router-link>
             </v-btn>
         </NavBar>
-        <v-content app>
-            <v-container>
+        <v-content dark transition="fade-transition" app>
+            <v-container style="min-height: 66vh">
                 <div class="d-flex"
                     justify="center"
                     style="margin: 4.6em auto;"

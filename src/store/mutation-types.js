@@ -1,0 +1,14 @@
+export const MESSAGE_SUCCESS = 'ADD_MESSAGE_SUCCESS';
+export const MESSAGE_ERROR = 'ADD_MESSAGE_ERROR';
+export const MESSAGE_DISMISSED = 'DISMISS_MESSAGE';
+
+// Profile
+//for setting new profile
+export const N_PROFILE_SUCCESS = 'SET_USER_PROFILE_SUCCESS';
+export const N_PROFILE_ERROR = 'SET_PROFILE_ERROR';
+export const N_PROFILE_REQUEST = 'REQUEST_NEWPROFILE_SET'
+
+// for updating current profile
+export const P_UPDATE_SUCCESS = 'UPDATE_USER_PROFILE_SUCCESS'
+export const P_UPDATE_ERROR = 'UPDATE_USER_PROFILE_ERROR'
+export const P_UPDATE_REQUEST = 'REQUEST_PROFILE_UPDATE'

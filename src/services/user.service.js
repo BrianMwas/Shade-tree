@@ -1,34 +1,41 @@
 import axios from './api';
 
 export const userService = {
-    login,
-    logout,
-    register,
-    getAll,
-    getById,
-    update
+    getAllAgents,
+    getSingleAgent,
+    addAgentReview,
+  	addUserProfile
 }
 
-function login() {
-
+const baseUrl = "http://localhost:8500/api/v1/"
+const config = {
+    headers: {
+        'Content-Type': 'application/json'
+    }
 }
 
-function logout() {
-
+function buildUrl(url) {
+    return baseUrl + url;
 }
 
-function register() {
-
+function getAllAgents() {
+	let url = buildUrl('users/agents')
+	return axios.get(url, config)
 }
 
-function getAll() {
-
+function getSingleAgent(agentId) {
+	let url = buildUrl(`users/agents/${agentId}`);
+	return axios.get(url, config);
 }
 
-function getById() {
-
+function addAgentReview(agentId, review) {
+	let rJson = JSON.stringify(review);
+	let url = buildUrl(`users/agents/${agentId}`);
+	return axios.post(url, rJson, config)
 }
 
-function update() {
-
+function addUserProfile(userData) {
+	let url = buildUrl('auth/create-profile')
+	let userProfile = JSON.stringify(userData)
+	return axios.post(url, userProfile, config)
 }

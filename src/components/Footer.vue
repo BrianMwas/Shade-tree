@@ -12,7 +12,7 @@
                         <a href="#">Contact</a>
                     </li>
                     <li>
-                        <a href="#">About us</a>
+                        <router-link to="/about-us">About Us</router-link>
                     </li>
                     <li>
                         <a href="#">FAQ's</a>
