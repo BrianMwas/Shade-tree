@@ -1,35 +1,37 @@
 <template>
-    <div class="blog-card my-4" @click="gotoBlog">
-        <div class="blog-img">
-            <img src="@/assets/big-leaf.jpg" alt="Big leaf">
-        </div>
-        <div class="blog-card-info">
-            <div class="title">
-                <h2 class="h3">{{title}}</h2>
+    <div>
+       <div class="blog-card alt">
+            <div class="meta">
+              <div class="photo" style="background-image: url('~@/assets/brick-wall.jpg')"></div>
+              <ul class="details">
+                <li class="author"><a href="#">{{ blog.author }}</a></li>
+                <li class="date">{{ blog.publishDate }}</li>
+                <li class="tags">
+                  <ul>
+                    <li  v-for="(tag, i) in blog.tags" :key="i"><a href="#">{{ tag }}</a></li>
+                  </ul>
+                </li>
+              </ul>
             </div>
-            <div class="tags">
-                <ul>
-                    <li>
-                        <p>decor</p>
-                    </li>
-                    <li>
-                        <p>Paint color</p>
-                    </li>
-                    <li>
-                        <p>Tiles</p>
-                    </li>
-                </ul>
+            <div class="description">
+              <h1>{{ blog.title }}</h1>
+              <h2>{{ blog.subtitle }}</h2>
+              <p>{{ blog.summary }}</p>
+              <p class="read-more">
+                <router-link to="single-blog">Read More</router-link>
+              </p>
             </div>
-            <p class="font-italic published">Published on January 23</p>
         </div>
     </div>
-    
 </template>
 
 <script>
+
 export default {
     name: 'BlogCard',
-    props: ['title'],
+    props: {
+        blog: Object
+    },
     methods: {
         gotoBlog () {
             this.$router.push('/single-blog')
@@ -40,118 +42,198 @@ export default {
 
 
 <style lang="scss" scoped>
-    @import '@/scss/global.scss';
 
-    .blog-card {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        width: 100%;
 
-        @include media('>=medium') {
-            flex-direction: row;
-        }
+    $color_white: #fff;
+    $color_prime: #5ad67d;
+    $color_grey: #e2e2e2;
+    $color_grey_dark: #a2a2a2;
+
+.blog-card {
+  display: flex;
+  flex-direction: column;
+  margin: 1rem auto;
+  box-shadow: 0 3px 7px -1px rgba(#000, .1);
+  margin-bottom: 1.6%;
+  background: $color_white;
+  line-height: 1.4;
+  font-family: sans-serif;
+  border-radius: 5px;
+  overflow: hidden;
+  z-index: 0;
+  a {
+    color: inherit;
+    &:hover {
+      color: $color_prime;
+    }
+  }
+  &:hover {
+    .photo {
+      transform: scale(1.3) rotate(3deg);
+    }
+  }
+  .meta {
+    position: relative;
+    z-index: 0;
+    height: 200px;
+  }
+  .photo {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-size: cover;
+    background-position: center;
+    transition: transform .2s;
+  }
+  .details,
+  .details ul {
+    margin: auto;
+    padding: 0;
+    list-style: none;
+  }
+
+  .details {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -100%;
+    margin: auto;
+    transition: left .2s;
+    background: rgba(#000, .6);
+    color: $color_white;
+    padding: 10px;
+    width: 100%;
+    font-size: .9rem;
+    a {
+      text-decoration: dotted underline
+    }
+    ul li {
+      display: inline-block;
+    }
+    .author:before {
+
+      margin-right: 10px;
+ 
     }
 
-    .blog-img {
-        flex-grow: 1;
-        display: none;
-
-        @include media('<=medium') {
-            display: inline-block;
-        }
+    .date:before {
     
-         img {
-             width: 400px;
-             height: 200px;
-         }
+      margin-right: 10px;
+    
     }
 
-    .blog-card-info {
-        position: relative;
-        display: block;
-        transition: background-color ease-in 150ms;
-        flex-grow: 2;
-        height: 200px;
-        padding-bottom: 10px; 
+    .tags {
+      ul:before {
         
-
-        &:hover {
-            background-color: color(typography, 3);
-
-            .title h2 {
-                color: color(typography, 1);
-            }
-
-            .tags ul li {
-                background: color(green, 4);
-            }
-
-            .tags ul li p {
-                color: whitesmoke;
-            }
-
-            .summary p {
-                color: white;
-            }
+        margin-right: 10px;
+      }
+      li {
+        margin-right: 2px;
+        &:first-child {
+          margin-left: -4px;
         }
-
-        .title {
-            text-align: left;
-            margin: 0;
-            padding: 0 10px;
-
-            h2 {
-                color: color(typography, 2);
-                text-transform: capitalize;
-                margin: 10px auto;
-
-                @include media('<=medium') {
-                    margin: 15px 0;
-                }
-            }
-        }
-
-        .tags {
-            padding: 0 10px;
-            margin: 0;
-
-            ul {
-                margin: 0;
-                padding: 0;
-            }
-        }
-
-        .tags ul{
-            display: flex;
-            flex-direction: row;
-
-            li {
-                background-color: color(bg, 4);
-                list-style: none;
-                padding: 10px;
-                margin-bottom: 20px;
-                border-radius: 4px;
-            }
-
-            li:not(:first-child) {
-                margin-left: 10px;
-            }
-
-            li p {
-                margin: auto 0;
-                color: white;
-                text-transform: capitalize;
-            }
-        }
-
-        @include media('>medium') {
-            width: 100%;
-        }
-
-        p.published {
-            padding: 0 10px 15px;
-            margin: 0;
-        }
+      }
     }
+  }
+  .description {
+    padding: 1rem;
+    background: $color_white;
+    position: relative;
+    z-index: 1;
+    
+    h1 {
+      line-height: 1;
+      margin: 0;
+      font-size: 1.7rem;
+    }
+    h2 {
+      font-size: 1rem;
+      font-weight: 300;
+      text-transform: uppercase;
+      color: $color_grey_dark;
+      margin-top: 5px;
+    }
+    .read-more {
+      text-align: right;
+      a {
+        color: $color_prime;
+        display: inline-block;
+        position: relative;
+        &:after {
+          
+          margin-left: -10px;
+          opacity: 0;
+          vertical-align: middle;
+          transition: margin .3s, opacity .3s;
+        }
+
+        &:hover:after {
+          margin-left: 5px;
+          opacity: 1;
+        }
+      }
+    }
+  }
+  p {
+    position: relative;
+    margin: 1rem 0 0;
+    &:first-of-type {
+      margin-top: 1.25rem;
+      &:before {
+        content: "";
+        position: absolute;
+        height: 5px;
+        background: $color_prime;
+        width: 35px;
+        top: -0.75rem;
+        border-radius: 3px;
+      }
+    }
+  }
+  &:hover {
+    .details {
+      left: 0%;
+    }
+  }
+
+
+  @media (min-width: 640px) {
+    flex-direction: row;
+    max-width: 700px;
+    .meta {
+      flex-basis: 40%;
+      height: auto;
+    }
+    .description {
+      flex-basis: 60%;
+      &:before {
+        transform: skewX(-3deg);
+        content: "";
+        background: #fff;
+        width: 30px;
+        position: absolute;
+        left: -10px;
+        top: 0;
+        bottom: 0;
+        z-index: -1;
+      }
+    }
+    &.alt {
+      flex-direction: row-reverse;
+      .description {
+        &:before {
+          left: inherit;
+          right: -10px;
+          transform: skew(3deg)
+        }
+      }
+      .details {
+        padding-left: 25px;
+      }
+    }
+  }
+}
+    
 </style>

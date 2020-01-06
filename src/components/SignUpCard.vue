@@ -77,6 +77,7 @@
                     autocomplete="on"
                     required
                   ></v-text-field>
+        
                 <v-btn 
                   color="success" 
                   dark type="submit" 
@@ -113,7 +114,7 @@ export default {
             confirmPassword: false,
             passwordShowIcon: mdiEye,
             passwordEyeCancel: mdiEyeCheck,
-            userType: this.$route.query.userType
+        
         };
     },
     mixins: [validationMixin],
@@ -147,13 +148,12 @@ export default {
         this.email = this.password = this.confirmation = "";
       },
       async register () {
-        let data = {
+         let data = {
           username: this.username,
-          userType: this.userType,
+          userType: this.$route.query.userType,
           email: this.email,
           password: this.password
         }
-
         this.$v.$touch();
         if(this.$v.$invalid) {
           this.submitStatus = "ERROR"

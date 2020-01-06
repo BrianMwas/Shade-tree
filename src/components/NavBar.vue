@@ -125,7 +125,7 @@
       >
         <v-btn @click="drawer = !drawer" class="hidden-md-and-up" icon><v-icon>{{ menu }}</v-icon></v-btn>
 
-        <v-toolbar-title @click="goto('home')">Shade tree</v-toolbar-title>
+        <v-toolbar-title>Shade tree</v-toolbar-title>
 
         <v-spacer></v-spacer>
           <v-toolbar-items class="d-none d-md-flex d-lf-flex">

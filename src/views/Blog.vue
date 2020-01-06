@@ -3,14 +3,21 @@
         <!-- Routes only visible when user is logged in -->
         <NavBar v-if="loggedIn" #loggedInRoutes>
           <v-btn text>
-           <router-link to="/map" class="link">map</router-link>
-         </v-btn>
+            <router-link to="/dashboard" class="link">dashboard</router-link>
+          </v-btn>
          <v-btn text>
-           <router-link to="/logout" class="link">Log out</router-link>
-         </v-btn>
-         <v-btn text>
-           <router-link to="/logout" class="link">Add Unit</router-link>
-         </v-btn>
+            <router-link to="/units" class="link">units</router-link>
+          </v-btn>
+         
+           <v-btn text>
+            <router-link to="/blogs" class="link">blogs</router-link>
+           </v-btn>
+           <v-btn text @click="logOutUser">
+             Log Out
+           </v-btn>
+           <v-btn text v-if="loggedInUserType == 'owner'">
+             <router-link to="/logout" class="link">Add Unit</router-link>
+           </v-btn>
         </NavBar>
         <NavBar v-else #default>
             <v-btn text>
@@ -30,13 +37,9 @@
         <v-content app>
           
             <v-container transition="slide-x-transition">
-                <BlogCard title="Home decor"/>
-                <BlogCard title="Choosing the right paint"/>
-                <BlogCard title="What tile goes with your living room"/>
-                <BlogCard title="Getting started to DIY"/>
-                <BlogCard title="dIY your own kitchen garden"/>
-                <BlogCard title="Cleaning your walls"/>
-                <BlogCard title="finding the right toilet seat"/>
+                <div v-for="(blog, index) in blogs" :key="index">
+                  <BlogCard class="my-5" :blog="blog"/>
+                </div>
                 <v-pagination
                     v-model="page"
                     :length="4"
@@ -55,7 +58,8 @@ import BlogCard from '@/components/BlogCard.vue'
 import Footer from '@/components/Footer.vue'
 import { mdiMenuLeft, mdiMenuRight } from '@mdi/js'
 
-
+import { mapState, mapActions, createNamespacedHelpers } from 'vuex';
+  const { mapGetters } = createNamespacedHelpers('auth');
 export default {
     name: 'Blog',
     components: {
@@ -68,8 +72,29 @@ export default {
             page: 1,
             menuLeft: mdiMenuLeft,
             menuRight: mdiMenuRight,
-            loggedIn: false
+            blogs: [
+              {
+                title: "Blog one",
+                subtitle: "blog subtitle",
+                summary: "lorem ipsum lorem ipsum",
+                author: "brian",
+                publishDate: "June, 2013",
+                tags: ["walls", "paint", "color"]
+
+              }
+
+            ]
         }
+    },
+    methods: {
+      ...mapActions('auth', ['logOutUser'])
+    },
+    computed: {
+      ...mapGetters(['loggedInUser', 'loggedInUserType', 'logged']),
+      ...mapState({
+        loggedIn: state => state.auth.status,
+        settingProfile: state => state.profile.settingUserProfile,
+      })
     }
 }
 </script>

@@ -10,29 +10,6 @@ export default [
         }
     },
     {
-        path: '/dashboard',
-        name: 'dashboard',
-        view : 'DashBoard',
-        beforeEnter: (to, from, next) => {
-            if(!window.$cookies.isKey('user')) {
-                store.dispatch('alert/errorAlert', {
-                    mKey: Math.floor(Math.random() * Math.floor()),
-                    message: "Please log in first",
-                    type: "error",
-                    duration: 45000
-                })
-                next({
-                    name: 'LogIn'
-                })
-            } else {
-                next()
-            }
-        },
-        meta: {
-            requiresAuth: true
-        }
-    },
-    {
         path: '/newunit',
         name: 'add-unit',
         view: 'AddNewUnit',
@@ -64,6 +41,63 @@ export default [
             guest: true
         }
     },
+    {
+        path: '/dashboard',
+        name: 'dashboard',
+        view: 'Dashboard',
+        meta: {
+            requiresAuth: true
+        },
+        beforeEnter (to, from, next) {
+            if(!window.$cookies.isKey('user')) {
+                next()
+            } else {
+                store.dispatch('alert/errorAlert', {
+                    mKey: Math.floor(Math.random() * Math.floor(20)),
+                    message:"Please login first",
+                    type: "error"
+                }, { root: true })
+                next({
+                    name: 'Login'
+                })
+            }
+        }
+    },
+
+    {
+       path: '/dashboard/userprofile',
+        name: 'Profile',
+        view: 'Profile',
+        meta: {
+            requiresAuth: true
+        },
+        beforeEnter (to, from, next) {
+            if(!window.$cookies.isKey('user')) {
+                store.dispatch('alert/errorAlert', {
+                    mKey: Math.floor(Math.random() * Math.floor(20)),
+                    message:"Please login first",
+                    type: "error"
+                }, { root: true })
+                next('/login')
+
+            } else {
+                if (!window.$cookies.isKey('userProfile')) {
+                    store.dispatch('alert/errorAlert', {
+                    mKey: Math.floor(Math.random() * Math.floor(20)),
+                    message:"You don't have a profile yet. Please set up one",
+                    type: "error"
+                    }, { root: true })
+
+                    next({
+                        name: 'dashboard'
+                    })
+                } else {
+                    next()
+                }
+            }
+        } 
+    },
+
     {  
         path: '/blogs',
         name: 'Blog',

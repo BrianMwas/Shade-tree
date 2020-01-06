@@ -1,31 +1,16 @@
 <template>
     <div>
-        <!-- Routes only visible when user is logged in -->
-        <NavBar loggedIn="loggedIn" :user="loggedInUser.username" v-if="loggedIn" #loggedInRoutes>
+      <!-- Routes only visible when user is logged in -->
+        <NavBar  :loggedIn="loggedIn" :user="loggedInUser.username"  #loggedInRoutes>
           <v-btn text>
-           <router-link to="/map" class="link">map</router-link>
+           <router-link to="/dashboard/userprofile" class="link">Profile</router-link>
          </v-btn>
          <v-btn text @click="logOutUser">
            Log Out
          </v-btn>
-         <v-btn text>
+         <v-btn v-if="loggedInUserType == 'owner'" text>
            <router-link to="/logout" class="link">Add Unit</router-link>
          </v-btn>
-        </NavBar>
-        <NavBar v-else #default>
-            <v-btn text>
-              <router-link to="/units" class="link">units</router-link>
-            </v-btn>
-           
-            <v-btn text>
-              <router-link to="/blogs" class="link">blogs</router-link>
-            </v-btn>
-            <v-btn text>
-              <router-link to="/login" class="link">log in</router-link>
-            </v-btn>
-            <v-btn text>
-              <router-link to="/signup" class="link">Sign up</router-link>
-            </v-btn>
         </NavBar>
         <v-content dark transition="fade-transition" app>
             <v-container>
@@ -64,7 +49,7 @@
                     <v-btn color="primary" text>EDIT Company</v-btn>
                   </v-card-actions>
                 </v-card>
-                <v-row v-if="loggedInUser.roles[0] !== 'user'">
+                <v-row v-if="loggedInUserType == 'agent'">
                   <v-col cols="12" sm="12" md="6" lg="6" xl="6">
                     <h2 class="grey--text text--darken-2 mb-3">Agents</h2>
                     <v-simple-table fixed-header height="300" width="400">
@@ -201,12 +186,23 @@
                     lg="8"
                   >
                   
-                  <v-card class="mb-2">
-                    <v-card-title class="display-1">{{loggedInUser.username}}</v-card-title>
-                    <v-card-text>
-                      <p>This is my profile box</p>
-                    </v-card-text>
-                  </v-card>
+                    <v-card class="mb-2">
+                      <v-img
+                        src="@/assets/galaxy.jpg"
+                        :aspect-ratio="16/9"
+                      >
+                        <!-- <div class="p-5">
+                            <h2 class="white--text dispaly-1">{{loggedInUser.username}}</h2>
+                            <h5 class="white--text font-weight-light display-5">{{loggedInUser.email}}</h5>
+                        </div> -->
+                          <v-row align="end" class="lightbox white--text pa-2 fill-height">
+                            <v-col>
+                              <div class="heading white--text display-1">{{loggedInUser.username}}</div>
+                              <div class="body-1">{{loggedInUser.email}}</div>
+                            </v-col>
+                          </v-row>
+                      </v-img>
+                    </v-card>
                   </v-col>
                   <v-col
                     cols="12"
@@ -214,65 +210,110 @@
                     md="5"
                     lg="4">
                       <v-card class="mb-2">
-                        <v-card-title class="display-1">
-                          Profile
-                        </v-card-title>
-                        <v-card-text>
-                          <p>This is my profile box</p>
-                        </v-card-text>
-                  </v-card>
+                      <v-toolbar color="purple">
+                        <v-toolbar-title class="white--text">
+                          Saved Units
+                        </v-toolbar-title>
+                        <v-spacer></v-spacer>
+                        <v-btn icon ripple @click="getAgents">
+                          <v-icon color="white">{{ bin }}</v-icon>
+                        </v-btn>
+                      </v-toolbar>
+                      <v-card-text>
+                        <p>This is my saved units box</p>
+                      </v-card-text>
+                    </v-card>
                   </v-col>
                 </v-row>
                 <v-row>
                   <v-col
                     cols="12"
                     sm="12"
-                    md="5"
-                    lg="5"
+                    md="7"
+                    lg="7"
                   >
-                    
-                    <v-card class="mb-2">
-                      <v-card-title class="display-1">{{loggedInUser.username}}</v-card-title>
+                    <v-card>
+                      <v-toolbar color="cyan">
+                        <v-toolbar-title class="white--text">
+                          Map
+                        </v-toolbar-title>
+                        <!-- <v-spacer></v-spacer>
+                        <v-btn icon ripple @click="getAgents">
+                          <v-icon color="white">{{ bin }}</v-icon>
+                        </v-btn> -->
+                      </v-toolbar>
                       <v-card-text>
-                        <p>This is my saved units box</p>
+                        <p>This is your map view</p>
                       </v-card-text>
                     </v-card>
                   </v-col>
                   <v-col
                     cols="12"
                     sm="12"
-                    md="7"
-                    lg="7"
+                    md="5"
+                    lg="5"
                   >
                     <v-card class="mb-2">
-                    <v-card-title class="display-1">{{loggedInUser.username}}</v-card-title>
-                    <v-card-text>
+                      <v-toolbar color="green darken-1">
+                        <v-toolbar-title class="white--text">
+                          Agents
+                        </v-toolbar-title>
+                        <v-spacer></v-spacer>
+                        <v-btn icon ripple @click="getAgents">
+                          <v-icon color="white">{{ refreshIcon }}</v-icon>
+                        </v-btn>
+                      </v-toolbar>
+                      <v-card-text>
                       
-                    </v-card-text>
-                    <v-card-actions>
-                      <v-btn icon color="accent">
-                        <v-icon>{{ refreshIcon }}</v-icon>
-                      </v-btn>
-                    </v-card-actions>
-                  </v-card>
+                        
+                        <div v-if="agents.length > 0">
+                          <v-list two-line>
+                             <v-list-item
+                              v-for="agent in agents"
+                              :key="agent.id"
+                             >
+                              <v-list-item-avatar>
+                                <v-img src="@/assets/face.jpg"></v-img>
+                              </v-list-item-avatar>
 
+                              <v-list-item-content>
+                                <v-list-item-title v-text="agent.username"></v-list-item-title>
+                                <v-list-item-subtitle v-text="agent.email"></v-list-item-subtitle>
+                              </v-list-item-content>
+                              <v-list-item-icon>
+                                <!-- <v-btn @click="sendMessage"  color="success"> -->
+                                  <v-icon @click="sendMessage(agent._id)" color="primary">{{ messageIcon }}</v-icon>
+                                <!-- </v-btn> -->
+                              </v-list-item-icon>
+                             </v-list-item>
+                          </v-list>
+                          
+                        </div>
+                        <div v-else>
+                          <div class="d-flex justify-center align-center">
+                            <p>Sorry we could not find any agents</p>
+                          </div>
+                        </div>
+                      </v-card-text>
+                    </v-card>
                   </v-col>
                 </v-row>
               </div>                
             </v-container>
         </v-content>
-        
         <Footer/>
     </div>
 </template>
 
 <script>
-import NavBar from '@/components/NavBar.vue'
-import Footer from '@/components/Footer.vue'
-import { mdiPencil, mdiDelete, mdiArrowUp, mdiArrowDown, mdiRefresh } from '@mdi/js'
+
+
+import NavBar from '@/components/NavBar.vue';
+import Footer from '@/components/Footer.vue';
 import { mapState, mapActions, createNamespacedHelpers } from 'vuex';
 const { mapGetters } = createNamespacedHelpers('auth');
 
+import { mdiPencil, mdiArrowUp, mdiArrowDown, mdiMessage, mdiRefresh, mdiDelete, mdiCancel, mdiCamera } from '@mdi/js'
 export default {
     name: 'Dashboard',
     components: {
@@ -282,11 +323,13 @@ export default {
     data () {
         return {
             dialog: false,
-            edit : mdiPencil,
             bin: mdiDelete,
             up: mdiArrowUp,
             down: mdiArrowDown,
+            messageIcon: mdiMessage,
             refreshIcon: mdiRefresh,
+            clear: mdiCancel,
+            camera: mdiCamera,
             headers: [
               {
                 text: 'Dessert (100g serving)',
@@ -328,7 +371,7 @@ export default {
               780,
               400
             ],
-            agents: [
+            agents2: [
               {
                 name: "Brian",
                 sale: 12,
@@ -371,8 +414,10 @@ export default {
               carbs: 0,
               protein: 0,
             },
+           
         }
     },
+   
     watch : {
       dialog (val) {
         val || this.close()
@@ -381,79 +426,84 @@ export default {
     methods: {
       ...mapActions('alert', ['errorAlert']),
       ...mapActions('auth', ['logOutUser']),
+      ...mapActions('agents', ['getAgents']),
+      ...mapActions('profile', ['initProfile']),
+      sendMessage(id) {
+        console.log("Your profile", this.agents.find(agent =>agent.id == id).email)
+      },
         initialize () {
-        this.desserts = [
-          {
-            name: 'Frozen Yogurt',
-            calories: 159,
-            fat: 6.0,
-            carbs: 24,
-            protein: 4.0,
-          },
-          {
-            name: 'Ice cream sandwich',
-            calories: 237,
-            fat: 9.0,
-            carbs: 37,
-            protein: 4.3,
-          },
-          {
-            name: 'Eclair',
-            calories: 262,
-            fat: 16.0,
-            carbs: 23,
-            protein: 6.0,
-          },
-          {
-            name: 'Cupcake',
-            calories: 305,
-            fat: 3.7,
-            carbs: 67,
-            protein: 4.3,
-          },
-          {
-            name: 'Gingerbread',
-            calories: 356,
-            fat: 16.0,
-            carbs: 49,
-            protein: 3.9,
-          },
-          {
-            name: 'Jelly bean',
-            calories: 375,
-            fat: 0.0,
-            carbs: 94,
-            protein: 0.0,
-          },
-          {
-            name: 'Lollipop',
-            calories: 392,
-            fat: 0.2,
-            carbs: 98,
-            protein: 0,
-          },
-          {
-            name: 'Honeycomb',
-            calories: 408,
-            fat: 3.2,
-            carbs: 87,
-            protein: 6.5,
-          },
-          {
-            name: 'Donut',
-            calories: 452,
-            fat: 25.0,
-            carbs: 51,
-            protein: 4.9,
-          },
-          {
-            name: 'KitKat',
-            calories: 518,
-            fat: 26.0,
-            carbs: 65,
-            protein: 7,
-          }
-        ]
+          this.desserts = [
+            {
+              name: 'Frozen Yogurt',
+              calories: 159,
+              fat: 6.0,
+              carbs: 24,
+              protein: 4.0,
+            },
+            {
+              name: 'Ice cream sandwich',
+              calories: 237,
+              fat: 9.0,
+              carbs: 37,
+              protein: 4.3,
+            },
+            {
+              name: 'Eclair',
+              calories: 262,
+              fat: 16.0,
+              carbs: 23,
+              protein: 6.0,
+            },
+            {
+              name: 'Cupcake',
+              calories: 305,
+              fat: 3.7,
+              carbs: 67,
+              protein: 4.3,
+            },
+            {
+              name: 'Gingerbread',
+              calories: 356,
+              fat: 16.0,
+              carbs: 49,
+              protein: 3.9,
+            },
+            {
+              name: 'Jelly bean',
+              calories: 375,
+              fat: 0.0,
+              carbs: 94,
+              protein: 0.0,
+            },
+            {
+              name: 'Lollipop',
+              calories: 392,
+              fat: 0.2,
+              carbs: 98,
+              protein: 0,
+            },
+            {
+              name: 'Honeycomb',
+              calories: 408,
+              fat: 3.2,
+              carbs: 87,
+              protein: 6.5,
+            },
+            {
+              name: 'Donut',
+              calories: 452,
+              fat: 25.0,
+              carbs: 51,
+              protein: 4.9,
+            },
+            {
+              name: 'KitKat',
+              calories: 518,
+              fat: 26.0,
+              carbs: 65,
+              protein: 7,
+            }
+          ]
         },
         editItem (item) {
           this.editedIndex = this.desserts.indexOf(item)
@@ -487,23 +537,40 @@ export default {
       ...mapState({
         loggedIn: state => state.auth.status,
         Messages: state => state.alert.Messages.map(n => n.Raw),
-        Agents: state => state.agents
+        agents: state => state.agents.agents,
+        gettingAgents: state => state.agents.retrievingAgents
       }),
-      ...mapGetters(['loggedInUser', 'loggedInUserType']),
+      ...mapGetters(['loggedInUser', 'loggedInUserType', 'logged']),
       paramer () {
           return this.$route.params.username
       },
       formTitle () {
         return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
-        },
+      }
     },
+    mounted() {
+      this.$store.dispatch('agents/initAgents')
+    },
+      // async beforeCreate() {
+      //   await this.$store.dispatch('profile/initProfile')    
+      // },
     created() {
-      this.initialize()
+      this.$store.dispatch('profile/initProfile')    
+      // this.userProfile = this.$cookies.get('userProfile');
     }
 }
 </script>
 
 <style lang="scss" scoped>
+    .round {
+      border-radius: 50%;
+    }
+
+    .fd-column {
+      display: flex;
+      flex-direction: column;
+    }
+
     .btn {
         background-color: #3a3a3a;
         color: white;
@@ -516,19 +583,19 @@ export default {
         }
     }
 
-  .mx-2e {
-    margin: 2em auto;
-  }
+    .mx-2e {
+      margin: 2em auto;
+    }
 
-  .site {
-    display: block;
-    margin: auto;
-  }
+    .site {
+      display: block;
+      margin: auto;
+    }
 
-  .profile {
-    position: relative;
-    border-radius: 50% !important;
-    top: -100px;
-    left: 20px;
-  }
+    .profile {
+      position: relative;
+      border-radius: 50% !important;
+      top: -100px;
+      left: 20px;
+    }
 </style>

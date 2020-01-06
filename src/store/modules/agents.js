@@ -1,4 +1,5 @@
 import  { userService } from '../../services/user.service';
+const MAX_RANDOM_NUM = 20;
 
 function getRandomInt () {
   return Math.floor(Math.random() * Math.floor(MAX_RANDOM_NUM))
@@ -9,9 +10,9 @@ const agents = {
 	state: {
 		retrievingAgents: null,
 		retrievingAgent: null,
-		agents: [],
+		agents: {},
 		agent: null,
-		AgentReviews: [],
+		AgentReviews: {},
 		requestingReviewAdd: null,
 	},
 	mutations: {
@@ -19,11 +20,12 @@ const agents = {
 			state.retrievingAgents = true
 		},
 		getAllAgentsError(state) {
-			state.agents = [];
+			state.agents = {};
 			state.retrievingAgents = false
 		},
 		getAllAgentsSuccess(state, agents) {
-			[...state.agents, agents]
+			state.agents = agents;
+			state.retrievingAgents = false
 		},
 		getSpecificAgentSuccess(state, agent) {
 			state.agent = agent;
@@ -33,9 +35,10 @@ const agents = {
 		},
 		getSpecificAgentError(state) {
 			state.agent = null;
+			state.retrievingAgent = false
 		},
 		addAgentReviewSuccess(state, dataReview) {
-			[...state.AgentReviews, dataReview]
+			state.AgentsReviews = dataReview
 		},
 		addAgentReviewRequest(state) {
 			state.requestingReviewAdd = true
@@ -45,20 +48,51 @@ const agents = {
 		}
 	},
 	actions: {
+		async initAgents({state, commit}) {
+			if(!state.agents['agents']) {
+			await userService.getAllAgents()
+				.then(d => {
+					let agents = d.data.data;
+					console.log("agentsOnLoad", agents)
+					commit("getAllAgentsSuccess", agents)
+				})
+				.catch(error => {
+					commit("getAllAgentsError", error.json())
+				})
+			}
+		},
 		getAgents({ dispatch, commit }) {
 			commit('getAllAgentsRequest');
 
 			userService.getAllAgents()
-			.then(response => {
-				if(response.message) {
-					return dispatch('alert/errorAlert', { mKey: getRandomInt(), message: response.message, type: 'secondary' }, { root: true })
+			.then(agents => {
+				if(agents.data.message) {
+				 dispatch('alert/errorAlert', 
+				 	{ 
+				 		mKey: getRandomInt(), 
+				 		message: agents.data.message, 
+				 		type: 'info' 
+				 	}, 
+				 	{ 
+				 		root: true 
+				 	})
+				} else {
+					console.log(agents.data.data)
+					commit('getAllAgentsSuccess', agents.data.data);
 				}
-				commit('getAllAgentsSuccess', response.data);
+				
 			})
 			.catch(error => {
-				let errorMessage = error.response.data.message;
 				commit('getAllAgentsError');
-				dispatch('alert/errorAlert', { mKey: getRandomInt(), message: errorMessage, type: 'secondary' }, { root: true })
+				dispatch('alert/errorAlert', 
+					{ 
+						duration: 20000, 
+						mKey: getRandomInt(), 
+						message: error, 
+						type: 'secondary' }, 
+					{ 
+						root: true 
+					})
 			})
 		},
 		getSingleAgent({ dispatch, commit}, id) {
@@ -66,7 +100,13 @@ const agents = {
 			.then(response => {
 				commit('getSpecificAgentRequest')
 				if(response.message) {
-				 dispatch('alert/errorAlert', { mKey: getRandomInt(), message: response.message, type: 'secondary' }, { root: true })
+				 dispatch('alert/errorAlert', 
+				 	{ mKey: getRandomInt(), 
+				 		message: response.message, 
+				 		type: 'secondary' }, 
+				 		{ 
+				 			root: true 
+				 		})
 				} else {
 					commit('getSpecificAgentSuccess', response.data)
 				}
@@ -75,9 +115,27 @@ const agents = {
 				let errorMessage = error.response.data.message;
 
 				if(errorMessage) {
-					dispatch('alert/errorMessage', { mKey: getRandomInt(), message: errorMessage, type: 'warning' }, { root: true })
+					dispatch('alert/errorMessage', 
+						{ 
+							duration: 20000, 
+							mKey: getRandomInt(), 
+							message: errorMessage, 
+							type: 'warning' 
+						}, 
+						{ 
+							root: true 
+						})
 				} else {
-					dispatch('alert/errorMessage', { mKey: getRandomInt(), message: error, type: 'error' }, { root: true })
+					dispatch('alert/errorMessage', 
+						{ 
+							duration: 20000, 
+							mKey: getRandomInt(), 
+							message: error, 
+							type: 'error' 
+						}, 
+						{ 
+							root: true 
+						})
 
 				}
 			})
@@ -99,9 +157,27 @@ const agents = {
 			.catch(error => {
 				let errorMessage = error.response.data.message;
 				if(errorMessage) {
-					dispatch('alert/errorMessage', { mKey: getRandomInt(), message: errorMessage, type: 'warning' }, { root: true })
+					dispatch('alert/errorMessage', 
+					{ 
+						duration: 20000, 
+						mKey: getRandomInt(), 
+						message: errorMessage, 
+						type: 'warning' 
+					}, 
+					{ 
+						root: true 
+					})
 				} else {
-					dispatch('alert/errorMessage', { mKey: getRandomInt(), message: error, type: 'error' }, { root: true })
+					dispatch('alert/errorMessage', 
+						{ 
+							duration: 20000, 
+							mKey: getRandomInt(), 
+							message: error, 
+							type: 'error' 
+						}, 
+						{ 
+							root: true 
+						})
 
 				}
 			})

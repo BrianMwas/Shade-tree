@@ -23,9 +23,9 @@ function logout() {
 }
 
 
-function register(userData) {
+async function register(userType, userData) {
     let data = JSON.stringify(userData)
-    let url = buildUrl(`auth/register?userType=${data.userType}`)
+    let url = await buildUrl(`auth/register?userType=${userType}`)
    return axios.post(url, data, config)
 }
 

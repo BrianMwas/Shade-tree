@@ -85,8 +85,9 @@ export default {
         div:nth-child(2) {
             position: absolute;
             left: 0;
-            z-index: 2;
-            width: 95%;
+            z-index: 15;
+            min-width: 100%;
+            max-width: 400%;
             height: auto;
             min-height: 25vh;
             overflow-y: scroll;

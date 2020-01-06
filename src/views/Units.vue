@@ -1,16 +1,23 @@
 <template>
     <div>      
         <!-- Routes only visible when user is logged in -->
-        <NavBar v-if="loggedIn" #loggedInRoutes>
+        <NavBar v-if="logged" #loggedInRoutes>
           <v-btn text>
-           <router-link to="/map" class="link">map</router-link>
+            <router-link to="/dashboard" class="link">dashboard</router-link>
           </v-btn>
           <v-btn text>
-            <router-link to="/logout" class="link">Log out</router-link>
+            <router-link to="/units" class="link">units</router-link>
           </v-btn>
-          <v-btn text>
-            <router-link to="/logout" class="link">Add Unit</router-link>
-          </v-btn>
+         
+           <v-btn text>
+            <router-link to="/blogs" class="link">blogs</router-link>
+           </v-btn>
+           <v-btn text @click="logOutUser">
+            LOG OUT
+           </v-btn>
+           <!-- <v-btn text v-if="loggedInUserType == 'owner'">
+             <router-link to="/logout" class="link">Add Unit</router-link>
+           </v-btn> -->
         </NavBar>
         <NavBar v-else #default>
             <v-btn text>
@@ -25,7 +32,17 @@
         </NavBar>
 
       <v-content dark transition="fade-transition" app>
-        <AdvertHeader/>
+        <AdvertHeader 
+          :titleOne=""
+          :titleTwo=""
+          :titleThree=""
+          :titleFour=""
+          :titleFive=""
+          :imageOne=""
+          :imageTwo=""
+          :imageThree=""
+          :imageFour=""
+          :imageFive="" />
         <v-container
           style="min-height: 100vh;"
         >
@@ -96,6 +113,9 @@ import { mdiMagnify, mdiClose, mdiSortDescending, mdiMenuLeft, mdiMenuRight } fr
 import Search from '@/components/Search.vue'
 import FilterQ from '@/components/FilterComponent.vue'
 
+import { mapState, mapActions, createNamespacedHelpers } from 'vuex';
+const { mapGetters } = createNamespacedHelpers('auth');
+
 export default {
   name: 'Units',
   components: {
@@ -115,15 +135,22 @@ export default {
       sortIcon: mdiSortDescending,
       menuLeft: mdiMenuLeft,
       menuRight: mdiMenuRight,
-      items: ["Date", "Rating", "Price", "Location"],
-      loggedIn: false
+      items: ["Date", "Rating", "Price", "Location"]
     }
   },
   methods : {
     searchInfo () {
       console.log("Search", this.search)
       this.search = ''
-    }
+    },
+    ...mapActions('auth', ['logOutUser'])
+  },
+  computed: {
+    ...mapState({
+        loggedIn: state => state.auth.status,
+        settingProfile: state => state.profile.settingUserProfile,
+      }),
+    ...mapGetters(['loggedInUser', 'loggedInUserType', 'logged'])   
   }
 }
 </script>

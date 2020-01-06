@@ -23,19 +23,26 @@ const auth = {
 
         commit('loginRequest');
 
-        authService.login(email, password).then(user => {
+        authService.login(email, password)
+        .then(user => {
               //not logged in, create cookie based on username
               // this.$cookies.set('user', user, '24h');
               //save username in store by committing a mutation
-              window.$cookies.set('user', user.data)
-              commit('loginSuccess', window.$cookies.get('user'));
+            window.$cookies.set('user', user.data, '1d')
 
+            commit('loginSuccess', window.$cookies.get('user'));
+            //For alerting the user once loggedIn
+            dispatch('alert/successAlert', 
+              { 
+                mKey: getRandomInt(), 
+                message : `Welcome to Shade tree ${user.data.username}`, 
+                type : 'success'}, 
+                { root: true })
+            Promise.all([
+              dispatch('profile/initProfile', null, { root: true }),
               router.push('/dashboard')
-              setTimeout(() => {
-                 dispatch('alert/successAlert', { mKey: getRandomInt(), message : `Welcome to Shade tree ${user.data.username}`, type : 'success'}, { root: true })
-             }, 1000)
-          
-          
+            ])
+
         }).catch(error => {
           let errorMessage = error.response.data.message;
           commit('loginFailure', errorMessage);
@@ -56,29 +63,33 @@ const auth = {
         router.push('/')
 
         $cookies.remove('user')
+        $cookies.remove('userProfile')
         commit('logout')
       }
       
     },
-    registerUser({ dispatch, commit }, user) {
-      commit('registerRequest', user)
-
-
-      authService.register(user)
+    registerUser({ dispatch, commit }, data) {
+      commit('registerRequest')
+  
+      let userType = data.userType;
+      delete data.userType;
+      
+      
+      authService.register(userType, data)
       .then(user => {
         commit('registerSuccess');
+        
         router.push('/login')
-
         setTimeout(() => {
-          dispatch('alert/successAlert', { mKey: getRandomInt(), message: 'Registration successful', type: 'success' }, { root: true })
+          dispatch('alert/successAlert', { mKey: getRandomInt(), message: `${user.data.message}`, type: 'success' }, { root: true })
         }, 1000)
       })
       .catch(error => {
-        let errorMessage = error.response.data.message
-
-        commit('registerFailure', errorMessage);
+      
+        commit('registerFailure');
         console.log("Reg fail", error.response)
-        if(errorMessage) {
+        if (error.response.data.message) {
+          let errorMessage = error.response.data.message;
           dispatch('alert/errorAlert', { mKey: getRandomInt(), message: errorMessage, type: 'info' }, { root: true });
         } else {
           dispatch('alert/errorAlert', { mKey: getRandomInt(), message: error, type: 'warning' }, { root: true });
@@ -108,17 +119,24 @@ const auth = {
     registerRequest(state) {
       state.status = { registering: true };
     },
-    registerSuccess(state, user) {
+    registerSuccess(state) {
       state.status = {};
     },
-    registerFailure(state, error) {
+    registerFailure(state) {
       state.status = {};
     }
   }, 
   getters: {
     loggedInUser: state => window.$cookies.get('user'),
-    loggedInUserType: state => window.$cookies.get('user').roles[0],
-    loggedIn: state => window.$cookies.isKey('user')
+    loggedInUserType: (state, getters) => {
+      let user = getters.loggedInUser
+      if(user) {
+        return user.roles[0]
+      } else {
+        return null
+      }
+    },
+    logged: state => window.$cookies.isKey('user')
   }
 }
 

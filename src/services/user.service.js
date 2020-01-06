@@ -1,4 +1,4 @@
-import axios from './api';
+import axios from 'axios';
 
 export const userService = {
     getAllAgents,
@@ -7,8 +7,10 @@ export const userService = {
   	addUserProfile
 }
 
+
 const baseUrl = "http://localhost:8500/api/v1/"
 const config = {
+	// withCredentials: true,
     headers: {
         'Content-Type': 'application/json'
     }
@@ -18,8 +20,8 @@ function buildUrl(url) {
     return baseUrl + url;
 }
 
-function getAllAgents() {
-	let url = buildUrl('users/agents')
+ async function getAllAgents() {
+	let url = await buildUrl('users/agents')
 	return axios.get(url, config)
 }
 
