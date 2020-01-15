@@ -6,13 +6,13 @@ import paths from './paths'
 Vue.use(VueRouter)
 
 
-function route(path, view, name, meta, beforeEnter, children) {
+function route(path, view, name, meta, beforeEnter) {
   return {
     name: name || view,
     path,
     meta,
     beforeEnter,
-    children,
+    
     component: (resolve) => import(
       `@/views/${view}.vue`
     ).then(resolve)
@@ -22,7 +22,7 @@ function route(path, view, name, meta, beforeEnter, children) {
 
 const router = new VueRouter({
   mode: 'history',
-  routes: paths.map(path => route(path.path, path.view, path.name, path.meta, path.beforeEnter, path.children)).concat([
+  routes: paths.map(path => route(path.path, path.view, path.name, path.meta, path.beforeEnter)).concat([
     { path: '*', redirect: '/' }
   ]),
   scrollBehavior (to, from, savedPosition) {

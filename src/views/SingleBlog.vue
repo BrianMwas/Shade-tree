@@ -32,18 +32,28 @@
                 <v-card class="mb-5">
                     <v-img :aspect-ratio="16/9" src="@/assets/big-leaf.jpg"></v-img>
                 </v-card>
-                <h3 class="display-1">HomeDecor</h3>
-                <p class="text-italic grey--text">Published on December 23 2019</p>
+                <h3 class="display-1">{{post.data.title}}</h3>
+                <p class="text-italic grey--text">{{ post.data.author.first_name }} + " " + {{post.data.author.second_name}}</p>
 
-                <v-card flat>
-                    <v-card-text>
-                        <p class="grey--text">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Provident quidem sit modi facilis suscipit illum similique molestias. Ex cumque error voluptatibus facere laborum qui reprehenderit delectus optio repudiandae autem, voluptatum nesciunt consequuntur quasi dignissimos animi repellat sit omnis? Quidem 
-                            doloribus expedita sit neque enim ab hic provident accusantium quaerat at!</p>
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione suscipit, neque eos molestiae iusto accusantium illum doloribus necessitatibus molestias ducimus eum! Optio corrupti voluptatum ullam nisi eveniet id labore nobis sunt minus placeat provident delectus, nostrum officia eum, facilis fugiat!</p>
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum dolor iste quasi a at maiores, eum, veniam et sapiente totam expedita libero iusto consectetur non ducimus. In, molestiae. Necessitatibus nam voluptas earum magnam ipsa quaerat nobis illo voluptatibus voluptatum ea, soluta vitae et laborum maxime doloribus sequi culpa consequuntur ipsam numquam inventore quis? Suscipit, quos. Minima in saepe nam cum?</p>
-                    </v-card-text>
-                </v-card>
+                <v-sheet v-html="post.data.body"></v-sheet>
             </div>
+            <v-container>
+               <router-link
+                  v-if="post.meta.previous_post"
+                  :to="/blog/ + post.meta.previous_post.slug"
+                  class="button"
+                >
+                  {{ post.meta.previous_post.title }}
+                </router-link>
+                <router-link
+                  v-if="post.meta.next_post"
+                  :to="/blog/ + post.meta.next_post.slug"
+                  class="button"
+                >
+                  {{ post.meta.next_post.title }}
+                </router-link>
+            </v-container>
+           
         </v-content>
          <Footer/> 
     </div>
@@ -52,7 +62,7 @@
 <script>
 import NavBar from '@/components/NavBar.vue'
 import Footer from '@/components/Footer.vue'
-
+import { butter } from '@/buttercms'
 
 export default {
     name: 'SingleBlog',
@@ -62,12 +72,38 @@ export default {
     },
     data () {
         return  {
-            loggedIn: true
+            loggedIn: true,
+            post: {}
         }
+    },
+    methods: {
+      getPost() {
+        butter.post.retrieve(this.$route.params.slug)
+          .then(res => {
+            this.post = res.data
+          }).catch(res => {
+            console.log(res)
+          })
+      },
+      getCategories () {
+        butter.category.list()
+        .then(res => {
+          console.log('List of Categories:')
+          console.log(res.data.data)
+        })
+       }
+    },
+    watch: {
+      $route : {
+        immediate: true,
+         handler(to, from) {
+          this.getPost()
+        }
+      }
     }
 }
 </script>
 
 <style lang="scss" scoped>
-
+  @import '@/scss/global.scss';
 </style>

@@ -27,7 +27,7 @@
         </NavBar>
         <v-content transition="fade-transition" app>
             <div class="container mt-5">
-                <h2 class="display-3 grey--text text--darken-3 font-weight-light d-inline">About Us</h2>
+                <h2 class="heading grey--text text--darken-3">About Us</h2>
             
             
             <v-row class="my-5">
@@ -36,10 +36,6 @@
                         Lorem, ipsum dolor sit amet consectetur adipisicing elit. Vero tenetur magni quibusdam fugit nisi adipisci officia? Tempora reiciendis itaque eum et sint incidunt adipisci, delectus tenetur possimus? Dolore, error numquam.
                     </p>
                     <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Error expedita quia hic numquam. Enim quisquam ratione repellat, quia a molestias eius, maiores cupiditate, distinctio officiis quam optio ut non quas?</p>
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusamus eligendi culpa, temporibus veritatis earum quas nam id dolor expedita? Enim reiciendis minus reprehenderit dignissimos cum a, eos ducimus eveniet rerum ratione libero? Amet fugiat minus quaerat, tempore quae quod exercitationem!</p>
-                    <p>Lorem ipsum, dolor sit amet consectetur adipisicing 
-                        elit. Recusandae aliquid dolor, officia vel 
-                        suscipit numquam adipisci explicabo</p>
                 </v-col>
                 <v-col cols="12" sm="12" lg="6" md="6">
                     <v-card max-width="500" min-width="300" >
@@ -52,7 +48,7 @@
             </v-row>
 
 
-                <h2 class="display-3 grey--text text--darken-3 font-weight-light d-inline">Contact Us</h2>
+                <h2 class="heading grey--text text--darken-3">Contact Us</h2>
                 <v-row class="mt-5">
                 <v-col cols="12" sm="12" lg="6" md="6">
                   <v-card max-width="450" flat>

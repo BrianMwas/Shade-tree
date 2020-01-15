@@ -1,7 +1,7 @@
 <template>
     <div>
         <!-- Routes only visible when user is logged in -->
-        <NavBar v-if="loggedIn" #loggedInRoutes>
+        <NavBar v-if="logged" #loggedInRoutes>
           <v-btn text>
             <router-link to="/dashboard" class="link">dashboard</router-link>
           </v-btn>
@@ -37,8 +37,9 @@
         <v-content app>
           
             <v-container transition="slide-x-transition">
-                <div v-for="(blog, index) in blogs" :key="index">
-                  <BlogCard class="my-5" :blog="blog"/>
+                <h2 class="grey--text text--darken-4 font-weight-bold display-1 my-5">{{ page_title }}</h2>
+                <div v-for="(post, index) in posts" :key="post.slug + '_' + index">
+                  <BlogCard class="my-5" :blog="post"/>
                 </div>
                 <v-pagination
                     v-model="page"
@@ -57,6 +58,7 @@ import NavBar from '@/components/NavBar.vue'
 import BlogCard from '@/components/BlogCard.vue'
 import Footer from '@/components/Footer.vue'
 import { mdiMenuLeft, mdiMenuRight } from '@mdi/js'
+import { butter } from '@/buttercms';
 
 import { mapState, mapActions, createNamespacedHelpers } from 'vuex';
   const { mapGetters } = createNamespacedHelpers('auth');
@@ -81,13 +83,75 @@ export default {
                 publishDate: "June, 2013",
                 tags: ["walls", "paint", "color"]
 
+              },
+              {
+                title: "Blog one",
+                subtitle: "blog subtitle",
+                summary: "lorem ipsum lorem ipsum",
+                author: "brian",
+                publishDate: "June, 2013",
+                tags: ["walls", "paint", "color"]
+
+              },
+              {
+                title: "Blog one",
+                subtitle: "blog subtitle",
+                summary: "lorem ipsum lorem ipsum",
+                author: "brian",
+                publishDate: "June, 2013",
+                tags: ["walls", "paint", "color"]
+
+              },
+              {
+                title: "Blog one",
+                subtitle: "blog subtitle",
+                summary: "lorem ipsum lorem ipsum",
+                author: "brian",
+                publishDate: "June, 2013",
+                tags: ["walls", "paint", "color"]
+
+              },
+              {
+                title: "Blog one",
+                subtitle: "blog subtitle",
+                summary: "lorem ipsum lorem ipsum",
+                author: "brian",
+                publishDate: "June, 2013",
+                tags: ["walls", "paint", "color"]
+
               }
 
-            ]
+            ],
+            posts: [],
+            page_title: 'Blog'
         }
     },
     methods: {
-      ...mapActions('auth', ['logOutUser'])
+      ...mapActions('auth', ['logOutUser']),
+      getPosts() {
+        butter.post.list({
+          page: 1,
+          page_size: 10
+        }).then(res => {
+          this.posts = res.data.data
+        })
+      },
+      getCategories() {
+        butter.category.list()
+          .then(res => {
+            console.log('List of Categories:')
+            console.log(res.data.data)
+          })
+      },
+      getPostsByCategory() {
+        butter.category.retrieve('example-category', {
+            include: 'recent_posts'
+          })
+          .then(res => {
+            console.log('Posts with specific category:')
+            console.log(res)
+          })
+      }
     },
     computed: {
       ...mapGetters(['loggedInUser', 'loggedInUserType', 'logged']),
@@ -95,6 +159,11 @@ export default {
         loggedIn: state => state.auth.status,
         settingProfile: state => state.profile.settingUserProfile,
       })
+    },
+    created () {
+      this.getPosts(),
+      this.getCategories(),
+      this.getPostsByCategory()
     }
 }
 </script>

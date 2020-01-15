@@ -13,7 +13,7 @@ const agents = {
 		agents: {},
 		agent: null,
 		AgentReviews: {},
-		requestingReviewAdd: null,
+		requestingReviewAdd: null
 	},
 	mutations: {
 		getAllAgentsRequest(state) {
@@ -45,6 +45,9 @@ const agents = {
 		},
 		addAgentReviewError(state) {
 			state.requestingReviewAdd = null
+		},
+		set_totalAgents(state, agents) {
+			state.totalAgents = agents
 		}
 	},
 	actions: {

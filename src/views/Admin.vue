@@ -1,39 +1,25 @@
 <template>
     <div>
         <!-- Routes only visible when user is logged in -->
-        <NavBar v-if="loggedIn" #loggedInRoutes>
+         <NavBar  :loggedIn="loggedIn" :user="loggedInUser.username"  #loggedInRoutes>
           <v-btn text>
-           <router-link to="/map" class="link">map</router-link>
+           <router-link to="/dashboard/userprofile" class="link">Profile</router-link>
          </v-btn>
-         <v-btn text>
-           <router-link to="/logout" class="link">Log out</router-link>
+         <v-btn text @click="logOutUser">
+           Log Out
          </v-btn>
-         <v-btn text>
-           <router-link to="/logout" class="link">Add Unit</router-link>
+         <v-btn v-if="loggedInUserType == 'owner'" text>
+           <router-link to="/newunit" class="link">Add Unit</router-link>
          </v-btn>
-        </NavBar>
-        <NavBar v-else #default>
-            <v-btn text>
-              <router-link to="/units" class="link">units</router-link>
-            </v-btn>
-            
-            <v-btn text>
-              <router-link to="/blogs" class="link">blogs</router-link>
-            </v-btn>
-            <v-btn text>
-              <router-link to="/login" class="link">log in</router-link>
-            </v-btn>
-            <v-btn text>
-              <router-link to="/signup" class="link">Sign up</router-link>
-            </v-btn>
         </NavBar>
         <v-content dark app transition="fade-transition">
                 <v-container>
+                
                     <v-row transition="slide-y-reverse-transition">
                         <v-col cols="12" sm="12" md="4">
                             <v-card flat>
                             <v-card-title class="display-2 red--text" style="position: relative">
-                                230
+                                {{ totalUsers }}
 
                                 <div class="icon-card--users">
                                     <v-icon large color="white">{{ user }}</v-icon>
@@ -45,7 +31,7 @@
                         <v-col cols="12" sm="12" md="4">
                             <v-card flat class="mb-3">
                             <v-card-title class="display-2 green--text" style="position: relative">
-                                20
+                                {{ totalCompanies }}
                                 <div class="icon-card--company">
                                     <v-icon large color="white">{{ company }}</v-icon>
                                 </div>
@@ -56,7 +42,7 @@
                         <v-col cols="12" sm="12" md="4">
                             <v-card flat mb-4>
                             <v-card-title class="display-2 blue--text" style="position: relative">
-                                100
+                                {{ totalAgents }}
                                 <div class="icon-card--agents">
                                     <v-icon large class="m-a" color="white">{{ agents }}</v-icon>
                                 </div>
@@ -142,25 +128,61 @@
                                 </v-card-text>
                             </v-card>
                         </v-col>
+                        <v-col cols="12" sm="12" md="6" lg="4" xl="4">
+                            <v-card class="mb-2">
+                              <v-img
+                                src="@/assets/galaxy.jpg"
+                                :aspect-ratio="16/9"
+                              >
+                                  <v-row align="end" class="lightbox white--text pa-2 fill-height">
+                                    <v-col>
+                                        <small class="white--text mr-2">logged in as</small>
+                                      <div class="heading white--text display-1">
+                                        
+                                      {{loggedInUser.username}}</div>
+                                      <div class="body-1">{{loggedInUser.email}}</div>
+                                    </v-col>
+                                  </v-row>
+                              </v-img>
+                            </v-card>
+                        </v-col>
                     </v-row>
                     <v-card>
-                                <v-card-title>
-                                Nutrition
-                                <v-spacer></v-spacer>
-                                <v-text-field
-                                    v-model="search"
-                                    :append-icon="searchIcon"
-                                    label="Search"
-                                    single-line
-                                    hide-details
-                                ></v-text-field>
-                                </v-card-title>
-                                <v-data-table
-                                :headers="headers"
-                                :items="desserts"
-                                :search="search"
-                                ></v-data-table>
-                            </v-card>
+                        <v-card-title>
+                        Agents
+                        <v-spacer></v-spacer>
+                        <v-text-field
+                            v-model="searchAgent"
+                            :append-icon="searchIcon"
+                            label="Search agent"
+                            single-line
+                            hide-details
+                        ></v-text-field>
+                        </v-card-title>
+                        <v-data-table
+                        :headers="agentHeaders"
+                        :items="agentsArr"
+                        :search="searchAgent"
+                        ></v-data-table>
+                    </v-card>
+                    <v-card class="mt-5">
+                        <v-card-title>
+                        Companies
+                        <v-spacer></v-spacer>
+                        <v-text-field
+                            v-model="searchCompany"
+                            :append-icon="searchIcon"
+                            label="Search company"
+                            single-line
+                            hide-details
+                        ></v-text-field>
+                        </v-card-title>
+                        <v-data-table
+                        :headers="companyHeaders"
+                        :items="companiesArr"
+                        :search="searchCompany"
+                        ></v-data-table>
+                    </v-card>
                 </v-container>
         </v-content>
         <Footer/>
@@ -174,6 +196,9 @@ import Footer from '@/components/Footer.vue'
 import VueChartist from 'vue-chartist'
 
 import { mdiShieldLock, mdiFaceAgent, mdiNaturePeople, mdiOfficeBuilding, mdiClock, mdiMagnify } from '@mdi/js'
+import { mapActions, mapState, createNamespacedHelpers } from 'vuex'
+const { mapGetters } = createNamespacedHelpers('auth');
+
 
 export default {
     name: 'Admin',
@@ -191,111 +216,47 @@ export default {
             company: mdiOfficeBuilding,
             clock: mdiClock,
             searchIcon: mdiMagnify,
-            search: '',
-        headers: [
+            searchAgent: '',
+            searchCompany: '',
+        agentHeaders: [
           {
-            text: 'Dessert (100g serving)',
+            text: 'Agents',
             align: 'left',
-            sortable: false,
-            value: 'name',
+            sortable: true,
+            value: 'username',
           },
-          { text: 'Calories', value: 'calories' },
-          { text: 'Fat (g)', value: 'fat' },
-          { text: 'Carbs (g)', value: 'carbs' },
-          { text: 'Protein (g)', value: 'protein' },
-          { text: 'Iron (%)', value: 'iron' },
+          { text: 'Rating', value: 'rating' },
+          { text: 'Email', value: 'email' },
         ],
-        desserts: [
-          {
-            name: 'Frozen Yogurt',
-            calories: 159,
-            fat: 6.0,
-            carbs: 24,
-            protein: 4.0,
-            iron: '1%',
-          },
-          {
-            name: 'Ice cream sandwich',
-            calories: 237,
-            fat: 9.0,
-            carbs: 37,
-            protein: 4.3,
-            iron: '1%',
-          },
-          {
-            name: 'Eclair',
-            calories: 262,
-            fat: 16.0,
-            carbs: 23,
-            protein: 6.0,
-            iron: '7%',
-          },
-          {
-            name: 'Cupcake',
-            calories: 305,
-            fat: 3.7,
-            carbs: 67,
-            protein: 4.3,
-            iron: '8%',
-          },
-          {
-            name: 'Gingerbread',
-            calories: 356,
-            fat: 16.0,
-            carbs: 49,
-            protein: 3.9,
-            iron: '16%',
-          },
-          {
-            name: 'Jelly bean',
-            calories: 375,
-            fat: 0.0,
-            carbs: 94,
-            protein: 0.0,
-            iron: '0%',
-          },
-          {
-            name: 'Lollipop',
-            calories: 392,
-            fat: 0.2,
-            carbs: 98,
-            protein: 0,
-            iron: '2%',
-          },
-          {
-            name: 'Honeycomb',
-            calories: 408,
-            fat: 3.2,
-            carbs: 87,
-            protein: 6.5,
-            iron: '45%',
-          },
-          {
-            name: 'Donut',
-            calories: 452,
-            fat: 25.0,
-            carbs: 51,
-            protein: 4.9,
-            iron: '22%',
-          },
-          {
-            name: 'KitKat',
-            calories: 518,
-            fat: 26.0,
-            carbs: 65,
-            protein: 7,
-            iron: '6%',
-          },
+        companyHeaders: [
+            {
+                text: 'Companies',
+                align: 'left',
+                sortable: true,
+                value: 'name'
+            },
+            {
+                text: 'Completed',
+                value: 'isCompleted'
+            },
+            {
+                text: 'Email',
+                value: 'email'
+            },
+            {
+                text: 'Slug',
+                value: 'slug'
+            }
         ],
-            labels: [
-                '12am',
-                '3am',
-                '6am',
-                '9am',
-                '12pm',
-                '3pm',
-                '6pm',
-                '9pm'
+        labels: [
+            '12am',
+            '3am',
+            '6am',
+            '9am',
+            '12pm',
+            '3pm',
+            '6pm',
+            '9pm'
             ],
             value: [
                 200,
@@ -330,6 +291,30 @@ export default {
                 }
             }
         }
+    },
+    methods: {
+        ...mapActions('admin', ['getNoOfUsers', 'getNoOfCompanies', 'getNoOfAgents', 'getNoOfEstates']),
+        ...mapActions('agents', ['initAgents']),
+        ...mapActions('auth', ['logOutUser']),
+
+    },
+    computed: {
+        ...mapGetters(['loggedInUser', 'loggedInUserType', 'logged']),
+        ...mapState({
+            totalAgents: state => state.admin.totalAgents,
+            totalUsers: state => state.admin.totalUsers,
+            totalCompanies: state =>  state.admin.totalCompanies,
+            agentsArr : state => state.agents.agents,
+            companiesArr: state => state.company.companies
+        })
+
+    },
+    created() {
+        this.initAgents(),
+        this.getNoOfUsers(),
+        this.getNoOfCompanies(),
+        this.getNoOfAgents(),
+        this.getNoOfEstates()
     }
 }
 </script>
@@ -338,6 +323,10 @@ export default {
     .v-sheet--offset {
         top: -24px;
         position: relative;
+    }
+
+    .white {
+        color: white;
     }
 
     .icon-card--agents {

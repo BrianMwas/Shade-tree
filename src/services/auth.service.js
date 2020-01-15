@@ -29,8 +29,32 @@ async function register(userType, userData) {
    return axios.post(url, data, config)
 }
 
+function changePasswordRequest(email) {
+    let url = buildUrl('auth/change-password');
+    const body = JSON.stringify({email})
+    console.log("email", body);
+    return axios.post(url, body, config)
+}
+
+
+function replaceForgotPassword(token, newPassword, repeatPassword) {
+    let url = buildUrl('auth/forgot-password/' + token);
+    let data = JSON.stringify({ newPassword, repeatPassword });
+    return axios.post(url, data, config);
+}
+
+
+function changeOldPasswordWithNew(oldPassword, newPassword, repeatPassword) {
+    let url = buildUrl("auth/change-password")
+    let data = JSON.stringify({oldPassword, newPassword, repeatPassword})
+    return axios.post(url, data, config)
+}
+
 export const authService = {
     login,
     logout,
-    register
+    register,
+    changePasswordRequest,
+    replaceForgotPassword,
+    changeOldPasswordWithNew
 }

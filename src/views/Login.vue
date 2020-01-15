@@ -1,22 +1,13 @@
 <template>
     <div>
-        <!-- Routes only visible when user is logged in -->
-        <NavBar v-if="loggedIn" #loggedInRoutes>
-          <v-btn text>
-           <router-link to="/map" class="link">map</router-link>
-         </v-btn>
-         <v-btn text>
-           <router-link to="/logout" class="link">Log out</router-link>
-         </v-btn>
-         <v-btn text>
-           <router-link to="/logout" class="link">Add Unit</router-link>
-         </v-btn>
-        </NavBar>
-        <NavBar v-else #default>
+        
+        <NavBar #default>
             <v-btn text>
               <router-link to="/units" class="link">units</router-link>
             </v-btn>
-           
+           <v-btn text>
+              <router-link to="/blog" class="link">Blog</router-link>
+            </v-btn>
             
             <v-btn text>
               <router-link to="/login" class="link">log in</router-link>
@@ -44,6 +35,7 @@ import { mdiShieldLock } from '@mdi/js'
 import NavBar from '@/components/NavBar.vue'
 import Footer from '@/components/Footer.vue'
 import LoginCard from '@/components/LoginCard.vue'
+import { mapState } from 'vuex'
 
 
 export default {

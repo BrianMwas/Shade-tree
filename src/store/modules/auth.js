@@ -15,7 +15,10 @@ const auth = {
     status: {
       loggedIn: null
     },
-    user: {}
+    user: {},
+    changePasswordRequestFail : null,
+    changePasswordRequest: null,
+    changedPasswordEmailSent: false
   },
   actions: {
     loginUser({ dispatch, commit }, { email, password }) {
@@ -36,12 +39,16 @@ const auth = {
               { 
                 mKey: getRandomInt(), 
                 message : `Welcome to Shade tree ${user.data.username}`, 
-                type : 'success'}, 
+                stage: true,
+                type : 'success'},
                 { root: true })
-            Promise.all([
-              dispatch('profile/initProfile', null, { root: true }),
+           
+           if(!user.data.roles['admin']) {
               router.push('/dashboard')
-            ])
+           } else {
+              router.push('/admin')
+           }
+          
 
         }).catch(error => {
           let errorMessage = error.response.data.message;
@@ -80,9 +87,7 @@ const auth = {
         commit('registerSuccess');
         
         router.push('/login')
-        setTimeout(() => {
-          dispatch('alert/successAlert', { mKey: getRandomInt(), message: `${user.data.message}`, type: 'success' }, { root: true })
-        }, 1000)
+        dispatch('alert/successAlert', { mKey: getRandomInt(), message: `${user.data.message}`, type: 'success' }, { root: true })
       })
       .catch(error => {
       
@@ -91,6 +96,57 @@ const auth = {
         if (error.response.data.message) {
           let errorMessage = error.response.data.message;
           dispatch('alert/errorAlert', { mKey: getRandomInt(), message: errorMessage, type: 'info' }, { root: true });
+        } else {
+          dispatch('alert/errorAlert', { mKey: getRandomInt(), message: error, type: 'warning' }, { root: true });
+        }
+      })
+    },
+    changePasswordRequest({ dispatch , commit}, email) {
+      commit('requestPasswordChangeRequest')
+      authService.changePasswordRequest(email)
+      .then(response => {
+        commit('changePasswordRequestSuccess')
+        router.push('/login')
+        dispatch('alert/successAlert', { mKey: getRandomInt(), message: `${response.data.message}`, type: 'success' }, { root: true })
+      })
+      .catch(error => {
+        commit('changePasswordRequestFail')
+        console.log("error change email", error.response)
+        if (error.response.data.message) {
+          let errorMessage = error.response.data.message;
+          dispatch('alert/errorAlert', { mKey: getRandomInt(), message: errorMessage, type: 'warning' }, { root: true });
+        } else {
+          dispatch('alert/errorAlert', { mKey: getRandomInt(), message: error, type: 'warning' }, { root: true });
+        }
+      })
+    },
+    replaceForgotPassword({ dispatch, commit }, token, data) {
+      authService.passwordChange(token, data.newPassword, data.repeatPassword)
+      .then(response => {
+        router.push('/login');
+        dispatch('alert/successAlert', { mKey: getRandomInt(), message: `${response.data.message}`, type: 'success' }, { root: true })
+      })
+      .catch(error => {
+        commit('changePasswordFail')
+        console.log("error change email", error.response)
+        if (error.response.data.message) {
+          let errorMessage = error.response.data.message;
+          dispatch('alert/errorAlert', { mKey: getRandomInt(), message: errorMessage, type: 'warning' }, { root: true });
+        } else {
+          dispatch('alert/errorAlert', { mKey: getRandomInt(), message: error, type: 'warning' }, { root: true });
+        }
+      })
+    },
+    replaceOldPassword({ dispatch, commit }, data) {
+      authService.changeOldPasswordWithNew(data.oldPassword, data.newPassword, data.repeatPassword)
+      .then(response => {
+        dispatch('alert/successAlert', { mKey: getRandomInt(), message: `${response.data.message}`, type: 'success' }, { root: true })
+      })
+      .catch(error => {
+        console.log("error replace password", error.response)
+        if (error.response.data.message) {
+          let errorMessage = error.response.data.message;
+          dispatch('alert/errorAlert', { mKey: getRandomInt(), message: errorMessage, type: 'warning' }, { root: true });
         } else {
           dispatch('alert/errorAlert', { mKey: getRandomInt(), message: error, type: 'warning' }, { root: true });
         }
@@ -124,6 +180,17 @@ const auth = {
     },
     registerFailure(state) {
       state.status = {};
+    },
+    requestPasswordChangeRequest(state) {
+      state.changePasswordRequest = true
+    },
+    changePasswordRequestSuccess(state) {
+      state.changePasswordRequest = false
+      state.changePasswordRequestFail = false
+      state.changedPasswordEmailSent = true
+    },
+    changePasswordRequestFail(state) {
+      state.changePasswordRequestFail= true
     }
   }, 
   getters: {

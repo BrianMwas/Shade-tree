@@ -2,23 +2,23 @@
     <div>
        <div class="blog-card alt">
             <div class="meta">
-              <div class="photo" style="background-image: url('~@/assets/brick-wall.jpg')"></div>
+              <div v-if="post.featured_image" class="photo" style="background-image: url(post.featured_image)"></div>
               <ul class="details">
-                <li class="author"><a href="#">{{ blog.author }}</a></li>
-                <li class="date">{{ blog.publishDate }}</li>
+                <li class="author"><a href="#">{{ post.author }}</a></li>
+                <li class="date">{{ post.publishDate }}</li>
                 <li class="tags">
                   <ul>
-                    <li  v-for="(tag, i) in blog.tags" :key="i"><a href="#">{{ tag }}</a></li>
+                    <li  v-for="(tag, i) in post.tags" :key="i"><a href="#">{{ tag }}</a></li>
                   </ul>
                 </li>
               </ul>
             </div>
             <div class="description">
-              <h1>{{ blog.title }}</h1>
-              <h2>{{ blog.subtitle }}</h2>
-              <p>{{ blog.summary }}</p>
+              <h1>{{ post.title }}</h1>
+              <h2>{{ post.subtitle }}</h2>
+              <p>{{ post.summary }}</p>
               <p class="read-more">
-                <router-link to="single-blog">Read More</router-link>
+                <router-link to="'/blog/' + post.slug">Read More</router-link>
               </p>
             </div>
         </div>
@@ -30,7 +30,7 @@
 export default {
     name: 'BlogCard',
     props: {
-        blog: Object
+        post: Object
     },
     methods: {
         gotoBlog () {

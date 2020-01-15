@@ -7,7 +7,11 @@ export const profileService = {
 	getUserProfile,
 	addCompanyProfile,
 	updateCompanyProfile,
-	getCompanyProfile
+	getCompanyProfile,
+	getMessagesFromMe,
+	getMessagesToMe,
+	sendMessage,
+	deleteMessage
 }
 
 const baseUrl = "http://localhost:8500/api/v1/"
@@ -23,23 +27,46 @@ const config = {
 	}
 }
 
-async function addUserProfile(data) {
-	let url = await buildUrl('user/create-profile');
-	let userId = window.$cookies.get('user')._id;
-	return axios.post(data);
+async function addUserProfile(userId, data) {
+	let url = await buildUrl('user/create-profile'+userId);
+	return axios.post(url, data, config);
 }
 
-function updateUserProfile() {
+function updateUserProfile(userId, data) {
+	let url = buildUrl('user/profileUpdate')
+}
 
+
+async function getMessagesToMe(userId) {
+	let url = await buildUrl(`user/messages/toMe?to=${userId}&date=${date}`);
+	return axios.get(url, config);
+}
+
+async function getMessagesFromMe(userId) {
+	let url = await buildUrl(`user/messages/fromMe?from=${userId}&date=${date}`);
+	return axios.get(url, config)
+}	
+
+async function sendMessage(from, to, message) {
+	let url = await buildUrl(`user/messages/send?from=${from}&to=${to}`);
+	return axios.post(url, message, config);
+}
+
+
+async function deleteMessage(message) {
+	let url = await buildUrl(`user/message/delete?message=${message}`);
+	return axios.delete(url, config);
 }
 
 async function getUserProfile(userId) {
 	let url = await buildUrl(`user/${userId}/profile`);
 	return axios.get(url, config);
+
 }
 
-function getCompanyProfile() {
-
+async function getCompanyProfile(companySlug) {
+	let url = await buildUrl(`companies/profile/${companySlug}`);
+	return axios.get(url, config);
 }
 
 async function addCompanyProfile(companySlug, data) {
@@ -47,6 +74,7 @@ async function addCompanyProfile(companySlug, data) {
 	return axios.post(url, data, config)
 }
 
-function updateCompanyProfile() {
-
+function updateCompanyProfile(slug, data) {
+	let url = buildUrl(`companies/profiles/${slug}`);
+	return axios.put(url, data, config)
 }

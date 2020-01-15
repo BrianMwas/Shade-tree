@@ -1,0 +1,25 @@
+@mixin keyframe($animation_name) {
+    @keyframes $animation_name {
+        @content;
+    }
+}
+
+@mixin animation($delay, $duration, $animation, $direction: forward, $fillmode: forwards) {
+    -webkit-animation-delay: $delay;
+    -webkit-animation-duration: $duration;
+    -webkit-animation-name: $animation;
+    -webkit-animation-fill-mode: $fillmode;
+    -webkit-animation-direction: $direction;
+
+    -moz-animation-delay: $delay;
+    -moz-animation-direction: $direction;
+    -moz-animation-name: $animation;
+    -moz-animation-fill-mode: $fillmode;
+    -moz-transition-duration: $duration;
+
+    animation-delay: $delay;
+    animation-name: $animation;
+    animation-direction: $direction;
+    animation-fill-mode: $fillmode;
+    animation-duration: $duration;
+}

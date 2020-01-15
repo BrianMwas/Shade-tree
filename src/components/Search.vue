@@ -1,17 +1,18 @@
 <template>
-    <div class="search">
+    <div class="search mr-5">
         <div>
             <v-text-field
             v-model="search"
             label="Search"
-            filled
+        
             autocomplete="off"
-            color="green darken-3"
-            width="200"
+          
+            width="400"
+            dense
             :append-icon="mdiCancel"
             @click:append="reset"
             max-width="200"
-            background-color="white"
+            
             @blur="searchResultsVisible = false"
             @focus="searchResultsVisible = true"
             @keydown.esc="searchResultsVisible = false"
@@ -35,7 +36,7 @@
             </div>
             <v-divider style="padding: 0; margin: 5px; background-color: grey;"></v-divider>
             <div>
-                <p>No results for "<strong>{{search}}</strong>"</p>
+                <p class="green--text">No results for "<strong class="grey--text">{{search}}</strong>"</p>
             </div>
         </div>
     </div>
@@ -81,6 +82,12 @@ export default {
 
     .search {
         position: relative;
+        width: 30%;
+        height: 20px;
+
+        @include media('<medium') {
+            width: 70%;
+        }
 
         div:nth-child(2) {
             position: absolute;

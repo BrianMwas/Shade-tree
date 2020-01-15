@@ -18,7 +18,7 @@
           border="left" 
           close-label="Close alert" 
           dismissible>
-            {{message.message}}
+            {{ message.message }}
           </v-alert>
           <v-card-title class="title font-weight-regular justify-space-between">
             Register
@@ -81,13 +81,14 @@
                 <v-btn 
                   color="success" 
                   dark type="submit" 
-                  :disabled="submitStatus == 'OKAY' && submitStatus !== 'ERROR'" 
+                  :disabled="submitStatus == 'OKAY' && submitStatus !== 'ERROR' && submitStatus == 'null'" 
                   :loading="submitStatus === 'PENDING' && status.registering"
                   >Sign Up</v-btn>
-                <div class="text-left">
-                    <router-link to="login" class="text-center">Already a member? <span class="text-bold">Sign Up here</span></router-link>
+                <div class="text-center">
+                    <router-link to="login" color="blue">Already a member? <span class="text-bold">Sign in here</span></router-link>
                 </div>
               </v-form>
+              <p class="blue--text text-center">By Signing up you agree to our terms and conditions</p>
           </v-card-text>
         </v-card>
 </template>
@@ -267,14 +268,5 @@ export default {
       text-align: left;
       margin: 10px 0 15px;
       text-decoration: underline;
-
-      a:hover {
-        color: blue !important;
-        text-decoration: underline;
-
-        .text-bold {
-          color: rgb(42, 153, 57);
-        }
-      }
     }
 </style>

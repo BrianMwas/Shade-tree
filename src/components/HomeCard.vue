@@ -10,6 +10,7 @@
       max-width="325"
       min-height="325"
       flat
+      tile
     >
       <v-img
         :aspect-ratio="16/9"
@@ -20,9 +21,9 @@
         class="pb-0 mb-2 font-weight-bold card-price"
         style="position: relative"
       >
-          Ksh 40000
+         <span class="font-weight-bold mr-2">KSH</span>{{unit.priceAnnual}}
           <span class="term">
-            pm
+            annual
           </span>
           <v-btn
                     fab
@@ -30,14 +31,14 @@
                     top
                     right
                     absolute
-                    to="/single-unit"
+                    @click="gotoUnit(unit.id)"
                     
                 >
                     <v-icon color="white">{{ arrowRight }}</v-icon>
                 </v-btn>
       </v-card-title>
       <v-card-subtitle class="card-street mt-2" style="dimgray">
-        James Gichuru rd
+        {{ unit.streetname }}
       </v-card-subtitle>
       <v-card-text>
           <v-chip-group
@@ -50,7 +51,7 @@
               <v-avatar left>
                 <v-icon class="grey--text text-lighten-4">{{ bed }}</v-icon>
               </v-avatar>
-              2
+              {{unit.rooms}}
             </v-chip>
             <v-chip
               color="white"
@@ -58,7 +59,7 @@
               <v-avatar left>
                 <v-icon class="grey--text text-lighten-4">{{ areaSpace }}</v-icon>
               </v-avatar>
-              200
+              {{unit.area}}
               <sup>sq</sup>
             </v-chip>
             <v-chip
@@ -67,7 +68,7 @@
               <v-avatar left>
                 <v-icon class="grey--text text-lighten-4">{{ bathrooms }}</v-icon>
               </v-avatar>
-              1
+              {{unit.bathrooms}}
             </v-chip>
           </v-chip-group>
       </v-card-text>
@@ -81,12 +82,7 @@ import {  mdiArrowRight, mdiMapMarker, mdiChevronDown, mdiChevronUp, mdiShapeSqu
 export default {
   name: 'Card',
   props: {
-    StreetName: String,
-    Price: Number,
-    NumberOfRooms: Number,
-    NumberOfBathrooms: Number,
-    AreaSpace: Number,
-    ImageSrc: String
+    unit: Object
   },
   data () {
     return {
@@ -99,6 +95,11 @@ export default {
       areaSpace : mdiShapeSquarePlus,
       bathrooms: mdiToilet,
       arrowRight: mdiArrowRight
+    }
+  },
+  methods: {
+    gotoUnit(id) {
+      this.$router.push({name: "single-unit", params: { id }})
     }
   }
 }

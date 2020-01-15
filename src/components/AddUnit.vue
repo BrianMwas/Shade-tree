@@ -2,6 +2,7 @@
     <v-card
         min-width="290"
         max-width="60%"
+        flat
     >
         <v-img
             src="@/assets/Kander.png"
@@ -52,6 +53,15 @@
                     filled
                     v-model="$v.streetname.$model"
                     :error-messages="streetNameErrors"
+                    color="green darken-3"
+                    type="text"
+                ></v-text-field>
+                <v-text-field
+                    name="category"
+                    label="Category"
+                    filled
+                    v-model="$v.category.$model"
+                    :error-messages="categoryErrors"
                     color="green darken-3"
                     type="text"
                 ></v-text-field>
@@ -143,7 +153,6 @@
                     :loading="submitStatus === 'PENDING'">Add Unit</v-btn>
             </form>
         </v-card-text>
-        
     </v-card>    
 </template>
 
@@ -151,6 +160,8 @@
 import { validationMixin } from 'vuelidate';
 import { mdiCancel } from '@mdi/js'
 const { minLength, maxLength, required, between, numeric } = require('vuelidate/lib/validators')
+
+import { mapGetters, mapState, mapActions } from 'vuex';
 
 export default {
     name: 'new-unit',
@@ -171,9 +182,9 @@ export default {
             bathrooms: 1,
             area: '',
             terms: ['rent'],
+            category: "",
             priceAnnual: '',
             priceMonth: '',
-            
             submitStatus: null
         }
     },
@@ -189,6 +200,9 @@ export default {
             max: maxLength(200)
         },
         streetname : {
+            required
+        },
+        category: {
             required
         },
         rooms: {
@@ -207,6 +221,7 @@ export default {
             withinRange: between(0, 100000)
         },
         priceAnnual : {
+            required,
             numeric, 
             withinRange: between(0, 1000000)
         },
@@ -217,17 +232,23 @@ export default {
         }
     },
     methods : {
+        ...mapActions('unit', ['newUnitAdd']),
        saveUnit () {
+            let body =  JSON.stringify({
+                            name: this.name,
+                            description: this.description,
+                            category: this.category,
+                            street: this.street,
+                            area: this.area,
+                            bathrooms: this.bathrooms,
+                            term: this.terms,
+                            priceAnnual: this.priceAnnual,
+                            priceMonth: this.priceMonth,
+                            noOfRooms: this.rooms
+                        });
             let data = {
-                name: this.name,
-                description: this.description,
-                street: this.streetname,
-                roomNumber: this.rooms,
-                bathrooms: this.bathrooms,
-                area: this.area,
-                term: this.terms,
-                priceAnnual: this.priceAnnual,
-                priceMonth: this.priceMonth
+                url: this.companyByOwnerId(this.loggedInUser.id).slug,
+                info: body
             }
 
             this.$v.$touch();
@@ -235,20 +256,20 @@ export default {
                 this.submitStatus = "ERROR"
             } else {
                 this.submitStatus = "PENDING";
-                setTimeout(() => {
-                    this.submitStatus = "OKAY"
-                    this.name = this.description = this.street = this.area = this.priceAnnual = this.priceMonth = "";
-                    this.rooms = this.bathrooms = 1;
-                    this.term = ['rent'];
-                    this.submitStatus = null;
-                    console.table(data);
-                    this.$v.$reset()
-                }, 500)
-               
+                this.submitStatus = "OKAY"
+                this.name = this.description =  this.category = this.streetname = this.area = this.priceAnnual = this.priceMonth = "";
+                this.rooms = this.bathrooms = 1;
+                this.term = ['rent'];
+                this.submitStatus = null;
+                console.log("body", data)
+                this.newUnitAdd(data);
+                this.$v.$reset()
             }
         }
     },
     computed : {
+        ...mapGetters('company', ['companyByOwnerId']),
+        ...mapGetters('auth', ['loggedInUser']),
         nameErrors () {
             const errors = [];
             if(!this.$v.name.$dirty) return errors;
@@ -279,6 +300,12 @@ export default {
             if(!this.$v.streetname.$dirty) return errors;
             if(!this.$v.streetname.required) errors.push("Please provide room number");
             
+            return errors
+        },
+        categoryErrors () {
+            let errors = []
+            if(!this.$v.category.$dirty) return errors;
+            if(!this.$v.category.required) {errors.push("Please enter the unit category"); }
             return errors
         },
         roomErrors () {
@@ -320,6 +347,7 @@ export default {
         priceAnnualErrors () {
             const errors = [];
             if(!this.$v.priceAnnual.$dirty) return errors;
+            if(!this.$v.priceAnnual.required) errors.push("The price is required")
             if(!this.$v.priceAnnual.numeric) {
                 errors.push('Please provide a valid price')
             }
@@ -341,7 +369,7 @@ export default {
             }
             return errors;
         }
-    },
+    }
     
 }
 </script>

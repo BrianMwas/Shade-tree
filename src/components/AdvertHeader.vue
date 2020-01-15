@@ -8,13 +8,34 @@
                 lg="4"
             >
                 <v-img
-                    :src="imageOne"
-                :aspect-ratio="16/9"
-
-                ><v-row align="end" class="lightbox white--text fill-height pa-2">
+                    src="@/assets/seat.jpg"
+                    :aspect-ratio="16/9"
+                    min-width="200"
+                >
+                    <v-row align="end" class="lightbox white--text fill-height pa-2">
                         <v-col>
                             <div class="heading">
-                                <h1>{{ titleOne }}</h1>
+                                <h1 class="font-weight-light">{{ titleOne }}</h1>
+                            </div>
+                        </v-col>
+                    </v-row>
+                </v-img>
+            </v-col>
+             <v-col
+                cols="12"
+                sm="12"
+                md="7"
+                lg="4"
+                class="hidden-md-and-down"
+            >
+                <v-img
+                    src="@/assets/green pot.jpg"
+                    :aspect-ratio="16/9"
+                    min-width="200"
+                ><v-row align="end" class="hidden-md-and-down  lightbox white--text fill-height pa-2">
+                        <v-col>
+                            <div class="heading font-weight-light">
+                                <h1 class="font-weight-light">{{ titleTwo }}</h1>
                             </div>
                         </v-col>
                     </v-row></v-img>
@@ -24,41 +45,25 @@
                 sm="12"
                 md="7"
                 lg="4"
+                class="hidden-md-and-down"
             >
                 <v-img
-                    :src="imageTwo"
-                :aspect-ratio="16/9"
-
-                ><v-row align="end" class="lightbox white--text fill-height pa-2">
-                        <v-col>
-                            <div class="heading">
-                                <h1>{{ titleTwo }}</h1>
-                            </div>
-                        </v-col>
-                    </v-row></v-img>
-            </v-col>
-             <v-col
-                cols="12"
-                sm="12"
-                md="7"
-                lg="4"
-            >
-                <v-img
-                    :src="imageThree"
-                :aspect-ratio="16/9"
+                    src="@/assets/brick-wall.jpg"
+                    :aspect-ratio="16/9"
+                    min-width="200"
 
                 >
                     <v-row align="end" class="lightbox white--text fill-height pa-2">
                         <v-col>
                             <div class="heading">
-                                <h1>{{ titleThree }}</h1>
+                                <h1 class="font-weight-light">{{ titleThree }}</h1>
                             </div>
                         </v-col>
                     </v-row>
                 </v-img>
             </v-col>
         </v-row>
-        <v-row>
+        <v-row class="hidden-md-and-down">
             <v-col
                 cols="12"
                 sm="12"
@@ -67,12 +72,14 @@
             >
                 <v-img
                     :aspect-ratio="16/9"
-                    :src="imageFour"
+                    src="@/assets/ginger-pot.jpg"
+                    min-width="200"
+
                 >
                     <v-row align="end" class="lightbox white--text fill-height pa-2">
                         <v-col>
                             <div class="heading">
-                                <h1>{{ titleFour }}</h1>
+                                <h1 class="font-weight-light">{{ titleFour }}</h1>
                             </div>
                         </v-col>
                     </v-row>
@@ -82,15 +89,17 @@
                 cols="12"
                 sm="12"
                 md="6"
-                lg="4"
+                lg="6"
             >
                 <v-img
-                :aspect-ratio="16/9"
-                    :src="imageFive"
+                    :aspect-ratio="16/9"
+                    src="@/assets/big-leaf.jpg"
+                    min-width="200"
+
                 ><v-row align="end" class="lightbox white--text fill-height pa-2">
                         <v-col>
                             <div class="heading">
-                                <h1>{{ titleFive }}</h1>
+                                <h1 class="font-weight-light">{{ titleFive }}</h1>
                             </div>
                         </v-col>
                     </v-row></v-img>
@@ -104,7 +113,7 @@
 
 export default {
     name: 'AdvertHeader',
-    props: ['imageOne', 'titleOne', 'imageTwo', 'titleTwo', 'imageThree', 'titleThree', 'imageFour', 'titleFour', 'imageFive', 'titleFive']
+    props: ['titleOne', 'titleTwo', 'titleThree', 'titleFour', 'titleFive']
 }
 </script>
 

@@ -4,7 +4,9 @@ export const userService = {
     getAllAgents,
     getSingleAgent,
     addAgentReview,
-  	addUserProfile
+  	addUserProfile,
+  	getTotalAgents,
+  	getAllUsers
 }
 
 
@@ -20,8 +22,21 @@ function buildUrl(url) {
     return baseUrl + url;
 }
 
+async function getTotalAgents() {
+	let url = await buildUrl('agents/total')
+
+	return axios.get(url, config)
+}
+
+function getAllUsers () {
+	let url = buildUrl('allusers/total')
+	return axios.get(url, config)
+}
+
+
  async function getAllAgents() {
 	let url = await buildUrl('users/agents')
+
 	return axios.get(url, config)
 }
 
@@ -41,3 +56,9 @@ function addUserProfile(userData) {
 	let userProfile = JSON.stringify(userData)
 	return axios.post(url, userProfile, config)
 }
+
+function getTotalOwners() {
+	let url = buildUrl('owners/total');
+	return axios.get(url, config)
+}
+

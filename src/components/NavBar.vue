@@ -16,7 +16,7 @@
               >
                 <v-row class="fill-height" align="end">
                   <v-card-title>
-                    <v-btn dark icon class="mr-4">
+                    <v-btn dark icon class="mr-4" @click="gotoProfile">
                       <v-icon>{{ pencil }}</v-icon>
                     </v-btn>
                   </v-card-title>
@@ -24,7 +24,7 @@
                   <v-spacer></v-spacer>
 
                   <v-card-title class="white--text pl-12 pt-12">
-                    <div class="pt-12 ">{{user}}</div>
+                    <div class="pt-12 pr-3 text-transform-capitalize font-weight-bold">{{user}}</div>
                   </v-card-title>
                 </v-row>
               </v-img>
@@ -59,27 +59,37 @@
                 </v-list-group>
                 
                 <div v-if="loggedIn">
-                    <v-list-item>
+                    <v-list-item to="/dashboard">
                     <v-list-item-icon>
-                      <v-icon>{{ mdiPlusBox }}</v-icon>
+                      <v-icon color="blue">{{ mdiViewDashboard }}</v-icon>
                     </v-list-item-icon>
                     <v-list-item-content>
-                    <v-list-item-title >Manage Units</v-list-item-title>
+                    <v-list-item-title >Dashboard</v-list-item-title>
                       </v-list-item-content>
                     </v-list-item>
 
-                    <v-list-item>
+
+                    <v-list-item v-if="loggedInUserType == 'owner'"  to="/dashboard/company-profile">
                       <v-list-item-icon>
-                        <v-icon>{{ mdiShoppingSearch }}</v-icon>
+                        <v-icon color="blue">{{ setting }}</v-icon>
                       </v-list-item-icon>
                       <v-list-item-content>
-                        <v-list-item-title>My purchases</v-list-item-title>
+                        <v-list-item-title>Company profile</v-list-item-title>
+                      </v-list-item-content>
+                    </v-list-item>
+
+                    <v-list-item to="/dashboard/userprofile">
+                      <v-list-item-icon>
+                        <v-icon color="blue">{{ mdiFaceProfile }}</v-icon>
+                      </v-list-item-icon>
+                      <v-list-item-content>
+                        <v-list-item-title>My profile</v-list-item-title>
                       </v-list-item-content>
                     </v-list-item>
 
                     <v-list-item>
                       <v-list-item-icon>
-                        <v-icon>{{ mdiLogout }}</v-icon>
+                        <v-icon color="blue">{{ mdiLogout }}</v-icon>
                       </v-list-item-icon>
                       <v-list-item-content>
                         <v-list-item-title @click="logOutUser">Log out</v-list-item-title>
@@ -90,7 +100,7 @@
                 <div v-else>
                   <v-list-item to="/login">
                   <v-list-item-icon>
-                    <v-icon>{{ mdiLogin }}</v-icon>
+                    <v-icon color="blue">{{ mdiLogin }}</v-icon>
                   </v-list-item-icon>
                   <v-list-item-content>
                     <v-list-item-title >Log In</v-list-item-title>
@@ -99,7 +109,7 @@
 
                 <v-list-item to="/signup">
                   <v-list-item-icon>
-                    <v-icon>{{ mdiAccount }}</v-icon>
+                    <v-icon color="success">{{ mdiAccount }}</v-icon>
                   </v-list-item-icon>
                   <v-list-item-content>
                     <v-list-item-title>Sign Up</v-list-item-title>
@@ -110,7 +120,7 @@
             <v-spacer></v-spacer>
             <v-list-item to="/about-us">
                   <v-list-item-icon>
-                    <v-icon>{{ mdiPhone }}</v-icon>
+                    <v-icon color="grey darken-1">{{ mdiPhone }}</v-icon>
                   </v-list-item-icon>
                   <v-list-item-content>
                     <v-list-item-title>Get in touch</v-list-item-title>
@@ -125,10 +135,12 @@
       >
         <v-btn @click="drawer = !drawer" class="hidden-md-and-up" icon><v-icon>{{ menu }}</v-icon></v-btn>
 
-        <v-toolbar-title>Shade tree</v-toolbar-title>
+        <v-toolbar-title class="hidden-sm-and-down">Shade tree</v-toolbar-title>
 
         <v-spacer></v-spacer>
+         <Search/>
           <v-toolbar-items class="d-none d-md-flex d-lf-flex">
+               
                  <slot>
                  </slot>
                  <slot name="loggedInRoutes">
@@ -139,17 +151,21 @@
 </template>
 
 <script>
-import { mdiMagnify, 
-mdiShopping, mdiPencil, mdiMenu, 
-mdiMapMarker, mdiEqualizerOutline, mdiPhoneAlert, mdiNewspaper, 
-mdiAccount, mdiLogin, mdiLogout, mdiShoppingSearch, mdiPlusBox, mdiPhone  } from '@mdi/js'
+import { mdiMagnify, mdiFaceProfile, mdiViewDashboard,
+ mdiPencil, mdiMenu, mdiEqualizerOutline, mdiPhoneAlert, mdiNewspaper, 
+mdiAccount, mdiLogin, mdiLogout,  mdiPhone,mdiSettingsBox  } from '@mdi/js'
 import { mapState } from 'vuex'
 import { createNamespacedHelpers } from 'vuex'
-const { mapActions } = createNamespacedHelpers('auth')
+const { mapActions, mapGetters } = createNamespacedHelpers('auth')
+
+import Search from '@/components/Search'
 
 export default {
   name: 'NavBar',
   props: ['loggedIn', 'user'],
+  components: {
+    Search
+  },
   data () {
     return {
       title: 'Shade tree',
@@ -157,11 +173,12 @@ export default {
       menu: mdiMenu,
       pencil: mdiPencil,
       mdiLogin,
-      mdiPlusBox,
       mdiAccount,
-      mdiShoppingSearch,
+      mdiFaceProfile,
       mdiLogout,
       mdiPhone,
+      mdiViewDashboard,
+      setting: mdiSettingsBox,
       items: [
           {
             action: mdiEqualizerOutline,
@@ -215,16 +232,16 @@ export default {
         this.$router.push(route)
       }
     },
+    gotoProfile() {
+      this.$router.push('/dashboard/userprofile')
+    },
     showR () {
       return this.loggedIn;
     }
   },
-  // computed: {
-  //   ...mapState({
-  //     loggedIn: state => state.auth.status.loggedIn,
-  //     loggedInUser: state => state.auth.user
-  //   })
-  // }
+  computed: {
+    ...mapGetters(['loggedInUserType'])
+  }
 }
 </script>
 

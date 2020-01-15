@@ -48,10 +48,12 @@
                     required
                 ></v-text-field>
                 <v-btn depressed color="success" type="submit" :disabled="submitStatus !== 'OKAY' && submitStatus === 'ERROR'" :loading="submitStatus === 'PENDING'">Login</v-btn>
-                 <div class="text-left">
-                    <router-link to="signup">Don't have an account? Sign Up here</router-link>
-                    <router-link to="change-password-request">Forgot password? Change It here</router-link>
-                </div>
+                 <div class="my-3">
+                     <router-link to="signup" class="text-center d-flex">Don't have an account? Sign Up here</router-link>
+                    <router-link to="change-password-request" class="text-center">Forgot password? Change It here</router-link>
+                 </div>
+                    
+               
             </form>
         </v-card-text>
   </v-card>
@@ -61,11 +63,10 @@
 import { mdiEye, mdiEyeCheck } from '@mdi/js'
 import { validationMixin } from 'vuelidate'
 const { required, minLength, email } = require('vuelidate/lib/validators')
-import { createNamespacedHelpers } from 'vuex';
+import { createNamespacedHelpers, mapActions } from 'vuex';
 
 const { mapGetters } = createNamespacedHelpers('alert');
 
-import { mapActions } from 'vuex'
 
 export default {
     name: 'Login',
@@ -151,16 +152,7 @@ export default {
         border-radius: 10px !important;
     }
 
-    .text-left {
-        text-decoration: underline;
-        display: flex;
-        flex-direction: column;
-        a {
-            margin: 5px 0 7.5px;
-
-            &:hover {
-                color: blue;
-            }
-        }
+    .d-block {
+        display: block !important;
     }
 </style>

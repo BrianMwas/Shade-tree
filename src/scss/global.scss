@@ -5,6 +5,9 @@
 "@/scss/abstracts/_functions.scss",
 "@/scss/abstracts/_mixins.scss",
 '@/scss/abstracts/_include_media.scss';
+@import "@/scss/base/_animations.scss";
+
+@import url('https://fonts.googleapis.com/css?family=Open+Sans|PT+Sans&display=swap');
 
 @import "@/scss/components/_navigation.scss";
 

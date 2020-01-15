@@ -20,6 +20,9 @@
            </v-btn> -->
         </NavBar>
         <NavBar v-else #default>
+          <v-btn text>
+            <router-link to="/blogs" class="link">blogs</router-link>
+           </v-btn>
             <v-btn text>
               <router-link to="/units" class="link">units</router-link>
             </v-btn>
@@ -32,76 +35,140 @@
         </NavBar>
 
       <v-content dark transition="fade-transition" app>
-        <AdvertHeader 
-          :titleOne=""
-          :titleTwo=""
-          :titleThree=""
-          :titleFour=""
-          :titleFive=""
-          :imageOne=""
-          :imageTwo=""
-          :imageThree=""
-          :imageFour=""
-          :imageFive="" />
-        <v-container
-          style="min-height: 100vh;"
-        >
-          <v-row
-           justify="center"
-           class="d-flex flex-sm-column"
-          >
-            <v-col
-              sm="12"
-              lg="4"
-            >
-              <Search style="width: 100%"/>
-            </v-col>
 
-            <v-col
-              sm="12"
-              class="d-sm-none"
-            >
-              <v-select
-                label="Sort"
-                dense
-                filled
-                :items="items"
-                hide-details
-                menu-props="auto"
-                :append-outer-icon="sortIcon"
-                class="sortSelect"
-                background-color="white"
-                color="green darken-3"
-                width="100%"
-              >
-              </v-select>
-            </v-col>
-          </v-row>
+        <div class="p-2">
+          <v-carousel :show-arrows="false" height="400" cycle>
+            <v-carousel-item
+              v-for="(item,i) in imageItems"
+              :key="i"
+              :src="item.src"
+              reverse-transition="fade-transition"
+              transition="fade-transition"
 
-          <div class="selection">
-            <h2 class="grey--text text--darken-3">Popular</h2>
-          </div>
-          
-          <div class="grid">
-            <Card/>
-            <Card/>
-            <Card/>
-            <Card/>
-            <Card/>
-            <Card/>
-          </div>
-        </v-container>
-        <div class="text-center my-8">
-          <v-pagination
-            v-model="page"
-            :length="4"
-            :prev-icon="menuLeft"
-            :next-icon="menuRight"
-          ></v-pagination>
+            ></v-carousel-item>
+           </v-carousel>
         </div>
+
+        <v-snackbar
+          v-for="alert in alerts"
+          :key="alert.mKey"
+          bottom
+          left
+          v-model="alert.stage"
+          :color="alert.type"
+        >
+          {{alert.message}}
+          <v-btn flat color="primary" @click.native="alert.stage = false">Close</v-btn>
+        </v-snackbar>
+        
+          <div class="homes">
+            <div class="sidebar">
+              <h2 class="header black--text">Filter</h2>
+              <v-card tile flat>
+                <v-card-text>
+                  <h4 class="black--text font-weight-light">By Date</h4>
+                  <v-radio-group :mandatory="false" v-model="dateSelection">
+                    <v-radio label="Latest" value="latest" color="primary"></v-radio>
+                    <v-radio label="Earliest" value="Earliest" color="primary"></v-radio>
+                  </v-radio-group>
+                  <h4 class="black--text font-weight-light">By Price</h4>
+                  <v-radio-group :mandatory="false" v-model="pricingSelection">
+                    <v-radio label="Highest" value="high-priced" color="primary"></v-radio>
+                    <v-radio label="Low" value="low-priced" color="primary"></v-radio>
+                  </v-radio-group>
+                </v-card-text>
+              </v-card>
+            </div>
+            <div class="units">
+              <div class="header">
+                  <h2 class="heading mx-5 black--text">{{ pricingSelection || 'AllUnits' || pricingSelection }}</h2> 
+              </div>
+              <div class="results">
+                <div v-if="gettingUnits" class="grid">
+                    <v-sheet
+                      color="grey lighten-4"
+                      class="px-3 pt-3 pb-3"
+                      >
+                      <v-skeleton-loader
+                        class="mx-auto"
+                        max-width="300"
+                        type="card"
+                      ></v-skeleton-loader>
+                    </v-sheet>
+                    <v-sheet
+                        color="grey lighten-4"
+                        class="px-3 pt-3 pb-3"
+                      >
+                      <v-skeleton-loader
+                        class="mx-auto"
+                        max-width="300"
+                        type="card"
+                      ></v-skeleton-loader>
+                    </v-sheet>
+                    <v-sheet
+                        color="grey lighten-4"
+                        class="px-3 pt-3 pb-3"
+                      >
+                      <v-skeleton-loader
+                        class="mx-auto"
+                        max-width="300"
+                        type="card"
+                      ></v-skeleton-loader>
+                    </v-sheet>
+                    <v-sheet
+                        color="grey lighten-4"
+                        class="px-3 pt-3 pb-3"
+                      >
+                      <v-skeleton-loader
+                        class="mx-auto"
+                        max-width="300"
+                        type="card"
+                      ></v-skeleton-loader>
+                    </v-sheet>
+                    <v-sheet
+                        color="grey lighten-4"
+                        class="px-3 pt-3 pb-3"
+                      >
+                      <v-skeleton-loader
+                        class="mx-auto"
+                        max-width="300"
+                        type="card"
+                      ></v-skeleton-loader>
+                    </v-sheet>
+                    <v-sheet
+                        color="grey lighten-4"
+                        class="px-3 pt-3 pb-3"
+                      >
+                      <v-skeleton-loader
+                        class="mx-auto"
+                        max-width="300"
+                        type="card"
+                      ></v-skeleton-loader>
+                    </v-sheet>
+                </div>
+                <div v-else class="grid" >
+                  <home-unit
+                    v-for="home in units.results"
+                    :key="home.id"
+                    :unit="home"
+                  ></home-unit>
+                </div>
+              </div>
+              <div class="footer">
+                <div class="text-center my-8">
+                  <v-pagination
+                    v-model="units.pageNumber"
+                    :length="units.pageCount"
+                    :prev-icon="menuLeft"
+                    :next-icon="menuRight"
+                  ></v-pagination>
+                </div>
+              </div>
+            </div>
+          </div>
       </v-content>
       <Footer/>
-    </div>
+      </div>
 </template>
 
 <script>
@@ -111,7 +178,6 @@ import Card from '@/components/HomeCard.vue'
 import AdvertHeader from '@/components/AdvertHeader.vue'
 import { mdiMagnify, mdiClose, mdiSortDescending, mdiMenuLeft, mdiMenuRight } from '@mdi/js';
 import Search from '@/components/Search.vue'
-import FilterQ from '@/components/FilterComponent.vue'
 
 import { mapState, mapActions, createNamespacedHelpers } from 'vuex';
 const { mapGetters } = createNamespacedHelpers('auth');
@@ -121,13 +187,15 @@ export default {
   components: {
     NavBar,
     Footer,
-    Card,
+    'home-unit': Card,
     AdvertHeader,
-    Search,
-    FilterQ
+    Search
   },
   data () {
     return {
+      snackbar: false,
+      text: 'My timeout is set to 2000.',
+      timeout: 2000,
       mdiMagnify,
       headerImg: 'backround: url(@/assets/brick-wall.jpg)',
       mdiClose,
@@ -135,7 +203,23 @@ export default {
       sortIcon: mdiSortDescending,
       menuLeft: mdiMenuLeft,
       menuRight: mdiMenuRight,
-      items: ["Date", "Rating", "Price", "Location"]
+      items: ["Date", "Rating", "Price", "Location"],
+      imageItems: [
+          {
+            src: 'https://source.unsplash.com/random/livingroom',
+          },
+          {
+            src: 'https://source.unsplash.com/random/daily?livingroom',
+          },
+          {
+            src: 'https://source.unsplash.com/random/?house',
+          },
+          {
+            src: 'https://source.unsplash.com/random/weekly?livingroom',
+          },
+        ],
+        pricingSelection: null,
+        dateSelection: null,
     }
   },
   methods : {
@@ -143,12 +227,16 @@ export default {
       console.log("Search", this.search)
       this.search = ''
     },
-    ...mapActions('auth', ['logOutUser'])
+    ...mapActions('auth', ['logOutUser']),
+    ...mapActions('unit', ['initUnits']),
   },
   computed: {
     ...mapState({
         loggedIn: state => state.auth.status,
         settingProfile: state => state.profile.settingUserProfile,
+        units: state => state.unit.units,
+        gettingUnits:state => state.unit.gettingUnits,
+        alerts: state => state.alert.Messages
       }),
     ...mapGetters(['loggedInUser', 'loggedInUserType', 'logged'])   
   }
@@ -158,9 +246,51 @@ export default {
 <style lang="scss" scoped>
   @import '@/scss/global.scss';
 
+  .homes {
+    display: grid;
+    grid-template-columns: 20% 80%;
+    padding: 1.5em;
+   
+
+    .sidebar {
+      backround: white;
+
+      @include media('<medium') {
+        display: none;
+        pointer-events: none;
+      }
+    }
+
+    .units {
+      
+      display: grid;
+      grid-template-columns: 1fr;
+     
+      .header {
+        grid-row: span 1;
+      }
+
+      .results {
+
+        grid-row: span 10;
+      }
+
+      .footer {
+        grid-row: span 1;
+      }
+    }
+  }
+
+
 .v-btn a {
   text-transform: uppercase;
 }
+  .advert {
+    width: 100%;
+    margin: auto;
+    padding: 0 10%;
+  }
+ 
 
   .text-dark {
     color: color(typography, 4);
@@ -192,7 +322,7 @@ export default {
       grid-template-columns: repeat(auto-fill, minmax(10em, 1fr));
       grid-auto-rows: 300px;
       grid-gap: 50px;
-      margin: 3em auto;
+      margin: 1em auto;
 
       @include media('>medium') {
         grid-template-columns: repeat(auto-fill, minmax(325px, 1fr));
@@ -236,4 +366,8 @@ export default {
     }
   }
   
+
+  .v-image__image--cover  {
+    backround-size: 100% auto !important;
+  }
 </style>

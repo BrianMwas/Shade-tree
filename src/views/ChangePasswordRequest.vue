@@ -24,19 +24,41 @@
         </NavBar>
         <v-content dark transition="fade-transition" app>
             <v-container class="vh-100">
+                
                 <div class="d-flex" justify="center" style="margin: 4.6em auto">
+                    
+
                     <v-card
                         class="mx-auto rounded"
                         width="400"
                         min-width="290"
                         flat
-                        height="220"
+                        min-height="220"
                     >
-                    <v-card-title primary-title>
-                        Enter your email
+                    <div 
+                        v-if="Messages.length > 0" 
+                    >
+                        <v-alert 
+                        class="my-5 mx-3" 
+                        border="left" 
+                        close-label="Close alert" 
+                        :type="message.type" 
+                        dismissible
+                        v-for="message in Messages"
+                        :key="message.mKey"
+                        >
+                            {{message.message}}
+                        </v-alert>
+                    </div>
+                    
+                    <v-card-title class="display-1">
+                       Shade Tree
                     </v-card-title>
+                    <v-card-subtitle>
+                        Enter your email first
+                    </v-card-subtitle>
                         <v-card-text>
-                            <form @submit.prevent="changePasswordRequest">
+                            <form @submit.prevent="changePassword">
                                 <v-text-field
                                     name="email"
                                     label="Email"
@@ -49,7 +71,12 @@
                                     @blur="$v.email.$touch()"
                                     required
                                 ></v-text-field>
-                                <v-btn color="primary" type="submit" block>Send</v-btn>
+                                <v-btn 
+                                color="primary" 
+                                type="submit" 
+                                block  
+                                :disabled="submitStatus == 'OKAY' && submitStatus !== 'ERROR'" 
+                                :loading="submitStatus === 'PENDING'">Send</v-btn>
                             </form>
                         </v-card-text>
                     </v-card>
@@ -65,6 +92,9 @@ import NavBar from '@/components/NavBar.vue'
 import Footer from '@/components/Footer.vue'
 import { validationMixin } from 'vuelidate'
 const { required, minLength, email } = require('vuelidate/lib/validators')
+import { mapActions, createNamespacedHelpers } from 'vuex'
+
+const { mapGetters } = createNamespacedHelpers('alert');
 
 
 export default {
@@ -88,22 +118,25 @@ export default {
         }
     },
     methods: {
-        async changePasswordRequest() {
-            let email = this.email;
-            console.log("Email", email);
+        ...mapActions('auth', ['changePasswordRequest']),
+        changePassword() {
+            this.$v.$touch();
             if(this.$v.$invalid) {
                 this.submitStatus = "ERROR"
             } else {
                 this.submitStatus = "PENDING";
-                setTimeout(() => {
-                    this.submitStatus = "OK"
-                    this.email = this.password = this.confirmation = "";
-                    this.$v.$reset()
-                }, 500)
+          
+                this.submitStatus = "OK"
+                console.log("email hope", this.email)
+
+                this.changePasswordRequest(this.email)
+                this.email = "";
+                this.$v.$reset()
             }
         }
     },
     computed: {
+        ...mapGetters(['Messages']),
         emailErrors () {
             const errors = [];
             if(!this.$v.email.$dirty) {

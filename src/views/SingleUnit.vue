@@ -44,9 +44,9 @@
             <v-col cols="12" sm="12" md="8" lg="8">
               <v-card flat>
                   <v-card-title primary-title class="d-flex display-1">
-                    <span class="green--text font-weight-bold">Ksh 45000</span>
+                    <span class="green--text font-weight-bold">{{unit.priceAnnual}}</span>
                     <v-spacer></v-spacer>
-                    <span class="grey--text text--darken-1 rd">James Gichuru Rd</span>
+                    <span class="grey--text text--darken-1 rd">{{unit.streetname}}</span>
                   </v-card-title>
                   <v-card-subtitle>
                     Nairobi
@@ -72,7 +72,7 @@
                     >
                     <div class="unit-detail">
                         <v-icon large color="red darken-1">{{bed}}</v-icon>
-                        <p class="grey--text h5 font-weight-light">Bedrooms <span class="green--text font-weight-normal">4</span></p>
+                        <p class="grey--text h5 font-weight-light">{{ unit.rooms }} <span class="green--text font-weight-normal">4</span></p>
                       </div>
                     </v-col>
                     <v-col
@@ -83,7 +83,7 @@
                     >
                       <div class="unit-detail">
                         <v-icon large color="green darken-1">{{bathroom}}</v-icon>
-                        <p class="grey--text h5 font-weight-light">Bathrooms <span class="green--text font-weight-normal">1</span></p>
+                        <p class="grey--text h5 font-weight-light">{{ unit.bathrooms }} <span class="green--text font-weight-normal">1</span></p>
                       </div>
                       
                     </v-col>
@@ -95,7 +95,7 @@
                     >
                       <div class="unit-detail">
                         <v-icon large color="green darken-1">{{square}}</v-icon>
-                        <p class="grey--text h5 font-weight-light">Square Feet<span class="green--text font-weight-normal"><sup>sq</sup></span></p>
+                        <p class="grey--text h5 font-weight-light">{{ unit.area }}<span class="green--text font-weight-normal"><sup>sq</sup></span></p>
                       </div>
                     </v-col>
                     <v-col
@@ -133,7 +133,7 @@
                   Description
                 </v-card-title>
                 <v-card-text>
-                  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Laboriosam adipisci quis error itaque aliquam nisi, minus repellat non, officia fugiat aut! Perferendis excepturi dignissimos totam illo eius, ea dolorum delectus?.</p>
+                  <p>{{unit.description}}</p>
                   <v-card-actions>
                   <v-btn depressed color="blue white--text">
                     BOOK SITEVIEW
@@ -170,6 +170,8 @@ import Footer from '@/components/Footer.vue'
 import AgentCard from '@/components/AgentCard.vue'
 import { mdiMapMarker, mdiBedSingleOutline, mdiToilet, mdiShareOutline, mdiShield, mdiParking, mdiCalendar, mdiVectorSquare } from '@mdi/js'
 
+import { mapActions, mapState } from 'vuex';
+
 export default {
   name: 'SingleUnit',
   components: {
@@ -189,7 +191,24 @@ export default {
       date: mdiCalendar,
       loggedIn: false
     }
-  }
+  },
+  methods: {
+    ...mapActions('unit', ['getUnitById']),
+    ...mapState({
+      unit: state => state.unit.unit
+    }),
+    getUnit() {
+      this.getUnitById(this.$route.params.id)
+    }
+  },
+  watch: {
+    $route: {
+      immediate: true,
+      handler(to, from) {
+        this.getUnit()
+      }
+    }
+  } 
 }
 </script>
 
