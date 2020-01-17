@@ -58,6 +58,11 @@ export default [
         }
     },
     {
+        path: '/auth/user-activation/:userId',
+        name: "ActivateAccount",
+        view: "Activation"
+    },
+    {
         path: '/dashboard',
         name: 'dashboard',
         view: 'DashBoard',
