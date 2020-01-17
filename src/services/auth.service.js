@@ -23,6 +23,11 @@ function logout() {
 }
 
 
+function activateAccount(userId) {
+    let url = buildUrl(`auth/activate-user/${userId}`);
+    return axios.get(url, config)
+}
+
 async function register(userType, userData) {
     let data = JSON.stringify(userData)
     let url = await buildUrl(`auth/register?userType=${userType}`)
@@ -56,5 +61,6 @@ export const authService = {
     register,
     changePasswordRequest,
     replaceForgotPassword,
-    changeOldPasswordWithNew
+    changeOldPasswordWithNew,
+    activateAccount
 }
