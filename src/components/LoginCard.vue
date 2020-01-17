@@ -48,13 +48,20 @@
                     required
                 ></v-text-field>
                 <v-btn depressed color="success" type="submit" :disabled="submitStatus !== 'OKAY' && submitStatus === 'ERROR'" :loading="submitStatus === 'PENDING'">Login</v-btn>
-                 <div class="my-3">
-                     <router-link to="signup" class="text-center d-flex">Don't have an account? Sign Up here</router-link>
-                    <router-link to="change-password-request" class="text-center">Forgot password? Change It here</router-link>
-                 </div>
-                    
-               
+
             </form>
+            <div class="text-center d-block">
+                <ul>
+                    <li>
+                        <router-link to="signup">Don't have an account? Sign Up here</router-link>
+                    </li>
+                    <li>
+                            <router-link to="change-password-request">Forgot password? Change It here</router-link>
+                    </li>
+                </ul>
+                 
+            </div>
+            
         </v-card-text>
   </v-card>
 </template>
@@ -94,6 +101,7 @@ export default {
     methods: {
         ...mapActions('auth', ['loginUser']),
         async login () {
+            
             let data = {
                 email: this.email,
                 password: this.password
@@ -101,9 +109,9 @@ export default {
             this.$v.$touch();
             if(this.$v.$invalid) {
                 this.submitStatus = "ERROR"
+                navigator.vibrate([150, 150, 150]);
             } else {
                 this.submitStatus = "PENDING";
-                
                 this.submitStatus = "OK"
                 this.loginUser(data)
                 this.email = this.password = this.confirmation = "";
@@ -153,6 +161,9 @@ export default {
     }
 
     .d-block {
-        display: block !important;
+        padding: 1em 0;
+       ul li {
+           list-style: none;
+       }
     }
 </style>
