@@ -79,13 +79,13 @@
                   ></v-text-field>
         
                 <v-btn 
-                  color="success" 
+                  color="primary" 
                   dark type="submit" 
                   :disabled="submitStatus == 'OKAY' && submitStatus !== 'ERROR' && submitStatus == 'null'" 
                   :loading="submitStatus === 'PENDING' && status.registering"
                   >Sign Up</v-btn>
-                <div class="text-center">
-                    <router-link to="login" color="blue">Already a member? <span class="text-bold">Sign in here</span></router-link>
+                <div class="text-center mt-5">
+                    <router-link to="login" color="blue" class="link">Already a member? <span class="text-bold">Sign in here</span></router-link>
                 </div>
               </v-form>
               <p class="blue--text text-center">By Signing up you agree to our terms and conditions</p>
@@ -252,6 +252,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  .link {
+    color: rgb(25, 82, 189);
+    &:hover {
+      color: rgb(15, 68, 136) !important;
+    }
+  }
+
     .v-divider {
         background: grey;
     }

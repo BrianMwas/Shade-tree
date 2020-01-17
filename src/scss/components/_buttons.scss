@@ -42,8 +42,7 @@
 }
 
 .button-primary {
-    background: mix(color(primary, 1), color(primary, 2));
-    background: linear-gradient(65deg, color(green, 1) 0, color(green, 2) 100%);
+    background: mix(color(green, 1), color(green, 4));
 
     &:hover {
         background: lighten(mix(color(bg, 3), color(bg, 4)), 2%);

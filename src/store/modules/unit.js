@@ -66,8 +66,8 @@ const unit = {
             state.singleUnit = {};
             state.getUnitRequest = false
         },
-        getSingleUnitSuccess(state) {
-            state.unit = state;
+        getSingleUnitSuccess(state, unit) {
+            state.unit = unit;
             state.getUnitFail = false;
             state.getUnitRequest = false
         },
@@ -114,6 +114,7 @@ const unit = {
             commit('getSingleUnitRequest')
             unitService.getSingleUnit(unitId)
             .then(response => {
+                console.log("this unit", response.data.data)
                 commit('getSingleUnitSuccess', response.data.data)
             })
             .catch(error => {
@@ -210,7 +211,10 @@ const unit = {
         }
     },
     getters: {
-
+        singleUnit: state => state.unit,
+        companySpecificUnits: (state) => (companyId) => {
+            return state.units.find(unit => unit.company == companyId);
+        }
     }
 }
 

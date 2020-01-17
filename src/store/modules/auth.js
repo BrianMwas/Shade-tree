@@ -1,6 +1,5 @@
 import  { authService } from '../../services/auth.service';
 import router from '../../router/index';
-import axios from 'axios';
 const MAX_RANDOM_NUM = 20;
 
 // const stateInit = user ? { status: { loggedIn: true }, user } : { status: {}, user: null }
@@ -18,9 +17,28 @@ const auth = {
     user: {},
     changePasswordRequestFail : null,
     changePasswordRequest: null,
-    changedPasswordEmailSent: false
+    changedPasswordEmailSent: false,
+    activationSuccessMessage: null
   },
   actions: {
+    activate({dispatch, commit}, userId) {
+      authService.activateAccount(userId)
+      .then(response => {
+        console.log("activation response", response.data);
+        commit('activateAccountSuccess', response.data.data);
+        setTimeout(() => {
+          router.push("/login")
+        }, 20000)
+      })
+      .catch(error => {
+        dispatch('alert/errorAlert', {
+          mKey: getRandomInt(),
+          message: error.response,
+          type: 'warning',
+          stage: true
+        }, { root: true })
+      })
+    },
     loginUser({ dispatch, commit }, { email, password }) {
       if (!window.$cookies.isKey("user")) {
 
@@ -154,6 +172,12 @@ const auth = {
     }
   },
   mutations: {
+    activateAccountSuccess(state, data) {
+      state.activationSuccessMessage = data
+      setTimeout(function() {
+        state.activationSuccessMessage = null
+      }, 30000)
+    },
     loginRequest(state) {
       state.status = { loggingIn: true }
     },
@@ -202,7 +226,7 @@ const auth = {
       } else {
         return null
       }
-    },
+    }, 
     logged: state => window.$cookies.isKey('user')
   }
 }
