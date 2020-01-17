@@ -46,10 +46,10 @@
                   <v-card-title primary-title class="d-flex display-1">
                     <span class="green--text font-weight-bold">{{unit.priceAnnual}}</span>
                     <v-spacer></v-spacer>
-                    <span class="grey--text text--darken-1 rd">{{unit.streetname}}</span>
+                    <span class="grey--text text--darken-1 rd">{{unit.name}}</span>
                   </v-card-title>
                   <v-card-subtitle>
-                    Nairobi
+                    {{unit.streetname}}
                   </v-card-subtitle>
                   <v-card-text>
                       <v-row>
@@ -72,7 +72,7 @@
                     >
                     <div class="unit-detail">
                         <v-icon large color="red darken-1">{{bed}}</v-icon>
-                        <p class="grey--text h5 font-weight-light">{{ unit.rooms }} <span class="green--text font-weight-normal">4</span></p>
+                        <p class="grey--text h5 font-weight-light">Rooms <span class="green--text font-weight-normal ml-2">{{ unit.rooms }}</span></p>
                       </div>
                     </v-col>
                     <v-col
@@ -83,7 +83,7 @@
                     >
                       <div class="unit-detail">
                         <v-icon large color="green darken-1">{{bathroom}}</v-icon>
-                        <p class="grey--text h5 font-weight-light">{{ unit.bathrooms }} <span class="green--text font-weight-normal">1</span></p>
+                        <p class="grey--text h5 font-weight-light">Bathrooms<span class="green--text font-weight-normal ml-2">{{ unit.bathrooms }} </span></p>
                       </div>
                       
                     </v-col>
@@ -135,10 +135,8 @@
                 <v-card-text>
                   <p>{{unit.description}}</p>
                   <v-card-actions>
-                  <v-btn depressed color="blue white--text">
-                    BOOK SITEVIEW
-                  </v-btn>
-                  <v-btn color="green white--text" depressed>SEND MESSAGE</v-btn>
+                  
+                  <button class="button button-primary button-block">Save unit</button>
                 </v-card-actions>
                 </v-card-text>
                 
@@ -158,7 +156,6 @@
             </v-col>
           </v-row>
         </div>
-        
       </v-content>
       <Footer/>
     </div>
@@ -170,8 +167,8 @@ import Footer from '@/components/Footer.vue'
 import AgentCard from '@/components/AgentCard.vue'
 import { mdiMapMarker, mdiBedSingleOutline, mdiToilet, mdiShareOutline, mdiShield, mdiParking, mdiCalendar, mdiVectorSquare } from '@mdi/js'
 
-import { mapActions, mapState } from 'vuex';
-
+import { mapActions, createNamespacedHelpers } from 'vuex';
+const { mapState } = createNamespacedHelpers('unit')
 export default {
   name: 'SingleUnit',
   components: {
@@ -194,21 +191,28 @@ export default {
   },
   methods: {
     ...mapActions('unit', ['getUnitById']),
-    ...mapState({
-      unit: state => state.unit.unit
-    }),
     getUnit() {
-      this.getUnitById(this.$route.params.id)
+      if(!this.$route.params.id || this.$route.params.id.length < 24) {
+        this.$store.dispatch('alert/errorAlert', {
+          mKey: Math.floor(Math.random() * Math.floor(Math.random())),
+          message: "Invalid link or url",
+          type: "error"
+        })
+      }
+      return this.getUnitById(this.$route.params.id)
     }
+  },
+  computed: {
+     ...mapState(['unit'])
   },
   watch: {
     $route: {
       immediate: true,
-      handler(to, from) {
+      handler:  (to, from) => {
         this.getUnit()
       }
     }
-  } 
+  }
 }
 </script>
 

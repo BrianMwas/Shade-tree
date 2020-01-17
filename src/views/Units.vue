@@ -61,7 +61,7 @@
           <v-btn flat color="primary" @click.native="alert.stage = false">Close</v-btn>
         </v-snackbar>
         
-          <div class="homes">
+          <!-- <div class="homes">
             <div class="sidebar">
               <h2 class="header black--text">Filter</h2>
               <v-card tile flat>
@@ -81,9 +81,9 @@
             </div>
             <div class="units">
               <div class="header">
-                  <h2 class="heading mx-5 black--text">{{ pricingSelection || 'AllUnits' || pricingSelection }}</h2> 
+                  <h2 class="heading mx-5 black--text">{{ pricingSelection || 'AllUnits' }}</h2> 
               </div>
-              <div class="results">
+              <div class="results"> -->
                 <div v-if="gettingUnits" class="grid">
                     <v-sheet
                       color="grey lighten-4"
@@ -146,6 +146,14 @@
                       ></v-skeleton-loader>
                     </v-sheet>
                 </div>
+                <div class="h-50" v-else-if="units.results.length <= 0">
+                  <div class="mt-16">
+                    <p class="my-3 text-center">No units yet, Be the first to add one</p>
+                    
+                    <router-link class="button button-primary text-center" to="/login">Add A unit</router-link>
+                  </div>
+                  
+                </div>
                 <div v-else class="grid" >
                   <home-unit
                     v-for="home in units.results"
@@ -153,8 +161,8 @@
                     :unit="home"
                   ></home-unit>
                 </div>
-              </div>
-              <div class="footer">
+              <!-- </div> -->
+              <!-- <div class="footer"> -->
                 <div class="text-center my-8">
                   <v-pagination
                     v-model="units.pageNumber"
@@ -163,9 +171,9 @@
                     :next-icon="menuRight"
                   ></v-pagination>
                 </div>
-              </div>
-            </div>
-          </div>
+              <!-- </div> -->
+            <!-- </div>
+          </div> -->
       </v-content>
       <Footer/>
       </div>
@@ -239,12 +247,32 @@ export default {
         alerts: state => state.alert.Messages
       }),
     ...mapGetters(['loggedInUser', 'loggedInUserType', 'logged'])   
+  },
+  watch: {
+    filter: {
+      handler: 'filterUnits',
+      immediate: true
+    }
   }
 }
 </script>
 
 <style lang="scss" scoped>
   @import '@/scss/global.scss';
+
+  .h-50 {
+    height: 50vh;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+
+    div {
+      display: flex;
+      flex-direction: column;
+      align-content: center;
+      justify-content: center;
+    }
+  }
 
   .homes {
     display: grid;

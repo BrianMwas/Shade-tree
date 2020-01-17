@@ -1,17 +1,6 @@
 <template>
     <div>
-         <NavBar v-if="loggedIn" #loggedInRoutes>
-          <v-btn text>
-           <router-link to="/map" class="link">map</router-link>
-          </v-btn>
-          <v-btn text>
-            <router-link to="/logout" class="link">Log out</router-link>
-          </v-btn>
-          <v-btn text>
-            <router-link to="/logout" class="link">Add Unit</router-link>
-          </v-btn>
-        </NavBar>
-        <NavBar v-else #default>
+        <NavBar #default>
             <v-btn text>
               <router-link to="/units" class="link">units</router-link>
             </v-btn>
@@ -35,29 +24,27 @@
                         flat
                         min-height="220"
                     >
-                    <div 
-                        v-if="Messages.length > 0" 
-                    >
-                        <v-alert 
-                        class="my-5 mx-3" 
-                        border="left" 
-                        close-label="Close alert" 
-                        :type="message.type" 
-                        dismissible
-                        v-for="message in Messages"
-                        :key="message.mKey"
-                        >
-                            {{message.message}}
-                        </v-alert>
-                    </div>
                     
-                    <v-card-title class="display-1">
-                       Shade Tree
-                    </v-card-title>
-                    <v-card-subtitle>
-                        Enter your email first
-                    </v-card-subtitle>
-                        <v-card-text>
+                    
+                    <v-toolbar color="secondary">
+                        <v-toolbar-title class="white--text">Change forgot password</v-toolbar-title>
+                    </v-toolbar>
+                        <v-card-text class="py-3">
+                            <div 
+                                v-if="Messages.length > 0" 
+                            >
+                                <v-alert 
+                                class="my-5 mx-3" 
+                                border="left" 
+                                close-label="Close alert" 
+                                :type="message.type" 
+                                dismissible
+                                v-for="message in Messages"
+                                :key="message.mKey"
+                                >
+                                    {{message.message}}
+                                </v-alert>
+                            </div>
                             <form @submit.prevent="changePassword">
                                 <v-text-field
                                     name="email"
@@ -78,6 +65,7 @@
                                 :disabled="submitStatus == 'OKAY' && submitStatus !== 'ERROR'" 
                                 :loading="submitStatus === 'PENDING'">Send</v-btn>
                             </form>
+                            <p class="grey--text text--darken-3 mt-5">Go back to <router-link to="/login" class="green--text">login</router-link></p>
                         </v-card-text>
                     </v-card>
                  </div>

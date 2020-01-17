@@ -92,7 +92,8 @@
                   </v-card-actions>
                 </v-card>
                 <v-row>
-                  <v-col cols="12" lg="6" md="6" sm="12">
+                  <!-- Company agents -->
+                  <v-col cols="12" lg="4" md="6" sm="12">
                     <v-card>
                       <v-toolbar color="primary">
                         <v-toolbar-title class="white--text">Agents</v-toolbar-title>
@@ -107,7 +108,26 @@
                       </v-card-text>
                     </v-card>
                   </v-col>
-                  <v-col cols="12" lg="6" md="6" sm="12">
+                  <!-- Where all agents prospecting will be at -->
+                  <v-col cols="12" lg="4" md="6" sm="12">
+                    <v-card>
+                      <v-toolbar color="purple">
+                        <v-toolbar-title class="white--text">All Agents</v-toolbar-title>
+                      </v-toolbar>
+                      <v-card-text>
+                        <v-list two-line>
+                          <v-list-item class="agent-list" v-for="agent in agents" :key="agent._id">
+                            <v-list-item-content>
+                              <v-list-item-title>{{ agent.username }}</v-list-item-title>
+                              <v-list-item-subtitle><span class="font-weight-bold mr-3">{{ agent.email }}</span></v-list-item-subtitle>
+                            </v-list-item-content>
+                          </v-list-item>
+                        </v-list>
+                      </v-card-text>
+                    </v-card>
+                  </v-col>
+                  <!-- Company details -->
+                  <v-col cols="12" lg="4" md="6" sm="12">
                     <v-card>
                       <v-toolbar color="green darken-3">
                         <v-toolbar-title class="white--text">Company Details</v-toolbar-title>
@@ -137,6 +157,7 @@
                       </v-card-text>
                     </v-card>
                   </v-col>
+                  
                 </v-row>
                 <v-row>
                   <v-col cols="12" lg="8" md="6" sm="12">
@@ -146,7 +167,7 @@
                       </v-toolbar>
                       <v-card-text>
                         <v-list two-line>
-                          <v-list-item v-for="unit in units" :key="unit._id">
+                          <v-list-item v-for="unit in units.results" :key="unit._id">
                             <v-list-item-content>
                               <v-list-item-title>{{ unit.name }}</v-list-item-title>
                               <v-list-item-subtitle><span class="font-weight-bold mr-3">{{ unit.priceAnnual }}</span> <span>{{unit.category}}</span></v-list-item-subtitle>
@@ -423,6 +444,9 @@ export default {
       showCompany() {
         return this.companies.find(company => company.owner == this.loggedInUser._id )
       },
+      showUnits() {
+        console.log("units", this.units)
+      },
       showStartM() {
         console.log("start", this.startMessages)
       },
@@ -461,7 +485,6 @@ export default {
     mounted() {
       this.$store.dispatch('agents/initAgents')
     },
-      
     created() {
       this.$store.dispatch('profile/initProfile'),
       this.$store.dispatch('admin/getNoOfUsers')
@@ -472,6 +495,13 @@ export default {
 <style lang="scss" scoped>
     .round {
       border-radius: 50%;
+    }
+
+    .agent-list {
+      transition: all 200ms ease-in;
+      &:hover {
+        background: rgba(0, 0, 0, .15);
+      }
     }
 
     .fd-column {
