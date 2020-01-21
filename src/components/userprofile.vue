@@ -33,14 +33,14 @@
                   <v-file-input
                     show-size
                     label="Add your profile pic"
-                    filled
+                    outlined
                     :prepend-icon="camera"
                     accept="image/png, image/jpeg, image/jpg"
                   ></v-file-input>
                   <v-text-field
                     name="firstName"
                     label="First name"
-                    filled
+                    outlined
                     v-model.trim="$v.firstName.$model"
                     id="firstName"
                     :error-messages="fnameErrors"
@@ -53,7 +53,7 @@
                   <v-text-field
                     name="secondName"
                     label="Second Name"
-                    filled
+                    outlined
                     v-model.trim="$v.secondName.$model"
                     id="secondName"
                     :error-messages="snameErrors"
@@ -66,7 +66,7 @@
                   <v-text-field
                     name="telephone"
                     label="Telephone"
-                    filled
+                    outlined
                     v-model.trim="$v.telephone.$model"
                     @input="$v.telephone.$touch()"
                     id="telephone"
@@ -78,7 +78,7 @@
                     autocomplete="on"
                   ></v-text-field>
                   <v-textarea
-                      filled
+                      outlined
                       name="description"
                       cleareable
                       :clear-icon="clear"

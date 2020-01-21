@@ -110,6 +110,25 @@ const unit = {
                 commit('setUnitFail')
             })
         },
+        addUnitImage({ dispatch }, data) {
+            unitService.addUnitImages(data.companySlug, data.unitId, data.image)
+            .then(response => {
+                dispatch('alert/successAlert', {
+                    mKey: getRandomInt(),
+                    message: response.data.message,
+                    type: 'success',
+                    stage: true
+                })
+            })
+            .catch(error => {
+                dispatch('alert/errorAlert', {
+                    mKey: getRandomInt(),
+                    message: "Successfully added the image",
+                    type: 'warning',
+                    stage: true
+                }, {root: true})
+            })
+        },
         getUnitById({ commit }, unitId) {
             commit('getSingleUnitRequest')
             unitService.getSingleUnit(unitId)

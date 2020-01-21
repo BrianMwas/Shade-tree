@@ -58,6 +58,26 @@ export default [
         }
     },
     {
+        path: "/auth/after-login",
+        name: "AfterLogin",
+        view: "AfterLogin",
+        meta : {
+            requiresAuth: true
+        },
+        beforeEnter(to, from, next) {
+            if (window.$cookies.isKey('user')) {
+                next();
+            } else {
+                store.dispatch('alert/errorAlert', {
+                    mKey: Math.floor(Math.random() * Math.floor(20)),
+                    message: "Please login first",
+                    type: "error"
+                }, { root: true });
+                next('/login')
+            }
+        }
+    },
+    {
         path: '/auth/user-activation/:userId',
         name: "ActivateAccount",
         view: "Activation"

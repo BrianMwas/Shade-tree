@@ -28,7 +28,7 @@
                     <v-text-field
                       name="username"
                       label="Username"
-                      filled
+                      outlined
                       v-model.trim="$v.username.$model"
                       id="username"
                       :error-messages="usernameErrors"
@@ -41,7 +41,7 @@
                     <v-text-field
                       name="email"
                       label="Email"
-                      filled
+                      outlined
                       v-model.trim="$v.email.$model"
                       id="email"
                       :error-messages="emailErrors"
@@ -54,7 +54,7 @@
                    <v-text-field
                     name="password"
                     label="password"
-                    filled
+                    outlined
                     v-model.trim="$v.password.$model"
                     id="password"
                     :error-messages="passwordErrors"
@@ -67,7 +67,7 @@
                    <v-text-field
                     name="confirmation"
                     label="Password Confirmation"
-                    filled
+                    outlined
                     v-model.trim="$v.confirmation.$model"
                     id="confirm"
                     :error-messages="confirmationErrors"

@@ -4,6 +4,7 @@
 
 <script>
 export default {
+    name: "search-focus",
     mounted() {
         this.handler = event => {
             this.$emit('keyup', event)

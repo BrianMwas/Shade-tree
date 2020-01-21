@@ -46,7 +46,7 @@
         						<v-text-field
 				                    name="password"
 				                    label="Old password"
-				                    filled
+				                    outlined
 				                    v-model.trim="$v.oldPassword.$model"
 				                    id="oldPassword"
 				                    :error-messages="oldPasswordErrors"
@@ -60,7 +60,7 @@
         						<v-text-field
 				                    name="password"
 				                    label="New password"
-				                    filled
+				                    outlined
 				                    v-model.trim="$v.newPassword.$model"
 				                    id="newPassword"
 				                    :error-messages="newPasswordErrors"
@@ -74,7 +74,7 @@
 				                   <v-text-field
 				                    name="confirmation"
 				                    label="Password Confirmation"
-				                    filled
+				                    outlined
 				                    v-model.trim="$v.repeatPassword.$model"
 				                    id="repeatPassword"
 				                    :error-messages="repeatPasswordErrors"

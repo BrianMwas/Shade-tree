@@ -24,13 +24,14 @@ const auth = {
     activate({dispatch, commit}, userId) {
       authService.activateAccount(userId)
       .then(response => {
-        console.log("activation response", response.data);
-        commit('activateAccountSuccess', response.data.data);
+        console.log("activation response", response.data.message);
+        commit('activateAccountSuccess', response.data.message);
         setTimeout(() => {
           router.push("/login")
         }, 20000)
       })
       .catch(error => {
+        console.log("yes", error.response)
         dispatch('alert/errorAlert', {
           mKey: getRandomInt(),
           message: error.response,
@@ -62,7 +63,7 @@ const auth = {
                 { root: true })
            
            if(!user.data.roles['admin']) {
-              router.push('/dashboard')
+              router.push('/auth/after-login')
            } else {
               router.push('/admin')
            }

@@ -1,5 +1,6 @@
 <template>
     <div class="search mr-5">
+        <!-- <search-focus @keyup="focusSearch"></search-focus> -->
         <div>
             <v-text-field
             v-model="search"
@@ -16,14 +17,18 @@
             @blur="searchResultsVisible = false"
             @focus="searchResultsVisible = true"
             @keydown.esc="searchResultsVisible = false"
+            @keydown.up.prevent="highlightPrevious"
+            @keydown.down.prevent="highlightNext"
+            @keydown="performSearch"
             @input="softReset"
             ref="search"
-        ></v-text-field>
+            ></v-text-field>
         </div>
-    
-        <div v-if="search.length > 0 && searchResultsVisible">
-            <div>
-                <router-link to="/blogs">
+
+        <!-- Results -->
+        <div v-if="search.length > 0 && searchResultsVisible" class="searchResults">
+            <div ref="results">
+                <router-link v-for="(unit, i) in searchResults" :key="unit.id" :to="unit._id" :class="{ 'blue blue-lighten-3': i === highlightedIndex }">
                     <span>
                         KSH 45000
                     </span>
@@ -44,14 +49,22 @@
 
 <script>
 import { mdiCancel } from '@mdi/js'
-
+import SearchFocus from './SearchFocus';
 export default {
     name: 'Search',
+    props: {
+        dta: Array
+    },
+    components: {
+        SearchFocus
+    },
     data () {
         return {
             mdiCancel,
             search: '',
             searchResultsVisible: false,
+            searchResults: [],
+            highlightedIndex: 0,
             options: {
                 shouldSort: true,
                 threshold: 0.6,
@@ -60,8 +73,8 @@ export default {
                 maxPatternLength: 32,
                 minMatchCharLength: 3,
                 keys: [
-                    "title",
-                    "author.firstName"
+                    "price",
+                    "description"
                 ]
             }
         }
@@ -72,6 +85,32 @@ export default {
         },
         softReset () {
             this.searchResultsVisible = true;
+        },
+        focusSearch(e) {
+            if(e.key === "/") {
+                this.$refs.search.focus()
+            }
+        },
+        performSearch () {
+            this.$search(this.query, this.dta, this.options)
+            .then(results => {
+                this.searchResults = results
+            })
+        },
+        highlightPrevious() {
+            if(this.highlightedIndex > 0) {
+                this.highlightedIndex -= 1;
+                scrollIntoView()
+            }
+        },
+        highlightNext() {
+            if(this.highlightedIndex < this.searchResults.length - 1) {
+                this.highlightedIndex += 1;
+                scrollIntoView()
+            }
+        },
+        scrollIntoView() {
+            this.$refs.results.children(this.highlightedIndex).scrollIntoView({ block: 'nearest' })
         }
     }
 }
@@ -89,14 +128,14 @@ export default {
             width: 70%;
         }
 
-        div:nth-child(2) {
+        .searchResults {
             position: absolute;
             left: 0;
             z-index: 15;
             min-width: 100%;
             max-width: 400%;
             height: auto;
-            min-height: 25vh;
+            height: auto;
             overflow-y: scroll;
             background: white;
             text-align: left;

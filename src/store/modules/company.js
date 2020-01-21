@@ -1,4 +1,5 @@
 import { companyService } from '../../services/companyService';
+import router from '../../router/index';
 
 const MATH_RANDOM_INT = 20
 
@@ -168,6 +169,7 @@ const company = {
 					}, { root: true })
 				}
 				commit('addCompanySuccessful', company.data.data)
+				router.push("/dashboard")
 			})
 			.catch(error => {
 				commit('addingCompanyFail');

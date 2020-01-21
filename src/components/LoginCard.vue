@@ -11,24 +11,27 @@
         <v-card-title class="title font-weight-regular justify-space-between">
             Login    
         </v-card-title>
-        <v-alert 
-        class="my-5 mx-3" 
-        border="left" 
-        close-label="Close alert" 
-        v-if="Messages.length > 0" 
-        :type="message.type" 
-        dismissible
-        v-for="message in Messages"
-        :key="message.mKey"
-        >
-            {{message.message}}
-        </v-alert>
+        <div v-if="Messages.length > 0">
+            <v-alert 
+                class="my-5 mx-3" 
+                border="left" 
+                close-label="Close alert" 
+                
+                :type="message.type" 
+                dismissible
+                v-for="message in Messages"
+                :key="message.mKey"
+            >
+                {{message.message}}
+            </v-alert>
+        </div>
+        
         <v-card-text>
             <form @submit.prevent="login">
                 <v-text-field
                     label="Email"
                     type="email"
-                    filled
+                    outlined
                     autocomplete="on"
                     :error-messages="emailErrors"
                     v-model.trim="$v.email.$model"
@@ -38,7 +41,7 @@
                 ></v-text-field>
                 <v-text-field
                     label="Password"
-                    filled
+                    outlined
                     autocomplete="on"
                     v-model.trim="$v.password.$model"
                     :error-messages="passwordErrors"
@@ -112,7 +115,7 @@ export default {
                 navigator.vibrate([150, 150, 150]);
             } else {
                 this.submitStatus = "PENDING";
-                this.submitStatus = "OK"
+                this.submitStatus = "OKAY"
                 this.loginUser(data)
                 this.email = this.password = this.confirmation = "";
                 this.$v.$reset()
@@ -165,5 +168,10 @@ export default {
        ul li {
            list-style: none;
        }
+    }
+
+    li a:hover {
+        color: rgb(0, 132, 255);
+        text-decoration: underline;
     }
 </style>

@@ -21,7 +21,7 @@
                     
                 <v-text-field
                     name="unitName"
-                    filled
+                    outlined
                     label="Enter Units name"
                     required
                     clearable
@@ -34,7 +34,7 @@
                     max="15"
                 ></v-text-field>
                 <v-textarea
-                    filled
+                    outlined
                     name="description"
                     cleareable
                     :clear-icon="clear"
@@ -50,7 +50,7 @@
                 <v-text-field
                     name="streetname"
                     label="Streetname"
-                    filled
+                    outlined
                     v-model="$v.streetname.$model"
                     :error-messages="streetNameErrors"
                     color="green darken-3"
@@ -59,7 +59,7 @@
                 <v-text-field
                     name="category"
                     label="Category"
-                    filled
+                    outlined
                     v-model="$v.category.$model"
                     :error-messages="categoryErrors"
                     color="green darken-3"
@@ -73,14 +73,14 @@
                             :error-messages="roomErrors"
                             label="Select number of rooms"
                             color="green darken-3"
-                            filled
+                            outlined
                         ></v-select>
                         <v-select
                             v-model="$v.bathrooms.$model"
                             :error-messages="bathroomError"
                             :items="bathroomNumber"
                             label="Select number of bathrooms"
-                            filled
+                            outlined
                             color="green darken-3"
                         ></v-select>
                         <v-text-field
@@ -91,7 +91,7 @@
                             label="Select the square feet in metre squared"
                             v-model.number="$v.area.$model"
                             :error-messages="areaErrors"
-                            filled
+                            outlined
                             color="green darken-3"
                         ></v-text-field>
                     
@@ -102,7 +102,7 @@
                     name="priceAnnual"
                     type="number"
                     required="true"
-                    filled
+                    outlined
                     v-model.number.trim="$v.priceAnnual.$model"
                     :error-messages="priceAnnualErrors"
                     color="green darken-3"
@@ -111,7 +111,7 @@
                 <v-text-field
                     name="priceMonth"
                     type="number"
-                    filled
+                    outlined
                     v-model.number.trim="$v.priceMonth.$model"
                     :error-messages="priceMonthErrors"
                     label="Enter the monthly rent"

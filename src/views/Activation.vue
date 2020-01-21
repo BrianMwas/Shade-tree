@@ -24,10 +24,8 @@
                         flat
                         min-height="220"
                     >
-                    
-                    
                     <v-toolbar color="green lighten-1">
-                        <v-toolbar-title class="white--text">Account activation success</v-toolbar-title>
+                        <v-toolbar-title class="white--text">{{ activationMessage }}</v-toolbar-title>
                     </v-toolbar>
                         <v-card-text class="py-3">
                             <div 
@@ -45,8 +43,15 @@
                                     {{message.message}}
                                 </v-alert>
                             </div>
-                            <p class="heading grey--text text--darken-4 text-center"><span class="blue--text text--lighten-3">{{ activationMessage }}</span> redirecting towards login...</p>
-                            <p class="grey--text text--darken-3 mt-5">Go back to <router-link to="/login" class="green--text">login now</router-link></p>
+                            <v-img
+                                src="@/assets/activation-success.png"
+                                :aspect-ratio="1"
+                                class="my-3"
+                                contain
+                            ></v-img>
+                            <v-btn to="/login" color="success" class="text-center" block depressed>
+                                Go to login
+                            </v-btn>
                         </v-card-text>
                     </v-card>
                  </div>
@@ -66,29 +71,30 @@ export default {
         Footer
     },
     methods: {
-        ...mapActions('auth', ["activation"]),
-        ...mapActions('alert', ['errorAlert']),
+        ...mapActions('auth', ["activate"]),
+        ...mapActions('alert', ['errorAlert', 'successAlert']),
             getSuccessMessage () {
+                console.log("userId", this.$route.params.userId)
             if(!this.$route.params.userId || this.$route.params.userId.length < 24) {
                 this.$router.push("/login");
-                this.errorAlert({
-                    mKey: Math.floor(Math.random() * Math.floor(20)),
-                    messages: "Invalid link. Use the link sent to your email",
-                    type: "error"
-                })
             } else {
-                this.activation(this.$route.params.userId)                
+                this.activate(this.$route.params.userId)         
             }
         }
     },
     computed: {
         ...mapState({
-            messages: state => state.alert.Messages,
+            Messages: state => state.alert.Messages.map(m => m.Raw),
             activationMessage: state => state.auth.activationSuccessMessage
         }),
     },
-    created () {
-        this.getSuccessMessage()
+     watch: {
+      $route : {
+        immediate: true,
+         handler(to, from) {
+          this.getSuccessMessage()
+        }
+      }
     }
 }
 </script>

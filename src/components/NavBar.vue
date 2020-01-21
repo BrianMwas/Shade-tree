@@ -138,7 +138,7 @@
         <v-toolbar-title class="hidden-sm-and-down">Shade tree</v-toolbar-title>
 
         <v-spacer></v-spacer>
-         <Search/>
+         <search :dta="units"></search>
           <v-toolbar-items class="d-none d-md-flex d-lf-flex">
                
                  <slot>
@@ -164,7 +164,7 @@ export default {
   name: 'NavBar',
   props: ['loggedIn', 'user'],
   components: {
-    Search
+    "search" : Search
   },
   data () {
     return {
@@ -240,6 +240,9 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      units: state => state.unit.units.results
+    }),
     ...mapGetters(['loggedInUserType'])
   }
 }

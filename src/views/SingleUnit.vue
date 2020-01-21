@@ -33,11 +33,26 @@
             width="100%"
             class="mt-3"
           >
-            <v-img 
+          <carousel
+            :perPageCustom="[[480, 1], [768, 1], [1024, 2]]"
+            :scrollPerPage="true"
+          >
+            <slide>
+              <v-img 
               height="400"
               src="@/assets/seat.jpg"
               aspect-ratio="16/9"
             ></v-img>
+            </slide>
+            <slide>
+              <v-img 
+              height="400"
+              src="@/assets/seat.jpg"
+              aspect-ratio="16/9"
+            ></v-img>
+            </slide>
+          </carousel>
+            
           </v-card>
 
           <v-row>
@@ -168,13 +183,17 @@ import AgentCard from '@/components/AgentCard.vue'
 import { mdiMapMarker, mdiBedSingleOutline, mdiToilet, mdiShareOutline, mdiShield, mdiParking, mdiCalendar, mdiVectorSquare } from '@mdi/js'
 
 import { mapActions, createNamespacedHelpers } from 'vuex';
-const { mapState } = createNamespacedHelpers('unit')
+const { mapState } = createNamespacedHelpers('unit');
+import { Carousel, Slide } from 'vue-carousel';
+
 export default {
   name: 'SingleUnit',
   components: {
     NavBar,
     'agent-card': AgentCard,
-    Footer
+    Footer,
+    Carousel,
+    Slide
   },
   data () {
     return {

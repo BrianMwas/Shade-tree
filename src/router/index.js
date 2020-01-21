@@ -23,7 +23,7 @@ function route(path, view, name, meta, beforeEnter) {
 const router = new VueRouter({
   mode: 'history',
   routes: paths.map(path => route(path.path, path.view, path.name, path.meta, path.beforeEnter)).concat([
-    { path: '*', redirect: '/' }
+    { path: '*', component: import("@/views/404.vue") }
   ]),
   scrollBehavior (to, from, savedPosition) {
     if (savedPosition) {

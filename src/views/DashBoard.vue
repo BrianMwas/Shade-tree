@@ -24,15 +24,9 @@
                     </v-card-title>
                     <v-card-text>
                       
-                        <v-select
-                          :items="agents.map(agent => agent.username)"
-                          label="Agent*"
-                          required
-                          filled
-                          color="green darken-3"
-                        ></v-select>
+                        <h4>{{agentUsername}}</h4>
                         <v-textarea
-                          filled
+                          outlined
                           name="description"
                           cleareable
                           :clear-icon="clear"
@@ -68,332 +62,19 @@
                 <v-btn flat color="success" @click.native="message.stage = false">Close</v-btn>
               </v-snackbar>
               <div v-if="loggedInUserType == 'owner'">
-                <v-card>
-                  <v-img
-                    height="150"
-                    aspect-ratio="16/9"
-                    src="@/assets/ginger-pot.jpg"
-                    gradient="to top, rgba(0, 0, 0, 87), rgba(0, 0, 0, .25)"
-                    class="white--text align-start"
-                  >
-                    <v-row align="end" class="lightbox white--text pa-2 fill-height">
-                      <v-col>
-                        <div class="heading white--text display-1">{{loggedInUser.username}}</div>
-                        <div class="body-1">{{loggedInUser.email}}</div>
-                      </v-col>
-                    </v-row>
-                  </v-img>
-                 
-
-                  <v-card-actions>
-                    <v-btn color="green" depressed class="white--text" to="newunit">ADD Unit</v-btn>
-                    <v-btn color="primary" v-if="company" text>EDIT Company</v-btn>
-                    <v-btn v-else color="red darken-1">Add Company</v-btn>
-                  </v-card-actions>
-                </v-card>
-                <v-row>
-                  <!-- Company agents -->
-                  <v-col cols="12" lg="4" md="6" sm="12">
-                    <v-card>
-                      <v-toolbar color="primary">
-                        <v-toolbar-title class="white--text">Agents</v-toolbar-title>
-                      </v-toolbar>
-                      <v-card-text>
-                        <div v-if="company.agents.length <= 0">
-                          <p class="text-center">You don't have any agents yet</p>
-                        </div>
-                        <div v-else>
-                          <p>You have a couple of agents</p>
-                        </div>
-                      </v-card-text>
-                    </v-card>
-                  </v-col>
-                  <!-- Where all agents prospecting will be at -->
-                  <v-col cols="12" lg="4" md="6" sm="12">
-                    <v-card>
-                      <v-toolbar color="purple">
-                        <v-toolbar-title class="white--text">All Agents</v-toolbar-title>
-                      </v-toolbar>
-                      <v-card-text>
-                        <v-list two-line>
-                          <v-list-item class="agent-list" v-for="agent in agents" :key="agent._id">
-                            <v-list-item-content>
-                              <v-list-item-title>{{ agent.username }}</v-list-item-title>
-                              <v-list-item-subtitle><span class="font-weight-bold mr-3">{{ agent.email }}</span></v-list-item-subtitle>
-                            </v-list-item-content>
-                          </v-list-item>
-                        </v-list>
-                      </v-card-text>
-                    </v-card>
-                  </v-col>
-                  <!-- Company details -->
-                  <v-col cols="12" lg="4" md="6" sm="12">
-                    <v-card>
-                      <v-toolbar color="green darken-3">
-                        <v-toolbar-title class="white--text">Company Details</v-toolbar-title>
-                      </v-toolbar>
-                      <v-card-text>
-                        <v-list two-line>
-                          <v-list-item>
-                            <v-list-item-content>
-                              <v-list-item-title>{{ company.name }}</v-list-item-title>
-                              <v-list-item-subtitle>{{company.description}}</v-list-item-subtitle>
-                            </v-list-item-content>
-                          </v-list-item>
-                          <v-divider></v-divider>
-                          <v-list-item>
-                            <v-list-item-content>
-                              <v-list-item-title>{{ company.email }}</v-list-item-title>
-                              <v-list-item-subtitle>{{company.website}}</v-list-item-subtitle>
-                            </v-list-item-content>
-                          </v-list-item>
-                          <v-list-item>
-                            <v-list-item-content>
-                              <v-list-item-title>{{ company.internationalFormat }}</v-list-item-title>
-                              <v-list-item-subtitle>{{company.nationalFormat}}</v-list-item-subtitle>
-                            </v-list-item-content>
-                          </v-list-item>
-                        </v-list>
-                      </v-card-text>
-                    </v-card>
-                  </v-col>
-                  
-                </v-row>
-                <v-row>
-                  <v-col cols="12" lg="8" md="6" sm="12">
-                    <v-card>
-                      <v-toolbar color="red">
-                        <v-toolbar-title class="white--text">Units</v-toolbar-title>
-                      </v-toolbar>
-                      <v-card-text>
-                        <v-list two-line>
-                          <v-list-item v-for="unit in units.results" :key="unit._id">
-                            <v-list-item-content>
-                              <v-list-item-title>{{ unit.name }}</v-list-item-title>
-                              <v-list-item-subtitle><span class="font-weight-bold mr-3">{{ unit.priceAnnual }}</span> <span>{{unit.category}}</span></v-list-item-subtitle>
-                            </v-list-item-content>
-                          </v-list-item>
-                        </v-list>
-                      </v-card-text>
-                    </v-card>
-                  </v-col>
-                  <v-col cols="12" lg="4" md="6" sm="12">
-                    <v-card>
-                      <v-toolbar color="purple">
-                        <v-toolbar-title class="white--text">Messages</v-toolbar-title>
-                      </v-toolbar>
-                      <v-card-text>
-                        <p>Where your company messages will be</p>
-                        <v-btn color="primary" @click="showCompany">Company</v-btn>
-                      </v-card-text>
-                    </v-card>
-                  </v-col>
-                </v-row>
+                
+                <owner-view 
+                  :loggedInUser="loggedInUser"
+                  :units="companyUnits"
+                  :company="company"
+                  :agents="agents"></owner-view>
+                
               </div>
               <div v-else-if="loggedInUserType == 'user'">
-                <v-row>
-                  <v-col
-                    cols="12"
-                    xs="12"
-                    md="7"
-                    lg="8"
-                  >
-                  
-                    <v-card class="mb-2">
-                      <v-img
-                        src="@/assets/galaxy.jpg"
-                        :aspect-ratio="16/9"
-                      >
-                        <!-- <div class="p-5">
-                            <h2 class="white--text dispaly-1">{{loggedInUser.username}}</h2>
-                            <h5 class="white--text font-weight-light display-5">{{loggedInUser.email}}</h5>
-                        </div> -->
-                          <v-row align="end" class="lightbox white--text pa-2 fill-height">
-                            <v-col>
-                              <div class="heading white--text display-1">{{loggedInUser.username}}</div>
-                              <div class="body-1">{{loggedInUser.email}}</div>
-                            </v-col>
-                          </v-row>
-                      </v-img>
-                    </v-card>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    xs="12"
-                    md="5"
-                    lg="4">
-                      <v-card class="mb-2">
-                      <v-toolbar color="purple">
-                        <v-toolbar-title class="white--text">
-                          Saved Units
-                        </v-toolbar-title>
-                        <v-spacer></v-spacer>
-                        <v-btn icon ripple @click="getAgents">
-                          <v-icon color="white">{{ bin }}</v-icon>
-                        </v-btn>
-                      </v-toolbar>
-                      <v-card-text>
-                        <p>This is my saved units box</p>
-                      </v-card-text>
-                    </v-card>
-                  </v-col>
-                </v-row>
-                <v-row>
-                  <v-col
-                    cols="12"
-                    sm="12"
-                    md="7"
-                    lg="7"
-                  >
-                    <v-card>
-                      <v-toolbar color="cyan">
-                        <v-toolbar-title class="white--text">
-                          Map
-                        </v-toolbar-title>
-                        <!-- <v-spacer></v-spacer>
-                        <v-btn icon ripple @click="getAgents">
-                          <v-icon color="white">{{ bin }}</v-icon>
-                        </v-btn> -->
-                      </v-toolbar>
-                      <v-card-text>
-                        <p>This is your map view</p>
-                      </v-card-text>
-                    </v-card>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="12"
-                    md="5"
-                    lg="5"
-                  >
-                    <v-card class="mb-2">
-                      <v-toolbar color="green darken-1">
-                        <v-toolbar-title class="white--text">
-                          Agents
-                        </v-toolbar-title>
-                        <v-spacer></v-spacer>
-                        <v-btn icon ripple @click="getAgents">
-                          <v-icon color="white">{{ refreshIcon }}</v-icon>
-                        </v-btn>
-                      </v-toolbar>
-                      <v-card-text>
-                      
-                        
-                        <div v-if="agents.length > 0">
-                          <v-list two-line>
-                             <v-list-item
-                              v-for="agent in agents"
-                              :key="agent.id"
-                             >
-                              <v-list-item-avatar>
-                                <v-img src="@/assets/face.jpg"></v-img>
-                              </v-list-item-avatar>
-
-                              <v-list-item-content>
-                                <v-list-item-title v-text="agent.username"></v-list-item-title>
-                                <v-list-item-subtitle v-text="agent.email"></v-list-item-subtitle>
-                              </v-list-item-content>
-                              <v-list-item-icon>
-                                <!-- <v-btn @click="sendMessage"  color="success"> -->
-                                  <v-icon @click="sendMessage(agent._id)" color="primary">{{ messageIcon }}</v-icon>
-                                <!-- </v-btn> -->
-                              </v-list-item-icon>
-                             </v-list-item>
-                          </v-list>
-                          
-                        </div>
-                        <div v-else>
-                          <div class="d-flex justify-center align-center">
-                            <p>Sorry we could not find any agents</p>
-                          </div>
-                        </div>
-                      </v-card-text>
-                    </v-card>
-                  </v-col>
-                </v-row>
+                <regular-user :agentUsername="agentUsername" :dialog="dialog" :agents="agents" :loggedInUser="loggedInUser"></regular-user>
               </div>  
               <div v-else>
-                <v-row>
-                  <v-col
-                    cols="12"
-                    xs="12"
-                    md="7"
-                    lg="8"
-                  >
-                  
-                    <v-card class="mb-2">
-                      <v-img
-                        src="@/assets/galaxy.jpg"
-                        :aspect-ratio="16/9"
-                      >
-                        <!-- <div class="p-5">
-                            <h2 class="white--text dispaly-1">{{loggedInUser.username}}</h2>
-                            <h5 class="white--text font-weight-light display-5">{{loggedInUser.email}}</h5>
-                        </div> -->
-                          <v-row align="end" class="lightbox white--text pa-2 fill-height">
-                            <v-col>
-                              <div class="heading white--text display-1">{{loggedInUser.username}}</div>
-                              <div class="body-1">{{loggedInUser.email}}</div>
-                            </v-col>
-                          </v-row>
-                      </v-img>
-                    </v-card>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    xs="12"
-                    md="5"
-                    lg="4">
-                      <v-card class="mb-2">
-                      <v-toolbar color="purple">
-                        <v-toolbar-title class="white--text">
-                          Saved Companies
-                        </v-toolbar-title>
-                        <v-spacer></v-spacer>
-                        <v-btn icon ripple @click="getAgents">
-                          <v-icon color="white">{{ bin }}</v-icon>
-                        </v-btn>
-                      </v-toolbar>
-                      <v-card-text>
-                        <p>This is my prospecting companies box</p>
-                      </v-card-text>
-                    </v-card>
-                  </v-col>
-                  
-                </v-row>
-                <v-row>
-                  <v-col 
-                    cols="12"
-                    xs="12"
-                    md="6"
-                    lg="6"
-                  >
-                    <v-card>
-                      <v-toolbar color="primary">
-                        <v-toolbar-title class="white--text">Companies</v-toolbar-title>
-                      </v-toolbar>
-                      <v-card-text>
-                        <p>This inlcudes the companies I can request..</p>
-                      </v-card-text>
-                    </v-card>
-                  </v-col>
-                  <v-col 
-                    cols="12"
-                    xs="12"
-                    md="6"
-                    lg="6"
-                  >
-                    <v-card>
-                      <v-toolbar color="secondary">
-                        <v-toolbar-title class="white--text">Clients</v-toolbar-title>
-                      </v-toolbar>
-                      <v-card-text>
-                        <p>This inlcudes the messages from clients.</p>
-                      </v-card-text>
-                    </v-card>
-                  
-                  </v-col>
-                </v-row>
+                <agent-view :loggedInUser="loggedInUser" :companies="companies"></agent-view>
               </div>            
             </v-container>
         </v-content>
@@ -405,20 +86,31 @@
 
 
 import NavBar from '@/components/NavBar.vue';
+import RegularUser from "@/components/RegularUser.vue";
+import AgentView from "@/components/AgentView.vue";
+import OwnerView from "@/components/OwnerView.vue"
 import Footer from '@/components/Footer.vue';
 import { mapState, mapActions, createNamespacedHelpers } from 'vuex';
 const { mapGetters } = createNamespacedHelpers('auth');
+
+
 
 import { mdiPencil, mdiArrowUp, mdiArrowDown, mdiMessage, mdiRefresh, mdiDelete, mdiCancel, mdiCamera } from '@mdi/js'
 export default {
     name: 'Dashboard',
     components: {
         NavBar,
+        PictureInput,
+        OwnerView,
+        AgentView,
+        RegularUser,
         Footer
     },
     data () {
         return {
+            
             dialog: false,
+            tab: null,
             bin: mdiDelete,
             up: mdiArrowUp,
             down: mdiArrowDown,
@@ -426,7 +118,8 @@ export default {
             refreshIcon: mdiRefresh,
             clear: mdiCancel,
             camera: mdiCamera,
-            showCompanyModule: false
+            showCompanyModule: false,
+            agentUsername: ""
         }
     },
     methods: {
@@ -434,53 +127,29 @@ export default {
       ...mapActions('auth', ['logOutUser']),
       ...mapActions('agents', ['getAgents']),
       ...mapActions('profile', ['initProfile']),
-      sendMessage(id) {
-        this.dialog = true
-        console.log("Your profile", this.agents.find(agent =>agent.id == id).email)
-      },
+      
       showCompanyProfileModule() {
         this.showCompanyModule = true
-      },
-      showCompany() {
-        return this.companies.find(company => company.owner == this.loggedInUser._id )
-      },
-      showUnits() {
-        console.log("units", this.units)
-      },
-      showStartM() {
-        console.log("start", this.startMessages)
-      },
-      showStageM() {
-        console.log("stage", this.stageMessages)
       }
     },
     computed : {
       ...mapState({
         loggedIn: state => state.auth.status,
         Messages: state => state.alert.Messages.map(n => n.Raw),
+        agentNames: states => state.agents.agents.map(a => a.username),
         agents: state => state.agents.agents,
         gettingAgents: state => state.agents.retrievingAgents,
         companies: state => state.company.companies,
         units: state => state.unit.units
       }),
       ...mapGetters(['loggedInUser', 'loggedInUserType', 'logged']),
-      paramer () {
-          return this.$route.params.username
-      },
-      formTitle () {
-        return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
-      },
-      company: {
-        get() {
+      company() {
           return this.companies.find(company => company.owner == this.loggedInUser._id)
-        }
       },
-      startMessages () {
-        return this.Messages.find(messages => messages.stage == "start")
+      companyUnits () {
+        return this.units.find(u => u.company == this.company)
       },
-      stageMessages () { 
-        return this.Messages.find(messages => messages.stage == "within")
-      }
+      
     },
     mounted() {
       this.$store.dispatch('agents/initAgents')

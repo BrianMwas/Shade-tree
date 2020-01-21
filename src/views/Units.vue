@@ -247,12 +247,6 @@ export default {
         alerts: state => state.alert.Messages
       }),
     ...mapGetters(['loggedInUser', 'loggedInUserType', 'logged'])   
-  },
-  watch: {
-    filter: {
-      handler: 'filterUnits',
-      immediate: true
-    }
   }
 }
 </script>

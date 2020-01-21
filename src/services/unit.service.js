@@ -50,9 +50,16 @@ async function updateUnit(unitId, data) {
 }
 
 
-async function addUnitImages(companySlug, unitId, images) {
-    let url = await buildUrl(`company/:companySlug/units/:unitId/images`);
-    return axios.post(url, images, config)
+async function addUnitImages(companySlug, unitId, file) {
+    let url = await buildUrl(`company/${companySlug}/units/${unitId}/images`);
+    let formData = new FormData()
+    formData.append(file, "images");
+    let config = {
+        headers: {
+            'content-type': 'multipart/form-data'
+        }
+    }
+    return axios.post(url, formData, config);
 }
 
 async function addUnitReview(unitId, data) {

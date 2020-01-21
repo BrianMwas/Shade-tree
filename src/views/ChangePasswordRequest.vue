@@ -49,7 +49,7 @@
                                 <v-text-field
                                     name="email"
                                     label="Email"
-                                    filled
+                                    outlined
                                     type="email"
                                     autocomplete="on"
                                     :error-messages="emailErrors"

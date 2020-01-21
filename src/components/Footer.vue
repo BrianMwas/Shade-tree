@@ -15,7 +15,7 @@
                         <router-link to="/about-us">About Us</router-link>
                     </li>
                     <li>
-                        <a href="#">FAQ's</a>
+                        <router-link to="/about-us#faqs">FAQS</router-link>
                     </li>
                     <li>
                         <a href="#">Support</a>
