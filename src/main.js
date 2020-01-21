@@ -4,9 +4,19 @@ import router from '@/router'
 import store from '@/store'
 import vuetify from './plugins/vuetify';
 import VueCookies from 'vue-cookies'
-import VueFuse from "vue-fuse"
+import VueFuse from "vue-fuse";
+import VueAnalytics from "vue-analytics";
 
 import './plugins';
+
+// Vue.use(VueAnalytics, {
+//   id: "",
+//   router,
+//   ignoreRoutes: ["/"],
+//   autoTracking: {
+//     screenview: true
+//   }
+// })
 
 
 // Validation
