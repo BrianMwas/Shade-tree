@@ -223,7 +223,7 @@ export default {
             categories: ["Apartment", "Mansionette", "Bedsitter", "Single room", "Double room", "Stall", "Workspace"],
             security: ["Bad", "Fair", "Good", "Very Good"],
             Years: ["2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019"],
-            dateComplete: new Date().toISOString().substr(0, 10),
+            
             
             name: '',
             description: '',
