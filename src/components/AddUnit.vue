@@ -26,12 +26,12 @@
                     required
                     clearable
                     :rules="rules"
-                    counter="15"
+                    counter="50"
                     v-model="$v.name.$model"
                     :error-messages="nameErrors"
                     color="green darken-3"
                     type="text"
-                    max="15"
+                    max="50"
                 ></v-text-field>
                 <v-textarea
                     outlined
@@ -39,6 +39,7 @@
                     cleareable
                     :clear-icon="clear"
                     rows="4"
+                    hint="Say more about your unit"
                     row-height="20"
                     v-model="$v.description.$model"
                     :error-messages="descriptionErrors"
@@ -56,17 +57,30 @@
                     color="green darken-3"
                     type="text"
                 ></v-text-field>
-                <v-text-field
-                    name="category"
-                    label="Category"
-                    outlined
+                <v-select
                     v-model="$v.category.$model"
+                    :items="categories"
                     :error-messages="categoryErrors"
+                    label="Select unit category"
                     color="green darken-3"
-                    type="text"
-                ></v-text-field>
+                    outlined
+                    hint="Units with rooms above 3 will be an apartment"
+                    name="category"
+                ></v-select>
                 <h3 class="green--text">Unit space</h3>
-                <div class="flex-sm-column flex-lg-row flex-md-row" justify="space-between" align="center">
+                <div class="flex-sm-column flex-lg-row flex-md-column" justify="space-between" align="center">
+                    <v-text-field
+                            name="noOfUnits"
+                            required
+                            type="number"
+
+                            label="Select number of units"
+                            v-model.number="unitNumber"
+                            required
+                            outlined
+                            hint="Select if units are the same e.g Stalls"
+                            color="green darken-3"
+                        ></v-text-field>
                         <v-select
                             v-model="$v.rooms.$model"
                             :items="roomNumber"
@@ -96,6 +110,36 @@
                         ></v-text-field>
                     
                 </div>
+
+                <h3 class="green--text">Extra details</h3>
+                <v-text-field
+                    name="Parking"
+                    type="text"
+                    outlined
+                    v-model.trim="parking"
+                    color="green darken-3"
+                    label="Parking"
+                ></v-text-field>
+                <v-select
+                    v-model="completionYear"
+                    :items="Years"
+                    label="Select year completed"
+                    outlined
+                    color="green darken-3"
+                    name="completionYear"
+                ></v-select>
+                <v-select
+                    v-model="securityLevel"
+                    :items="security"
+                    
+                    label="Security level"
+                    hint="How secure is it from the surrounding and within the compund."
+                    color="green darken-3"
+                    outlined
+
+                    name="security"
+                ></v-select>
+
                 <h3 class="green--text">Unit pricing</h3>
                 
                 <v-text-field
@@ -106,7 +150,8 @@
                     v-model.number.trim="$v.priceAnnual.$model"
                     :error-messages="priceAnnualErrors"
                     color="green darken-3"
-                    label="Annual Charge"
+                    label="Price"
+                    hint="price for the unit if on sale"
                 ></v-text-field>
                 <v-text-field
                     name="priceMonth"
@@ -116,6 +161,7 @@
                     :error-messages="priceMonthErrors"
                     label="Enter the monthly rent"
                     color="green darken-3"
+                    hint="price if on rent"
                 ></v-text-field>
 
                 <v-combobox
@@ -169,12 +215,16 @@ export default {
     data() {
         return {
             clear: mdiCancel,
-            rules: [v => v.length <= 15 || 'Maximum 15 characters please.'],
+            rules: [v => v.length <= 50 || 'Maximum 15 characters please.'],
 
             roomNumber: [1, 2, 3, 4, 6, 8, 10],
             bathroomNumber: [1, 2, 3, 4, 5],
             termsAll: ['morgage', 'rent', 'purchase'],
-
+            categories: ["Apartment", "Mansionette", "Bedsitter", "Single room", "Double room", "Stall", "Workspace"],
+            security: ["Bad", "Fair", "Good", "Very Good"],
+            Years: ["2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019"],
+            dateComplete: new Date().toISOString().substr(0, 10),
+            
             name: '',
             description: '',
             streetname: '',
@@ -185,6 +235,10 @@ export default {
             category: "",
             priceAnnual: '',
             priceMonth: '',
+            completionYear: "",
+            securityLevel: "",
+            parking: "",
+            unitNumber: 1,
             submitStatus: null
         }
     },
@@ -192,11 +246,11 @@ export default {
         name:  {
             required,
             min : minLength(2),
-            max : maxLength(20)
+            max : maxLength(50)
         },
         description: {
             required,
-            min: minLength(10),
+            min: minLength(70),
             max: maxLength(200)
         },
         streetname : {
@@ -223,7 +277,7 @@ export default {
         priceAnnual : {
             required,
             numeric, 
-            withinRange: between(0, 1000000)
+            withinRange: between(0, 100000000)
         },
         priceMonth : {
             required,
@@ -233,18 +287,24 @@ export default {
     },
     methods : {
         ...mapActions('unit', ['newUnitAdd']),
+        
        saveUnit () {
             let body =  JSON.stringify({
+                            company: this.companyByOwnerId(this.loggedInUser.id)._id,
                             name: this.name,
                             description: this.description,
                             category: this.category,
-                            street: this.street,
+                            street: this.streetname,
                             area: this.area,
                             bathrooms: this.bathrooms,
                             term: this.terms,
                             priceAnnual: this.priceAnnual,
                             priceMonth: this.priceMonth,
-                            noOfRooms: this.rooms
+                            noOfRooms: this.rooms,
+                            unitNumber: this.unitNumber,
+                            completionYear: parseInt(this.completionYear),
+                            securityLevel: this.securityLevel,
+                            parking: parseInt(this.parking)
                         });
             let data = {
                 url: this.companyByOwnerId(this.loggedInUser.id).slug,
@@ -257,11 +317,15 @@ export default {
             } else {
                 this.submitStatus = "PENDING";
                 this.submitStatus = "OKAY"
-                this.name = this.description =  this.category = this.streetname = this.area = this.priceAnnual = this.priceMonth = "";
+                this.name = this.description = this.parking =  this.category = this.streetname = this.area = this.priceAnnual = this.priceMonth = "";
+                this.unitNumber = 1;
+                this.bathrooms = 1;
+                this.securityLevel = "";
+                this.term = ["rent"]
+
                 this.rooms = this.bathrooms = 1;
                 this.term = ['rent'];
                 this.submitStatus = null;
-                console.log("body", data)
                 this.newUnitAdd(data);
                 this.$v.$reset()
             }
@@ -275,9 +339,9 @@ export default {
             if(!this.$v.name.$dirty) return errors;
             if(!this.$v.name.required) errors.push("Please provide a name");
             if(!this.$v.name.min) {
-                errors.push('Name requires a minimum of 2 charactrers')
+                errors.push('Name requires a minimum of 3 characters')
             } else if(!this.$v.name.max) {
-                errors.push('Name requires a maximum of 20 characters')
+                errors.push('Name requires a maximum of 50 characters')
             }
             
             return errors;
@@ -287,7 +351,7 @@ export default {
             if(!this.$v.description.$dirty) return errors;
             if(!this.$v.description.required) errors.push("Please provide a description");
             if(!this.$v.description.min) {
-                errors.push('Please provide a minimum of 10 characters')
+                errors.push('Please provide a minimum of 70 characters.')
             } 
             if (!this.$v.description.max) {
                 errors.push('Please provide a maximum of 200 characters')

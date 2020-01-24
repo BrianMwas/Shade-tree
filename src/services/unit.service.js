@@ -13,7 +13,9 @@ function buildUrl(url) {
 
 function getUnitsTotal () {
     let url = buildUrl('units/total')
-    return axios.get(url, config)
+    return axios.get(url, {
+        headers: {}
+    })
 }
 
 
@@ -84,10 +86,17 @@ function deleteUnit(unitId) {
 }
 
 
+function getUnitsByCategory(category) {
+    let url = buildUrl(`units/category?category=${category}`);
+    return axios.get(url, config);
+}
+
+
 
 export const unitService =  {
     addNewUnit,
     getAllUnits,
+    getUnitsByCategory,
     updateUnit,
     addUnitReview,
     getSingleUnit,

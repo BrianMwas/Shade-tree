@@ -47,15 +47,20 @@ function updateCompany(companyId, data) {
 }
 
 
-function addCompanyAgents(slug, agentId) {
-	let url = buildUrl(`companies/${slug}/addAgents`);
-	return axios.post(url, agentId, config);
+async function addCompanyAgents(companySlug, agent) {
+	let url = await buildUrl(`companies/${companySlug}/addAgents`);
+	console.log("url", url)
+	return axios.post(url, agent, {
+		headers: {
+			
+		}
+	});
 }
 
 
-function removeAgents(companySlug, agentId) {
-	let burl = buildUrl(`companies/${companySlug}/removeAgents`)
-	return axios.post(burl, agentId, config)
+async function removeAgents(companySlug, agent) {
+	let burl = await buildUrl(`companies/${companySlug}/removeAgents`)
+	return axios.post(burl, agent, config)
 }
 
 export const companyService = {

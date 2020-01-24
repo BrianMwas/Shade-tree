@@ -138,7 +138,7 @@
         <v-toolbar-title class="hidden-sm-and-down">Shade tree</v-toolbar-title>
 
         <v-spacer></v-spacer>
-         <search :dta="units"></search>
+         <search :dta="allUnits"></search>
           <v-toolbar-items class="d-none d-md-flex d-lf-flex">
                
                  <slot>
@@ -179,6 +179,7 @@ export default {
       mdiPhone,
       mdiViewDashboard,
       setting: mdiSettingsBox,
+      allUnits: null,
       items: [
           {
             action: mdiEqualizerOutline,
@@ -190,6 +191,7 @@ export default {
               { title: 'Single rooms', link: 'single-rooms' },
               { title: 'Double rooms', link: 'double-rooms' },
               { title: 'Master ensuite', link: 'master-ensuite' },
+              { title: 'Bedsitter', link: 'bedsitter'},
               { title: 'Stalls', link: 'stalls' },
               { title: 'Workspaces', link: 'workspaces' }
             ],
@@ -237,6 +239,14 @@ export default {
     },
     showR () {
       return this.loggedIn;
+    },
+    setUnits() {
+      if(typeof this.units == Object) {
+        this.allUnits = [this.units];
+      } else {
+        this.allUnits = this.units;
+      }
+      console.log("units nav", this.allUnits)
     }
   },
   computed: {
@@ -244,6 +254,10 @@ export default {
       units: state => state.unit.units.results
     }),
     ...mapGetters(['loggedInUserType'])
+  },
+  created() {
+    this.setUnits()
+
   }
 }
 </script>

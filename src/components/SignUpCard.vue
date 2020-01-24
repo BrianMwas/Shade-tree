@@ -23,6 +23,7 @@
           <v-card-title class="title font-weight-regular justify-space-between">
             Register
           </v-card-title>
+          <v-card-subtitle v-if="$route.query.userType">You are registering as {{ $route.query.userType }}</v-card-subtitle>
           <v-card-text>
               <v-form @submit.prevent="register">
                     <v-text-field

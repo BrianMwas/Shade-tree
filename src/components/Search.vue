@@ -19,7 +19,7 @@
             @keydown.esc="searchResultsVisible = false"
             @keydown.up.prevent="highlightPrevious"
             @keydown.down.prevent="highlightNext"
-            @keydown="performSearch"
+            @keyup="performSearch"
             @input="softReset"
             ref="search"
             ></v-text-field>
@@ -28,19 +28,24 @@
         <!-- Results -->
         <div v-if="search.length > 0 && searchResultsVisible" class="searchResults">
             <div ref="results">
-                <router-link v-for="(unit, i) in searchResults" :key="unit.id" :to="unit._id" :class="{ 'blue blue-lighten-3': i === highlightedIndex }">
+                <a 
+                v-for="(unit, i) in searchResults" 
+                :key="unit.item.id" 
+                :href="/units/ + unit.item._id" 
+                :class="{'blue lighten-3' : i == highlightedIndex}"
+                @mousedown.prevent="searchResultsVisible == true">
                     <span>
-                        KSH 45000
+                        {{unit.item.name}}
                     </span>
                     
                     <span>
-                        <h5 color="grey darken-4">James Gichuru Rd</h5>
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae iure ab voluptate adipisci laboriosam explicabo quas voluptatem, impedit pariatur eum eius ex, magnam, illo reprehenderit iste vitae iusto alias fugiat!</p>
+                        <h5 color="grey darken-4">{{unit.item.streetname}}</h5>
+                        <p>{{unit.item.description}}</p>
                     </span>
-                </router-link>
+                </a>
             </div>
             <v-divider style="padding: 0; margin: 5px; background-color: grey;"></v-divider>
-            <div>
+            <div v-if="searchResults.length === 0">
                 <p class="green--text">No results for "<strong class="grey--text">{{search}}</strong>"</p>
             </div>
         </div>
@@ -67,6 +72,7 @@ export default {
             highlightedIndex: 0,
             options: {
                 shouldSort: true,
+                includeMatches: true,
                 threshold: 0.6,
                 location: 0,
                 distance: 100,
@@ -92,32 +98,43 @@ export default {
             }
         },
         performSearch () {
-            this.$search(this.query, this.dta, this.options)
+            this.$search(this.search, this.dta, this.options)
             .then(results => {
+
                 this.searchResults = results
             })
         },
         highlightPrevious() {
             if(this.highlightedIndex > 0) {
-                this.highlightedIndex -= 1;
+                this.highlightedIndex = this.highlightedIndex - 1;
                 scrollIntoView()
             }
         },
         highlightNext() {
             if(this.highlightedIndex < this.searchResults.length - 1) {
-                this.highlightedIndex += 1;
+                this.highlightedIndex = this.highlightedIndex + 1;
                 scrollIntoView()
             }
         },
         scrollIntoView() {
             this.$refs.results.children(this.highlightedIndex).scrollIntoView({ block: 'nearest' })
+        },
+        gotoLink() {
+            window.location = `/units/${this.searchResults[this.highlightedIndex].item._id}`;
         }
+    },
+    created() {
+        console.log("search", this.dta)
     }
 }
 </script>
 
 <style lang="scss" scoped>
     @import '@/scss/global.scss';
+
+    .lightblue {
+        background-color: lightblue !important;
+    }
 
     .search {
         position: relative;

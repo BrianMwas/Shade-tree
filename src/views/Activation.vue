@@ -25,7 +25,7 @@
                         min-height="220"
                     >
                     <v-toolbar color="green lighten-1">
-                        <v-toolbar-title class="white--text">{{ activationMessage }}</v-toolbar-title>
+                        <v-toolbar-title class="white--text">Activation success..redirecting..</v-toolbar-title>
                     </v-toolbar>
                         <v-card-text class="py-3">
                             <div 

@@ -59,7 +59,7 @@
             <v-col cols="12" sm="12" md="8" lg="8">
               <v-card flat>
                   <v-card-title primary-title class="d-flex display-1">
-                    <span class="green--text font-weight-bold">{{unit.priceAnnual}}</span>
+                    <span class="green--text font-weight-bold">{{unit.price}}</span>
                     <v-spacer></v-spacer>
                     <span class="grey--text text--darken-1 rd">{{unit.name}}</span>
                   </v-card-title>
@@ -76,7 +76,7 @@
                     >
                       <div class="unit-detail">
                         <v-icon large color="cyan darken-5">{{date}}</v-icon>
-                        <p class="grey--text h5 font-weight-light">Built <span class="green--text font-weight-normal">2018</span></p>
+                        <p class="grey--text h5 font-weight-light">Built <span class="green--text font-weight-normal">{{ unit.completionYear }}</span></p>
                       </div>
                     </v-col>
                     <v-col
@@ -121,7 +121,7 @@
                     >
                       <div class="unit-detail">
                         <v-icon large color="grey darken-1">{{park}}</v-icon>
-                        <p class="grey--text h5 font-weight-light">Parking <span class="green--text font-weight-normal">1</span></p>
+                        <p class="grey--text h5 font-weight-light">Parking <span class="green--text font-weight-normal">{{unit.parking}}</span></p>
                       </div>
                     
                     </v-col>
@@ -133,7 +133,7 @@
                     >
                       <div class="unit-detail">
                         <v-icon large color="blue darken-1">{{shield}}</v-icon>
-                        <p class="grey--text h5 font-weight-light">Area Safety <span class="green--text font-weight-normal">80%</span></p>
+                        <p class="grey--text h5 font-weight-light">Safety <span class="green--text font-weight-normal">{{unit.securityLevel}}</span></p>
                       </div>
                     
                     </v-col>
@@ -149,9 +149,11 @@
                 </v-card-title>
                 <v-card-text>
                   <p>{{unit.description}}</p>
-                  <v-card-actions>
                   
-                  <button class="button button-primary button-block">Save unit</button>
+                  
+                  <button class="button button-primary button-block" @click="saveUnitLocally" v-if="logged">Save unit</button>
+                  <button class="button text-center" v-else>Please log in to save a unit</button>
+
                 </v-card-actions>
                 </v-card-text>
                 
@@ -160,7 +162,7 @@
           </v-row>
           <v-row>
             <v-col cols="12" sm="12" md="6" lg="6">
-              <agent-card></agent-card>
+              <agent-card :loggedIn="logged"></agent-card>
             </v-col>
             <v-col cols="12" sm="12" md="6" lg="6">
               <v-card>
@@ -182,7 +184,7 @@ import Footer from '@/components/Footer.vue'
 import AgentCard from '@/components/AgentCard.vue'
 import { mdiMapMarker, mdiBedSingleOutline, mdiToilet, mdiShareOutline, mdiShield, mdiParking, mdiCalendar, mdiVectorSquare } from '@mdi/js'
 
-import { mapActions, createNamespacedHelpers } from 'vuex';
+import { mapActions, createNamespacedHelpers, mapGetters } from 'vuex';
 const { mapState } = createNamespacedHelpers('unit');
 import { Carousel, Slide } from 'vue-carousel';
 
@@ -209,7 +211,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('unit', ['getUnitById']),
+    ...mapActions('unit', ['getUnitById', "saveUnit"]),
     getUnit() {
       if(!this.$route.params.id || this.$route.params.id.length < 24) {
         this.$store.dispatch('alert/errorAlert', {
@@ -219,24 +221,35 @@ export default {
         })
       }
       return this.getUnitById(this.$route.params.id)
+    },
+    saveUnitLocally() {
+      this.saveUnit(this.unit)
     }
   },
   computed: {
-     ...mapState(['unit'])
+     ...mapState(['unit']),
+     ...mapGetters('auth', ['logged'])
   },
-  watch: {
-    $route: {
-      immediate: true,
-      handler:  (to, from) => {
-        this.getUnit()
-      }
-    }
+  created () {
+    this.getUnit()
   }
+  // watch: {
+  //   $route: {
+  //     immediate: true,
+  //     handler:  (to, from) => {
+  //       this.getUnit()
+  //     }
+  //   }
+  // }
 }
 </script>
 
 <style lang="scss" scoped>
   @import '@/scss/global.scss';
+
+  .button:focus {
+    outline: none;
+  }
 
   .container-fluid {
     width: 95%;

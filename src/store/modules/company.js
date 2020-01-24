@@ -26,6 +26,9 @@ const company = {
 		removeAgentFail: null
 	},
 	mutations: {
+		set_AgentSuccess(state, agents) {
+			state.agents = agents;
+		},
 		set_companiesRequest(state) {
 			state.gettingCompany = true
 		},
@@ -94,7 +97,7 @@ const company = {
 			companyService.getAllCompanies()
 			.then(companies => {
 				
-				console.log("companies", companies.data)
+				console.log("companies", companies.data.data)
 				commit('set_companiesSuccess', companies.data.data)
 			})
 			.catch(error => {
@@ -106,6 +109,21 @@ const company = {
 				},  {
 					root: true
 				})
+			})
+		},
+		initCompanyAgents({ commit, dispatch }, slug) {
+			companyService.getCompanyBySlug(slug)
+			.then(results => {
+				let agents = results.data.data.agents;
+				commit('set_AgentSuccess', agents)
+			}).catch(error => {
+				console.log("agentsInit", error.response)
+				dispatch('alert/errorAlert', {
+					mKey: getRandomInt(),
+					message: "No agents yet",
+					type: 'info',
+					stage: true
+				}, { root: true })
 			})
 		},
 		getCompanyById({commit, dispatch}, companyId) {
@@ -169,13 +187,14 @@ const company = {
 					}, { root: true })
 				}
 				commit('addCompanySuccessful', company.data.data)
-				router.push("/dashboard")
+				router.push("/newunit")
 			})
 			.catch(error => {
 				commit('addingCompanyFail');
+				console.log("company error", error.response)
 				dispatch('alert/errorAlert',  {
 					mKey: getRandomInt(),
-					message: error,
+					message: error.response.data.message,
 					type: 'warning',
 					stage: true
 				},  {
@@ -209,25 +228,27 @@ const company = {
 				})
 			})
 		},
-		addAgent ({ dispatch, commit }, slug, agentId) {
+		addAgent ({ dispatch, commit }, payload) {
 			commit('addAgentRequest')
-			companyService.addCompanyAgents()
-			.then(agents => {
-				if(agent.data.message)  {
+			companyService.addCompanyAgents(payload.companySlug, payload.agent)
+			.then(results => {
+				if(results.data.message)  {
 					dispatch('alert/successAlert', {
 						mKey: getRandomInt(),
-						message: agent.data.message,
+						message: results.data.message,
 						type: 'info',
 						stage: true
 					}, { root: true })
 				}
-				commit('addAgentSuccessful', agent.data.data)
+				// dispatch("initCompanyAgents", results.data.data.slug)
 			})
 			.catch(error => {
 				commit('addAgentFail')
+				console.log("error adding agent", error.response)
+				
 				dispatch('alert/errorAlert',  {
 					mKey: getRandomInt(),
-					message: error,
+					message: error.response.data.message,
 					type: 'warning',
 					stage: true
 				},  {
@@ -235,9 +256,9 @@ const company = {
 				})
 			})
 		},
-		removeAgents({dispatch, commit}, companySlug, agentId) {
+		removeAgent({dispatch, commit}, payload) {
 			commit('removeAgentFail')
-			companyService.removeAgents(companySlug, agentId)
+			companyService.removeAgents(payload.companySlug, payload.agentId)
 			.then(agent => {
 				if(agent.data.message)  {
 					dispatch('alert/successAlert', {
@@ -251,9 +272,10 @@ const company = {
 			})
 			.catch(error => {
 				commit('removeAgentFail')
+				console.log("error", error.response)
 				dispatch('alert/errorAlert',  {
 					mKey: getRandomInt(),
-					message: error,
+					message: error.response,
 					type: 'warning',
 					stage: true
 				},  {

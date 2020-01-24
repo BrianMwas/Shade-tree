@@ -34,7 +34,9 @@
             </v-btn>
         </NavBar>
 
-      <v-content dark transition="fade-transition" app>
+      <v-content dark transition="fade-transition" app class="position-relative">
+
+        
 
         <div class="p-2">
           <v-carousel :show-arrows="false" height="400" cycle>
@@ -48,7 +50,7 @@
             ></v-carousel-item>
            </v-carousel>
         </div>
-
+        
         <v-snackbar
           v-for="alert in alerts"
           :key="alert.mKey"
@@ -60,31 +62,9 @@
           {{alert.message}}
           <v-btn flat color="primary" @click.native="alert.stage = false">Close</v-btn>
         </v-snackbar>
-        
-          <!-- <div class="homes">
-            <div class="sidebar">
-              <h2 class="header black--text">Filter</h2>
-              <v-card tile flat>
-                <v-card-text>
-                  <h4 class="black--text font-weight-light">By Date</h4>
-                  <v-radio-group :mandatory="false" v-model="dateSelection">
-                    <v-radio label="Latest" value="latest" color="primary"></v-radio>
-                    <v-radio label="Earliest" value="Earliest" color="primary"></v-radio>
-                  </v-radio-group>
-                  <h4 class="black--text font-weight-light">By Price</h4>
-                  <v-radio-group :mandatory="false" v-model="pricingSelection">
-                    <v-radio label="Highest" value="high-priced" color="primary"></v-radio>
-                    <v-radio label="Low" value="low-priced" color="primary"></v-radio>
-                  </v-radio-group>
-                </v-card-text>
-              </v-card>
-            </div>
-            <div class="units">
-              <div class="header">
-                  <h2 class="heading mx-5 black--text">{{ pricingSelection || 'AllUnits' }}</h2> 
-              </div>
-              <div class="results"> -->
-                <div v-if="gettingUnits" class="grid">
+        <v-container>
+          
+          <div v-if="gettingUnits" class="grid">
                     <v-sheet
                       color="grey lighten-4"
                       class="px-3 pt-3 pb-3"
@@ -161,6 +141,32 @@
                     :unit="home"
                   ></home-unit>
                 </div>
+        </v-container>
+        
+          <!-- <div class="homes">
+            <div class="sidebar">
+              <h2 class="header black--text">Filter</h2>
+              <v-card tile flat>
+                <v-card-text>
+                  <h4 class="black--text font-weight-light">By Date</h4>
+                  <v-radio-group :mandatory="false" v-model="dateSelection">
+                    <v-radio label="Latest" value="latest" color="primary"></v-radio>
+                    <v-radio label="Earliest" value="Earliest" color="primary"></v-radio>
+                  </v-radio-group>
+                  <h4 class="black--text font-weight-light">By Price</h4>
+                  <v-radio-group :mandatory="false" v-model="pricingSelection">
+                    <v-radio label="Highest" value="high-priced" color="primary"></v-radio>
+                    <v-radio label="Low" value="low-priced" color="primary"></v-radio>
+                  </v-radio-group>
+                </v-card-text>
+              </v-card>
+            </div>
+            <div class="units">
+              <div class="header">
+                  <h2 class="heading mx-5 black--text">{{ pricingSelection || 'AllUnits' }}</h2> 
+              </div>
+              <div class="results"> -->
+                
               <!-- </div> -->
               <!-- <div class="footer"> -->
                 <div class="text-center my-8">
@@ -190,6 +196,7 @@ import Search from '@/components/Search.vue'
 import { mapState, mapActions, createNamespacedHelpers } from 'vuex';
 const { mapGetters } = createNamespacedHelpers('auth');
 
+
 export default {
   name: 'Units',
   components: {
@@ -211,6 +218,7 @@ export default {
       sortIcon: mdiSortDescending,
       menuLeft: mdiMenuLeft,
       menuRight: mdiMenuRight,
+      filter: "@/assets/filter.svg",
       items: ["Date", "Rating", "Price", "Location"],
       imageItems: [
           {
@@ -253,6 +261,7 @@ export default {
 
 <style lang="scss" scoped>
   @import '@/scss/global.scss';
+
 
   .h-50 {
     height: 50vh;

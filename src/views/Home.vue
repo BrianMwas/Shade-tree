@@ -75,7 +75,7 @@
                                                 <img src="../assets/512/Shopping Bag.png" alt="Products">
                                         </div>
                                         <h4 class="feature-title mt-24 text-darkblue">Shop Shop</h4>
-                                        <p class="text-sm mb-0 text-darkgrey">We not only have homes we also have green flowers and other house accessories to beautify your home.</p>
+                                        <p class="text-sm mb-0 text-darkgrey">We not only have homes we also have great articles to help you know some awesome home tips</p>
                                     </div>
                                 </div>
                                 <div class="feature text-center is-revealing drop">

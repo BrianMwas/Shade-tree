@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import paths from './paths'
+import PageNotFound from "@/views/PageNotFound.vue"
 
 
 Vue.use(VueRouter)
@@ -23,7 +24,7 @@ function route(path, view, name, meta, beforeEnter) {
 const router = new VueRouter({
   mode: 'history',
   routes: paths.map(path => route(path.path, path.view, path.name, path.meta, path.beforeEnter)).concat([
-    { path: '*', component: import("@/views/404.vue") }
+    { path: '*', name: "404", component: PageNotFound }
   ]),
   scrollBehavior (to, from, savedPosition) {
     if (savedPosition) {

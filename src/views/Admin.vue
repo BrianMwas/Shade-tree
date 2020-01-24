@@ -193,7 +193,7 @@
 import NavBar from '@/components/NavBar.vue'
 import Footer from '@/components/Footer.vue'
 
-import VueChartist from 'vue-chartist'
+
 
 import { mdiShieldLock, mdiFaceAgent, mdiNaturePeople, mdiOfficeBuilding, mdiClock, mdiMagnify } from '@mdi/js'
 import { mapActions, mapState, createNamespacedHelpers } from 'vuex'
@@ -205,7 +205,6 @@ export default {
     components: {
         NavBar,
         Footer,
-        'vue-chartist': VueChartist
     },
     data () {
         return {

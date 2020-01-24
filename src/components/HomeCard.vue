@@ -21,9 +21,9 @@
         class="pb-0 mb-2 font-weight-bold card-price"
         style="position: relative"
       >
-         <span class="font-weight-bold mr-2">KSH</span>{{unit.priceAnnual}}
+         <span class="font-weight-bold mr-2">KSH</span>{{unit.price}}
           <span class="term">
-            annual
+            {{unit.term[0]}}
           </span>
           <v-btn
                     fab

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div >
         <v-snackbar
             v-for="message in Messages"
             :key="message.mKey"
@@ -9,20 +9,23 @@
             class="mt-5"
             >
             {{message.message}}
-            <v-btn flat color="success" @click.native="message.stage = false">Close</v-btn>
+            <v-btn class="white--text" :color="message.type" @click.native="message.stage = false">Close</v-btn>
             </v-snackbar>
-                <v-tabs v-model="tab" grow>
+                <v-tabs v-model="tab" right>
                   <v-tab>
                     Home
                   </v-tab>
                   <v-tab>
                     Manage Units
                   </v-tab>
+                  <v-tab>
+                    Company profile
+                  </v-tab>
                 </v-tabs>
-                <v-tabs-items v-model="tab">
+                <v-tabs-items class="mt-3" v-model="tab">
                     <v-tab-item
                     >
-                    <div>
+                     <div>
                         <v-card>
                         <v-img
                             height="150"
@@ -39,12 +42,14 @@
                             </v-row>
                         </v-img>
                         
-
-                        <v-card-actions>
-                            <v-btn color="green" depressed class="white--text" to="newunit">ADD Unit</v-btn>
-                            <v-btn color="primary" v-if="company" text>EDIT Company</v-btn>
-                            <v-btn v-else color="red darken-1">Add Company</v-btn>
-                        </v-card-actions>
+                
+                                <v-card-actions>
+                                <v-btn 
+                                color="green" 
+                                depressed 
+                                class="white--text" 
+                                to="/newunit">ADD Unit</v-btn>
+                              </v-card-actions>
                         </v-card>
                         <v-row>
                         <!-- Company agents -->
@@ -55,10 +60,25 @@
                             </v-toolbar>
                             <v-card-text>
                                 <div v-if="company.agents.length <= 0">
-                                <p class="text-center">You don't have any agents yet</p>
+                                  <p class="text-center">
+                                    You don't have any agents yet
+                                  </p>
                                 </div>
                                 <div v-else>
-                                <p>You have a couple of agents</p>
+                                    <v-list two-line >
+                                        <v-list-item class="agent-list" v-for="agent in companyAgents" :key="agent._id">
+                                            <v-list-item-icon @click="removeAgent(company.slug, agent._id)">
+                                                <v-icon color="red darken-2">{{ mdiDeleteCircle }}</v-icon>
+                                            </v-list-item-icon>
+                                            <v-list-item-content>
+                                                <v-list-item-title>{{ agent.username }}</v-list-item-title>
+                                                <v-list-item-subtitle><span class="font-weight-bold mr-3">{{ agent.email }}</span></v-list-item-subtitle>
+                                            </v-list-item-content>
+                                             <v-list-item-icon>
+                                                <v-icon color="green darken-2">{{ mdiMessage }}</v-icon>
+                                            </v-list-item-icon>
+                                        </v-list-item>
+                                    </v-list>
                                 </div>
                             </v-card-text>
                             </v-card>
@@ -70,14 +90,23 @@
                                 <v-toolbar-title class="white--text">All Agents</v-toolbar-title>
                             </v-toolbar>
                             <v-card-text>
-                                <v-list two-line>
+                                <v-list two-line v-if="agents">
                                 <v-list-item class="agent-list" v-for="agent in agents" :key="agent._id">
+                                    <v-list-item-icon @click="addSingleAgent(agent._id)">
+                                        <v-icon color="blue darken-2">{{ mdiPlusCircle }}</v-icon>
+                                    </v-list-item-icon>
                                     <v-list-item-content>
-                                    <v-list-item-title>{{ agent.username }}</v-list-item-title>
-                                    <v-list-item-subtitle><span class="font-weight-bold mr-3">{{ agent.email }}</span></v-list-item-subtitle>
+                                        <v-list-item-title>{{ agent.username }}</v-list-item-title>
+                                        <v-list-item-subtitle><span class="font-weight-bold mr-3">{{ agent.email }}</span></v-list-item-subtitle>
                                     </v-list-item-content>
+                                    <v-list-item-icon>
+                                        <v-icon color="green darken-2">{{ mdiMessage }}</v-icon>
+                                    </v-list-item-icon>
                                 </v-list-item>
                                 </v-list>
+                                <div class="text-center" v-else>
+                                    <p>No agents yet</p>
+                                </div>
                             </v-card-text>
                             </v-card>
                         </v-col>
@@ -95,7 +124,7 @@
                                     <v-list-item-subtitle>{{company.description}}</v-list-item-subtitle>
                                     </v-list-item-content>
                                 </v-list-item>
-                                <v-divider></v-divider>
+                                <v-divider class="grey lighten-3"></v-divider>
                                 <v-list-item>
                                     <v-list-item-content>
                                     <v-list-item-title>{{ company.email }}</v-list-item-title>
@@ -120,15 +149,25 @@
                             <v-toolbar color="red">
                                 <v-toolbar-title class="white--text">Units</v-toolbar-title>
                             </v-toolbar>
-                            <v-card-text>
-                                <v-list two-line>
-                                <v-list-item v-for="unit in units.results" :key="unit._id">
+                            <v-card-text >
+                                <v-list two-line v-if="units.length > 0">
+                                <v-list-item v-for="unit in units" :key="unit._id">
                                     <v-list-item-content>
                                     <v-list-item-title>{{ unit.name }}</v-list-item-title>
                                     <v-list-item-subtitle><span class="font-weight-bold mr-3">{{ unit.priceAnnual }}</span> <span>{{unit.category}}</span></v-list-item-subtitle>
                                     </v-list-item-content>
                                 </v-list-item>
                                 </v-list>
+                                <div class="text-center" v-else>
+                                    <p>Sorry you don't have any units yet</p>
+                                    <v-btn 
+                                        to="/newunit" 
+                                        block 
+                                        color="red" 
+                                        
+                                        class="white--text"
+                                    >Add unit</v-btn>
+                                </div>
                             </v-card-text>
                             </v-card>
                         </v-col>
@@ -144,49 +183,88 @@
                             </v-card>
                         </v-col>
                         </v-row>
-                    </div>
+                     </div>
                     </v-tab-item>
                     <v-tab-item>
-                    <h2 class="black--text">Manage your units</h2>
-                    <v-divider class="grey lighten-1"></v-divider>
-                        <v-expansion-panels>
-                        <v-expansion-panel
-                            v-for="unit in units"
-                            :key="unit._id"
-                        >
-                            <v-expansion-panel-header>{{unit.name}}</v-expansion-panel-header>
-                            <v-expansion-panel-content>
-                            <v-card>
-
-                            </v-card>
-                            <v-card>
-                                <v-card-text class="p-3">
-                                <picture-input 
-                                    ref="pictureInput" 
-                                    @change="onChange" 
-                                    @remove="onRemoved"
-                                    width="300" 
-                                    height="300" 
-                                    margin="16" 
-                                    buttonClass="button button-primary"
-                                    accept="image/jpeg,image/png" 
-                                    size="10" 
-                                    :removable="true"
-                                    :customStrings="{
-                                    upload: '<h1>Upload!</h1>',
-                                    drag: 'Drag the unit image here'
-                                    }">
-                                </picture-input>
-                                <v-card-action>
-                                    <button @click="addImage(unit._id)" class="button button-block button-primary" :disabled="!image">
-                                    Add Image
-                                    </button>
-                                </v-card-action>
-                                </v-card-text>
-                            </v-card>
-                            </v-expansion-panel-content>
-                        </v-expansion-panel>
+        
+                        <v-expansion-panels v-if="units.length > 0" class="w-50">
+                            <v-expansion-panel
+                                v-for="unit in units"
+                                :key="unit._id"
+                            >   
+                                <v-expansion-panel-header>
+                                    <span class="subtitle">{{unit.name}}</span>
+                                </v-expansion-panel-header>
+                                <v-expansion-panel-content>
+                                <v-card flat>
+                                    <v-row v-if="unit.images">
+                                        <v-col
+                                            v-for="image in unit.images"
+                                            :key="image._id"
+                                            cols="12"
+                                            md="4"
+                                        >
+                                                <v-img
+                                                  :src="image.url"
+                                                  aspect-ratio="1"
+                                                ></v-img>
+                                        </v-col>
+                                    </v-row>
+                                    <v-card-text>
+                                        <p>{{ unit.description }}</p>
+                                        <p>{{ unit.price }}</p>
+                                        <p>{{ unit.streetname }}</p>
+                                        <p>{{ unit.unitNumber }}</p>
+                                    </v-card-text>
+                                </v-card>
+                                <v-card flat>
+                                    <v-card-text class="p-3">
+                                    <picture-input 
+                                        ref="pictureInput" 
+                                        @change="onChange" 
+                                        @remove="onRemoved"
+                                        width="300" 
+                                        height="300" 
+                                        margin="16" 
+                                        buttonClass="button button-primary"
+                                        accept="image/jpeg,image/png" 
+                                        size="10" 
+                                        radius="50"
+                                        :removable="true"
+                                        :customStrings="{
+                                        upload: '<h1>Upload!</h1>',
+                                        drag: 'Drag the unit image here',
+                                        tap: 'Tap here to select a photo.'
+                                        }">
+                                    </picture-input>
+                                    
+                                        <button @click="addImage(unit._id)" class="button button-block button-primary my-5" :disabled="!image">
+                                        Add Image
+                                        </button>
+                                    
+                                    </v-card-text>
+                                </v-card>
+                                </v-expansion-panel-content>
+                            </v-expansion-panel>
                         </v-expansion-panels>
+                        <v-card v-else>
+                            <v-card-text class="text-center">
+                                <p class="black--text">
+                                    You need to add units first before you can edit
+                                </p>
+                            </v-card-text>
+                        </v-card>
+                    </v-tab-item>
+                    <v-tab-item>
+                        <v-card>
+                            <v-card-title>
+                                Edit Company
+                            </v-card-title>
+                          <v-card-text>
+                              <p class="grey--text text--darken-3">Lets update our company</p>
+                          </v-card-text>  
+                        </v-card>
+                        
                     </v-tab-item>
                 </v-tabs-items>
     </div>
@@ -195,7 +273,8 @@
 <script>
 
 import PictureInput from 'vue-picture-input';
-import { mapActions, mapState } from "vuex"
+import { mapActions, mapState } from "vuex";
+import { mdiPlusCircle, mdiMessage, mdiDeleteCircle  } from "@mdi/js";
 
 export default {
     props: ["units", "loggedInUser", "company", "agents"],
@@ -205,11 +284,16 @@ export default {
     },
     data () {
         return {
-            unitImage: null,
+            image: null,
+            tab: null,
+            mdiDeleteCircle,
+             mdiPlusCircle,
+             mdiMessage
         }
     },
     methods: {
         ...mapActions("unit", ["addUnitImages"]),
+        ...mapActions("company", ["addAgent", "removeAgent", "initCompanyAgents"]),
         onChange () {
           console.log('New picture selected!')
           if (this.$refs.pictureInput.image) {
@@ -219,26 +303,48 @@ export default {
           }
         },
         onRemoved() {
-          this.unitImage = '';
+          this.image = '';
         },
         showCompany() {
             return this.companies.find(company => company.owner == this.loggedInUser._id )
         },
         addImage(unitId) {
-            if(this.unitImage) {
+            if(this.image) {
                 let data = {
-                    image : this.unitImage,
+                    image : this.image,
                     companySlug: this.company.slug,
                     unitId,
                 }
                 this.addUnitImage(data)
             }
+        },
+        addSingleAgent(agentId) {
+            let data = {
+                companySlug: this.company.slug,
+                agent: agentId
+            }
+            console.log("data", data)
+            this.addAgent(data)
+        },
+        removeSingleAgent(agentId) {
+            let data = JSON.stringify({
+                companySlug: this.company.slug,
+                agent: agentId
+            })
         }
     },
     computed: {
         ...mapState({
-             Messages: state => state.alert.Messages.map(n => n.Raw)
+             Messages: state => state.alert.Messages.map(n => n.Raw),
+             companyAgents: state => state.company.agents
         })
+    },
+    created() {
+            console.log("unitsoo", this.units),
+            console.log("agentsoo", this.agents),
+            this.initCompanyAgents(this.company.slug)
     }
 }
 </script>
+
+

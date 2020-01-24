@@ -50,7 +50,7 @@ const auth = {
               //not logged in, create cookie based on username
               // this.$cookies.set('user', user, '24h');
               //save username in store by committing a mutation
-            window.$cookies.set('user', user.data, '1d')
+            window.$cookies.set('user', user.data, '30d')
 
             commit('loginSuccess', window.$cookies.get('user'));
             //For alerting the user once loggedIn

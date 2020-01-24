@@ -42,6 +42,7 @@ import { mdiStar, mdiMessage, mdiMagnify } from '@mdi/js'
 
 export default {
   name: 'agent-card',
+  props: ["loggedIn"],
   data () {
     return {
       star: mdiStar,

@@ -1,21 +1,31 @@
 <template>
-    <div>
+    <div >
       <!-- Routes only visible when user is logged in -->
         <NavBar  :loggedIn="loggedIn" :user="loggedInUser.username"  #loggedInRoutes>
-          <v-btn text v-if="loggedInUserType !== 'admin'">
-           <router-link to="/dashboard/userprofile" class="link">Profile</router-link>
-         </v-btn>
          <v-btn v-if="loggedInUserType == 'admin'">
            <router-link to="/admin">Admin</router-link>
-         </v-btn>
-         <v-btn text @click="logOutUser">
-           Log Out
          </v-btn>
          <v-btn v-if="loggedInUserType == 'owner'" text>
            <router-link to="/newunit" class="link">Add Unit</router-link>
          </v-btn>
+         <v-menu  transition="slide-y-transition" open-on-click>
+            <template v-slot:activator="{ on }">
+              <v-btn text dark v-on="on">
+                {{ loggedInUser.username }}
+              </v-btn>
+            </template>
+            <v-list>
+              <v-list-item to="/dashboard/profile">
+                Profile
+              </v-list-item>
+              <v-list-item @click="logOutUser">
+                Log out
+              </v-list-item>
+            </v-list>
+          </v-menu>
+         
         </NavBar>
-        <v-content dark transition="fade-transition" app>
+        <v-content dark transition="fade-transition" app class="h-100">
             <v-row>
                 <v-dialog v-model="dialog" persistent max-width="600px">
                   <v-card>
@@ -59,7 +69,7 @@
                 class="mt-5"
               >
                 {{message.message}}
-                <v-btn flat color="success" @click.native="message.stage = false">Close</v-btn>
+                <v-btn class="white" @click.native="message.stage = false">Close</v-btn>
               </v-snackbar>
               <div v-if="loggedInUserType == 'owner'">
                 
@@ -90,8 +100,7 @@ import RegularUser from "@/components/RegularUser.vue";
 import AgentView from "@/components/AgentView.vue";
 import OwnerView from "@/components/OwnerView.vue"
 import Footer from '@/components/Footer.vue';
-import { mapState, mapActions, createNamespacedHelpers } from 'vuex';
-const { mapGetters } = createNamespacedHelpers('auth');
+import { mapState, mapGetters, mapActions, createNamespacedHelpers } from 'vuex';
 
 
 
@@ -100,7 +109,6 @@ export default {
     name: 'Dashboard',
     components: {
         NavBar,
-        PictureInput,
         OwnerView,
         AgentView,
         RegularUser,
@@ -108,21 +116,23 @@ export default {
     },
     data () {
         return {
-            
+            menuShow: false,
             dialog: false,
-            tab: null,
             bin: mdiDelete,
             up: mdiArrowUp,
+            company: null,
             down: mdiArrowDown,
             messageIcon: mdiMessage,
             refreshIcon: mdiRefresh,
             clear: mdiCancel,
             camera: mdiCamera,
             showCompanyModule: false,
-            agentUsername: ""
+            agentUsername: "",
+            companyUnits: null,
         }
     },
     methods: {
+      ...mapActions('unit', ['init']),
       ...mapActions('alert', ['errorAlert']),
       ...mapActions('auth', ['logOutUser']),
       ...mapActions('agents', ['getAgents']),
@@ -130,6 +140,21 @@ export default {
       
       showCompanyProfileModule() {
         this.showCompanyModule = true
+      },
+      initCompany() {
+        console.log("initCompany")
+          this.company = this.companies.find(company => company.owner == this.loggedInUser._id)
+      },
+      companyUnitsSpec() {
+        let units = this.companySpecificUnits(this.company._id);
+        if(typeof units !== Array) {
+            this.companyUnits = [units];
+        } else {
+          this.companyUnits = units;
+        }
+      },
+      showMenu() {
+        this.menuShow = true
       }
     },
     computed : {
@@ -140,28 +165,32 @@ export default {
         agents: state => state.agents.agents,
         gettingAgents: state => state.agents.retrievingAgents,
         companies: state => state.company.companies,
-        units: state => state.unit.units
+        units: state => state.unit.units.results
       }),
-      ...mapGetters(['loggedInUser', 'loggedInUserType', 'logged']),
-      company() {
-          return this.companies.find(company => company.owner == this.loggedInUser._id)
-      },
-      companyUnits () {
-        return this.units.find(u => u.company == this.company)
-      },
+      ...mapGetters('auth', ['loggedInUser', 'loggedInUserType', 'logged']),
+      ...mapGetters('unit', ['companySpecificUnits'])
       
     },
     mounted() {
       this.$store.dispatch('agents/initAgents')
     },
     created() {
+      this.initCompany(),
+      this.init(),
+      this.companyUnitsSpec(),
       this.$store.dispatch('profile/initProfile'),
+      this.$store.dispatch('agents/initAgents'),
+
       this.$store.dispatch('admin/getNoOfUsers')
     }
 }
 </script>
 
 <style lang="scss" scoped>
+
+.h-100 {
+    min-height: 75vh;
+}
     .round {
       border-radius: 50%;
     }

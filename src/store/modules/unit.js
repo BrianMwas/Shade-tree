@@ -21,6 +21,8 @@ const unit = {
     state: {
         units: [],
         unit: {},
+        unitsByQuery: [],
+        savedUnits: [],
         gettingUnits: null,
         failedToGetUnits: null,
         reviews: {},
@@ -34,7 +36,8 @@ const unit = {
         deleteUnit : null,
         deleteUnitFail : null,
         updateUnitFail: null,
-        updatingUnit: null
+        updatingUnit: null,
+        savingUnit: null
     },
     mutations: {
         setUnitFail(state) {
@@ -44,6 +47,42 @@ const unit = {
             state.units = units;
             state.gettingUnits = false;
             state.failedToGetUnits=  false;
+        },
+        saveUnitRequest(state) {
+            state.savingUnit = true
+        },
+
+        saveUnitSuccess(state, unit) {
+            state.savingUnit = false
+            if(state.savedUnits.length <= 0) {
+                state.savedUnits.push(unit);
+                
+                    window.$cookies.set("savedUnits", state.savedUnits)
+                
+            } else {
+                for (var i = 0; i < state.savedUnits.length; i++) {
+                    if(unit == state.savedUnits[i]) {
+                        return
+                    }
+                }
+                state.savedUnits.push(unit)
+            }
+        },
+        removeSavedUnitRequest(state) {
+            state.removingSavedUnit = true;
+        },
+        removeSavedUnitSuccess(state, unit) {
+            state.removingSavedUnit = false;
+            if(state.savedUnits.contains(unit)) {
+                state.savedUnits.splice(
+                state.savedUnits.indexOf(state.units.find(u._id == unit._id)), 1)
+            } else {
+                return;
+            }
+            
+        },
+        setUnitsByQuery(state, units) {
+            state.unitsByQuery = units;
         },
         setUnitRequest(state) {
             state.gettingUnits = true
@@ -110,7 +149,19 @@ const unit = {
                 commit('setUnitFail')
             })
         },
-        addUnitImage({ dispatch }, data) {
+        saveUnit({ commit }, unit) {
+            if(!window.$cookies.isKey("savedUnits")) {
+                commit("saveUnitRequest");
+                commit("saveUnitSuccess", unit);
+            } else {
+                commit("saveUnitSuccess", unit);
+            }
+        },
+        removeSavedUnit({ commit }, unit) {
+            commit("removeSavedUnitRequest");
+            commit("removeSavedUnitSuccess", unit)
+        },
+        addUnitImage({ commit, dispatch }, data) {
             unitService.addUnitImages(data.companySlug, data.unitId, data.image)
             .then(response => {
                 dispatch('alert/successAlert', {
@@ -119,11 +170,42 @@ const unit = {
                     type: 'success',
                     stage: true
                 })
+
             })
             .catch(error => {
                 dispatch('alert/errorAlert', {
                     mKey: getRandomInt(),
-                    message: "Successfully added the image",
+                    message: "Image add failed",
+                    type: 'warning',
+                    stage: true
+                }, {root: true})
+            })
+        },
+        unitsByCategory({commit, dispatch}, unitId) {
+            unitService.getUnitsByCategory(category)
+            .then(results => {
+                if(results.data.message) {
+                    dispatch('alert/successAlert', {
+                    mKey: getRandomInt(),
+                    message: response.data.message,
+                    type: 'success',
+                    stage: true
+                    })
+                }
+                 commit("setUnitsByQuery", results.data.data)
+            })
+            .catch(error => {
+                if(error.response) {
+                        dispatch('alert/errorAlert', {
+                            mKey: getRandomInt(),
+                            message: error.response.data.message,
+                            type: 'warning',
+                            stage: true
+                        }, {root: true})
+                    }
+                dispatch('alert/errorAlert', {
+                    mKey: getRandomInt(),
+                    message: "Failed to find units",
                     type: 'warning',
                     stage: true
                 }, {root: true})
@@ -161,7 +243,7 @@ const unit = {
             })
             .catch(error => {
                 commit('addUnitFail')
-                console.log("error", error)
+                console.log("error", error.response)
                 dispatch('alert/errorAlert',
                 {
                     mKey: getRandomInt(),
@@ -232,7 +314,7 @@ const unit = {
     getters: {
         singleUnit: state => state.unit,
         companySpecificUnits: (state) => (companyId) => {
-            return state.units.find(unit => unit.company == companyId);
+            return state.units.results.find(unit => unit.company == companyId);
         }
     }
 }

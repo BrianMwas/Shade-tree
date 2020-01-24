@@ -1,14 +1,15 @@
 <template>
     <div class="h-100">
-        <v-sheet 
-            class="p-3" 
+        <v-content app dark>
+            <div 
+            class="p-3 container" 
             color="white"
             v-if="loggedInUserType == 'owner'">
             <v-card
-                max-width="700"
-                min-width="300"
+                max-width="500"
                 max-height="auto"
-                class="pt-5"
+                class="m-a"
+                v-if="userCompany ==null"
             >
                 <v-img
                     src="@/assets/App Development.png"
@@ -21,7 +22,7 @@
                 <v-card-subtitle>
                     Please fill in all details to continue to dashboard.
                 </v-card-subtitle>
-                <v-card-text v-if="userCompany == {} || userCompany == null">
+                <v-card-text>
                     <div v-if="Messages.length > 0">
                         <v-alert 
                             class="my-5 mx-3" 
@@ -66,7 +67,7 @@
                             label="Company email"
                             type="text"
                             color="green darken-3"
-
+                            :error-messages="emailErrors"
                             hint="The comapmy description example. mycompany@gmail.com"
                             v-model="$v.email.$model"
                         ></v-text-field>
@@ -100,13 +101,32 @@
                         >Add Company</v-btn>
                     </v-form>
                 </v-card-text>
-                <v-card-text v-else>
+               <!--  <v-card-text v-if="userCompany !== null">
                     <h3 class="text-center black--text heading">Welcome back {{loggedInUser.username}}</h3>
                     <router-link class="button button-block" to="/dashboard">Continue</router-link>
+                </v-card-text> -->
+            </v-card>
+            <v-card v-else max-width="400" min-width="300" class="m-a" height="auto" flat>
+                <v-toolbar color="grey darken-3">
+                    <v-toolbar-title class="white--text">
+                        Hey! {{ loggedInUser.username }}, welcome back..
+                    </v-toolbar-title>
+                </v-toolbar>
+                <v-img
+                    src="@/assets/VR.png"
+                    :aspect-ratio="1.7"
+                    class="mt-5"
+                    contain
+                ></v-img>
+                
+                <v-card-text>
+                    <router-link class="button button-block" to="/newunit">Continue to add new unit</router-link>
+                    <router-link class="button button-block button-primary" to="/units">Browse units</router-link>
                 </v-card-text>
             </v-card>
             
-        </v-sheet>
+            
+        </div>
         <div v-if="loggedInUserType == 'user'">
             <v-card max-width="400">
                 <v-img
@@ -125,12 +145,14 @@
                 </v-card-actions>
             </v-card>
         </div>
+        </v-content>
+        
     </div>
 </template>
 
 <script>
 import { validationMixin } from "vuelidate"
-const { required, minLength, maxLength, url,  email, numeric } = require('vuelidate/lib/validators')
+const { required, minLength, maxLength, url,  email } = require('vuelidate/lib/validators')
 
 
 import { mapGetters, mapState, mapActions } from "vuex";
@@ -140,6 +162,7 @@ export default {
     mixins: [validationMixin],
     data() {
         return {
+            userCompany : null,
             name: "",
             summary: "",
             website: "",
@@ -168,8 +191,8 @@ export default {
         },
         phoneNumber: {
             required,
-            numeric,
-            max: maxLength(10),
+           
+            max: maxLength(15),
             min: minLength(10)
         }
     },
@@ -195,7 +218,15 @@ export default {
                 this.phoneNumber = "";
                 this.$v.$reset()
             }
-        }
+        },
+        getUserCompany() {
+            if(this.companies.length <= 0) {
+                this.userCompany = null;
+                console.log("yes we set userCompany to null")
+            } else {
+                this.userCompany =this.companies.find(c => c.owner == this.loggedInUser._id)
+            }
+        },
     },
     computed : {
         ...mapGetters("auth", ["loggedInUser", "loggedInUserType"]),
@@ -204,9 +235,7 @@ export default {
             addingCompany: state => state.company.addingCompany,
             companies: state => state.company.companies,
         }),
-        userCompany() {
-            return this.companies.find(c => c.owner == this.loggedInUser._id)
-        },
+        
         emailErrors () {
             const errors = [];
             if(!this.$v.email.$dirty) {
@@ -260,9 +289,7 @@ export default {
             if(!this.$v.phoneNumber.$dirty) {
                 return errors;
             }
-            if(!this.$v.phoneNumber.numeric) {
-                errors.push("Phone number can only be a number")
-            }
+            
 
             if(!this.$v.phoneNumber.max || !this.$v.phoneNumber.min) {
                 errors.push("PLease enter a valid phone number")
@@ -271,16 +298,24 @@ export default {
             return errors;
         }
 
+    },
+    created() {
+        this.getUserCompany()
     }
 }
 </script>
 
 <style lang="scss" scoped>
+@import '@/scss/global.scss';
+
 .h-100 {
-    
     display: flex;
     justify-content: flex-start;
     align-content: center;
-    margin: 2em auto;
+    margin: 1em .2em;
+}
+
+.m-a {
+    margin: auto;
 }
 </style>

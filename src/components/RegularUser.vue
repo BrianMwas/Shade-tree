@@ -125,7 +125,7 @@
 
 <script>
 import { mapActions } from "vuex";
-
+import { mdiMessage } from "@mdi/js"
 export default {
     props: ["loggedInUser", "agents", "dialog", "agentUsername"],
     name: "regular-user",

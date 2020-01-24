@@ -9,14 +9,14 @@ import VueAnalytics from "vue-analytics";
 
 import './plugins';
 
-// Vue.use(VueAnalytics, {
-//   id: "",
-//   router,
-//   ignoreRoutes: ["/"],
-//   autoTracking: {
-//     screenview: true
-//   }
-// })
+Vue.use(VueAnalytics, {
+  id: "UA-15662007-1",
+  router,
+  ignoreRoutes: ["/"],
+  autoTracking: {
+    screenview: true
+  }
+})
 
 
 // Validation
