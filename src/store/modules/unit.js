@@ -23,6 +23,7 @@ const unit = {
         unit: {},
         unitsByQuery: [],
         savedUnits: [],
+        deletedUnits: [],
         gettingUnits: null,
         failedToGetUnits: null,
         reviews: {},
@@ -113,31 +114,60 @@ const unit = {
         updateUnitRequest(state) {
             state.updatingUnit = true;
         },
-        async updateUnitSuccess(state, unitUpdate) {
+        updateUnitSuccess(state, update) {
+            // let index = state.units['units'].indexOf(state.units['units'].find(unit => unit._id == unitUpdate._id))
+            // await removeAt(state.units['units'], index);
+            // await addAt(index, unitUpdate)
+            let unitIndex;
+            for(var i = 0; i < state.units.length; i++) {
+                if(update == state.units[i]) {
+                    unitIndex = i;
+                    break;
+                }
+            }
+            removeAt(state.units, unitIndex);
+            addAt(unitIndex, update);
             state.updatingUnit = false;
-            let index = state.units['units'].indexOf(state.units['units'].filter(unit => unit._id == unitUpdate._id))
-            await removeAt(state.units['units'], index);
-            await addAt(index, unitUpdate)
         },
         updateUnitFail (state) {
-            state.updateUnitFail = true
+            state.updateUnitFail = true;
         },
         deleteUnitRequest (state) {
-            state.deletingUnit = true
+            state.deletingUnit = true;
         },
         deleteUnitSuccessful(state, unitId) {
-            state.deletingUnit = false
-            state.deleteUnitFail = false
+            
+            let index;
 
-            let i = state.units['units'].indexOf(state.units['units'].filter(unit => unit._id == unitId));
-            removeAt(state.units['units'], i)
+            for (var i = 0; i < state.units.length; i++) {
+                if (unitId == state.units[i]._id) {
+                    unitIndex = i;
+                    state.deletedUnits.push(state.units[i])
+                    break;
+                }
+            }
+            removeAt(index, state.units);
+            state.deletingUnit = false;
+            state.deleteUnitFail = false;
         },
         deleteUnitFail (state) {
             state.deleteUnitFail = true
         }
     },
     actions: {
-    	init({ state, commit }, sortBy, pageNumber) {
+    	init({ commit }, sortBy, pageNumber) {
+            commit('setUnitRequest');
+            unitService.getAllUnits(sortBy, pageNumber)
+            .then(response => {
+                console.log("Get all units success", response.data.data)
+                commit('setUnitsSuccess', response.data.data)
+            })
+            .catch(error => {
+                console.log("Error from getting units", error)
+                commit('setUnitFail')
+            })
+        },
+        initUnits({ commit }, sortBy, pageNumber) {
             commit('setUnitRequest');
             unitService.getAllUnits(sortBy, pageNumber)
             .then(response => {
@@ -181,7 +211,7 @@ const unit = {
                 }, {root: true})
             })
         },
-        unitsByCategory({commit, dispatch}, unitId) {
+        unitsBySearch({commit, dispatch}, category) {
             unitService.getUnitsByCategory(category)
             .then(results => {
                 if(results.data.message) {
@@ -256,9 +286,9 @@ const unit = {
                 )
             })
         },
-        updateUnit({ dispatch, commit }, unitId, data) {
+        updateUnit({ dispatch, commit }, payload) {
             commit('updateUnitRequest')
-            unitService.updateUnit(unitId, data)
+            unitService.updateUnit(payload.slug, payload.data)
             .then(response => {
                 commit('updateUnitSuccess', response.data.data)
                 dispatch('alert/successAlert',

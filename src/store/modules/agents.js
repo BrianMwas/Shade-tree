@@ -10,7 +10,7 @@ const agents = {
 	state: {
 		retrievingAgents: null,
 		retrievingAgent: null,
-		agents: null,
+		agents: [],
 		agent: null,
 		AgentReviews: {},
 		requestingReviewAdd: null
@@ -24,6 +24,7 @@ const agents = {
 			state.retrievingAgents = false
 		},
 		getAllAgentsSuccess(state, agents) {
+
 			state.agents = agents;
 			state.retrievingAgents = false
 		},
@@ -51,9 +52,9 @@ const agents = {
 		}
 	},
 	actions: {
-		initAgents({state, commit}) {
+		initAgents({commit}) {
 
-			if(state.agents == null) {
+			
 				userService.getAllAgents()
 				.then(d => {
 					let agents = d.data.data;
@@ -63,7 +64,7 @@ const agents = {
 				.catch(error => {
 					commit("getAllAgentsError", error.response)
 				})
-			}
+			
 		},
 		getAgents({ dispatch, commit }) {
 			commit('getAllAgentsRequest');

@@ -12,9 +12,6 @@
            <v-btn text>
             <router-link to="/blogs" class="link">blogs</router-link>
            </v-btn>
-           <v-btn text @click="logOutUser">
-             Log Out
-           </v-btn>
            <v-btn text v-if="loggedInUserType == 'owner'">
              <router-link to="/logout" class="link">Add Unit</router-link>
            </v-btn>

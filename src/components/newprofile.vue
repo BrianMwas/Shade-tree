@@ -86,7 +86,11 @@
 	import { validationMixin } from 'vuelidate'
 	const { minLength, maxLength, numeric, required } = require('vuelidate/lib/validators')
 	import { mapActions, mapState } from 'vuex';
-	import { mdiCamera, mdiClear } from '@mdi/js'
+	import { mdiCamera, mdiCancel } from '@mdi/js';
+
+	const telephoneValidate = (value, vm) => ( 
+		value.match(vm.telReg)
+	 )
 
 	export default {
 		name: 'NewProfile',
@@ -100,7 +104,9 @@
 				image: null,
 				submitStatus: null,
 				camera: mdiCamera,
-				clear: mdiClear
+				clear: mdiCancel,
+
+				telReg : "/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/"
 			}
 		},
 		validations: {
@@ -117,7 +123,8 @@
 	      telephone: {
 	        numeric,
 	        min: minLength(10),
-	        max: maxLength(13)
+	        max: maxLength(13),
+	        telephoneValidate
 	      },
 	      description: {
 	        required,
@@ -172,6 +179,10 @@
 		        if(!this.$v.telephone.$dirty) return errors;
 		        if(!this.$v.telephone.numeric) {
 		          errors.push("Number must contain numbers only")
+		        }
+
+		        if(!this.$v.telephone.validate) {
+		        	errors.push("A valid telephone number is required.")
 		        }
 		        if(!this.$v.telephone.min) {
 		          errors.push("Telephone requires a minmum of 10 numbers")

@@ -109,7 +109,7 @@
             <v-card v-else max-width="400" min-width="300" class="m-a" height="auto" flat>
                 <v-toolbar color="grey darken-3">
                     <v-toolbar-title class="white--text">
-                        Hey! {{ loggedInUser.username }}, welcome back..
+                        Hey! {{ loggedInUser.username }}, Lets explore..
                     </v-toolbar-title>
                 </v-toolbar>
                 <v-img
@@ -120,7 +120,7 @@
                 ></v-img>
                 
                 <v-card-text>
-                    <router-link class="button button-block" to="/newunit">Continue to add new unit</router-link>
+                    <router-link class="button button-block mb-2" to="/newunit">Continue to add new unit</router-link>
                     <router-link class="button button-block button-primary" to="/units">Browse units</router-link>
                 </v-card-text>
             </v-card>

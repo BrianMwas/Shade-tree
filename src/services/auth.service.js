@@ -1,6 +1,6 @@
 // import axios from './api'
 import axios from 'axios'
-const baseUrl = "http://localhost:8500/api/v1/"
+const baseUrl = process.env.VUE_API_URL
 const config = {
     headers: {
         'Content-Type': 'application/json'
@@ -42,9 +42,11 @@ function changePasswordRequest(email) {
 }
 
 
-function replaceForgotPassword(token, newPassword, repeatPassword) {
+function changePassword(token, newPassword, repeatPassword) {
     let url = buildUrl('auth/forgot-password/' + token);
     let data = JSON.stringify({ newPassword, repeatPassword });
+
+    console.log("data", data)
     return axios.post(url, data, config);
 }
 
@@ -60,7 +62,7 @@ export const authService = {
     logout,
     register,
     changePasswordRequest,
-    replaceForgotPassword,
+    changePassword,
     changeOldPasswordWithNew,
     activateAccount
 }

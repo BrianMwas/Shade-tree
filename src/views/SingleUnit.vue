@@ -34,8 +34,7 @@
             class="mt-3"
           >
           <carousel
-            :perPageCustom="[[480, 1], [768, 1], [1024, 2]]"
-            :scrollPerPage="true"
+            
           >
             <slide>
               <v-img 
@@ -59,7 +58,7 @@
             <v-col cols="12" sm="12" md="8" lg="8">
               <v-card flat>
                   <v-card-title primary-title class="d-flex display-1">
-                    <span class="green--text font-weight-bold">{{unit.price}}</span>
+                    <span class="green--text font-weight-bold">Ksh {{unit.price}}</span>
                     <v-spacer></v-spacer>
                     <span class="grey--text text--darken-1 rd">{{unit.name}}</span>
                   </v-card-title>

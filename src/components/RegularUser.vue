@@ -95,7 +95,7 @@
                               :key="agent.id"
                              >
                               <v-list-item-avatar>
-                                <v-img src="@/assets/face.jpg"></v-img>
+                                <v-img src="@/assets/face.png"></v-img>
                               </v-list-item-avatar>
 
                               <v-list-item-content>

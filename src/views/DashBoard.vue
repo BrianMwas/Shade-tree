@@ -86,6 +86,7 @@
               <div v-else>
                 <agent-view :loggedInUser="loggedInUser" :companies="companies"></agent-view>
               </div>            
+              <!-- <h3 class="grey--text">{{ m }}</h3> -->
             </v-container>
         </v-content>
         <Footer/>
@@ -116,6 +117,7 @@ export default {
     },
     data () {
         return {
+          m: "Hello",
             menuShow: false,
             dialog: false,
             bin: mdiDelete,
@@ -161,7 +163,7 @@ export default {
       ...mapState({
         loggedIn: state => state.auth.status,
         Messages: state => state.alert.Messages.map(n => n.Raw),
-        agentNames: states => state.agents.agents.map(a => a.username),
+        agentNames: states => state.agents.agents.map(agent => agent.username),
         agents: state => state.agents.agents,
         gettingAgents: state => state.agents.retrievingAgents,
         companies: state => state.company.companies,
@@ -172,17 +174,18 @@ export default {
       
     },
     mounted() {
-      this.$store.dispatch('agents/initAgents')
+      this.$store.dispatch('agents/initAgents'),
+      this.companyUnitsSpec()
     },
     created() {
       this.initCompany(),
       this.init(),
-      this.companyUnitsSpec(),
       this.$store.dispatch('profile/initProfile'),
       this.$store.dispatch('agents/initAgents'),
 
       this.$store.dispatch('admin/getNoOfUsers')
     }
+    
 }
 </script>
 

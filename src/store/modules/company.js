@@ -17,7 +17,7 @@ const company = {
 		company: {},
 		addingCompany: null,
 		addingCompanyFail:  null,
-		agents: [],
+		agents: Set,
 		addAgentsRequest: null,
 		addAgentsFail: null,
 		updateCompanyRequest: null,
@@ -27,7 +27,11 @@ const company = {
 	},
 	mutations: {
 		set_AgentSuccess(state, agents) {
-			state.agents = agents;
+			let agentSet = new Set();
+			for (var i = agents.length - 1; i >= 0; i--) {
+				agentSet.add(agents[i])
+			}
+			state.agents = Array.from(agentSet);
 		},
 		set_companiesRequest(state) {
 			state.gettingCompany = true
@@ -71,7 +75,7 @@ const company = {
 		addAgentSuccessful(state, agent) {
 			state.addAgentsRequest = false;
 			state.addAgentsFail = false;
-			state.agents.push(agent)
+			state.agents.add(agent)
 		},
 		addAgentFail(state) {
 			state.addAgentFail = true
@@ -88,7 +92,9 @@ const company = {
 			// state.agents.splice(
 			// 	state.agents.indexOf(state.agents.map(agent => agent.id).filter(id => id._id == agentId)),
 			// 	1)
-			state.agents.splice(state.agents.indexOf(agentId), 1)
+			let agent = state.agents.find(agent => agent._id == agentId);
+
+			state.agents.delete(agent)
 		}
 
 	},

@@ -6,7 +6,7 @@ const config = {
 	}
 }
 
-const baseUrl = "http://localhost:8500/api/v1/"
+const baseUrl = process.env.VUE_API_URL
 
 
 function buildUrl(url) {
@@ -20,7 +20,7 @@ function getAllCompanies() {
 
 
 function getCompanyByQuery(query) {
-	let url = buildUrl(`companies/searchQ?${query}`) 
+	let url = buildUrl(`companies/searchQ?${query}`)
 	return axios.get(url, config);
 }
 
@@ -41,7 +41,7 @@ function addCompany(data) {
 	return axios.post(url, data, config);
 }
 
-function updateCompany(companyId, data) {	
+function updateCompany(companyId, data) {
 	let url = buildUrl(`company/${companyId}`);
 	return axios.put(url, data, config);
 }
@@ -52,7 +52,7 @@ async function addCompanyAgents(companySlug, agent) {
 	console.log("url", url)
 	return axios.post(url, agent, {
 		headers: {
-			
+
 		}
 	});
 }

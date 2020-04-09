@@ -6,7 +6,7 @@
               Profile
             </v-toolbar-title>
             <v-spacer></v-spacer>
-            <v-btn icon ripple @click="changeProfile">
+            <v-btn icon ripple @click="toggleProfile">
               <v-icon color="white">{{ edit }}</v-icon>
             </v-btn>
         </v-toolbar>
@@ -29,14 +29,8 @@
                   <h5 class="body-1"><span class="font-weight-bold">Telephone:</span> {{ userProfile.nationalFormat }}</h5>
               </div>
               <div v-else>
+                
                 <v-form @submit.prevent="editUserProfile">
-                  <v-file-input
-                    show-size
-                    label="Add your profile pic"
-                    outlined
-                    :prepend-icon="camera"
-                    accept="image/png, image/jpeg, image/jpg"
-                  ></v-file-input>
                   <v-text-field
                     name="firstName"
                     label="First name"
@@ -50,6 +44,7 @@
                     type="text"
                     autocomplete="on"
                   ></v-text-field>
+
                   <v-text-field
                     name="secondName"
                     label="Second Name"
@@ -112,12 +107,17 @@
 const { minLength, maxLength, required, numeric } = require('vuelidate/lib/validators')
 import { validationMixin } from 'vuelidate';
 import { mdiPencil, mdiCamera, mdiCancel } from '@mdi/js';
+import { mapActions } from "vuex";
+import PictureInput from "vue-picture-input";
 
 export default  {
 	name: 'user-profile',
   mixins: [validationMixin],
   props: {
     userProfile: Object,
+  },
+  components: {
+    PictureInput
   },
 	data () {
 		return {
@@ -130,7 +130,9 @@ export default  {
       submitStatus: null,
       edit : mdiPencil,
       camera: mdiCamera,
-      clear: mdiCancel
+      clear: mdiCancel,
+      profileSubmitStatus: null,
+      profileImageRules: null
 		}
 	},
    validations: {
@@ -196,9 +198,6 @@ export default  {
       telephoneErrors () {
         const errors = [];
         if(!this.$v.telephone.$dirty) return errors;
-        if(!this.$v.telephone.numeric) {
-          errors.push("Number must contain numbers only")
-        }
         if(!this.$v.telephone.min) {
           errors.push("Telephone requires a minmum of 10 numbers")
         } 
@@ -210,13 +209,56 @@ export default  {
       }
   },
   methods: {
-        changeProfile() {
+    ...mapActions("user", ["setUserProfile", "setUserProfileImage"]),
+    addImage(unitId) {
+            if(this.profileImage) {
+                let data = {
+                    image : this.profileImage,
+                    unitId
+                }
+                this.addUnitImage(data)
+            }
+        },
+      toggleProfile() {
           console.log(this.editProfile)
           if(this.editProfile) {
             this.editProfile = false
           } else {
               this.editProfile = true
             }
+        },
+        editUserProfile() {
+          let data = {
+            firstName: this.firstName,
+            secondName: this.secondName,
+            telephone: this.telephone,
+            description: this.description
+          }
+           this.$v.$touch();
+        if(this.$v.$invalid) {
+          this.submitStatus = "ERROR"
+        } else {
+            this.submitStatus = "PENDING";
+            this.setUserProfile({userId: this.userProfile.user, data});
+            this.firstName = this.secondName = this.telephone = this.description = "";
+            this.$v.$reset()
+          
+        }
+        },
+        addUserProfile() {
+          if(this.profileImage) {
+            let data = {
+              image: this.profileImage,
+              userId: this.userProfile.user
+            }
+            this.setUserProfileImage(data);
+          }
+        },
+        addProfileImage() {
+          let data = {
+            userId : this.userProfile.user,
+            file: this.profileImage
+          }
         }
   },
   mounted() {

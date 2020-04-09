@@ -76,7 +76,7 @@
 
                             label="Select number of units"
                             v-model.number="unitNumber"
-                            required
+                         
                             outlined
                             hint="Select if units are the same e.g Stalls"
                             color="green darken-3"

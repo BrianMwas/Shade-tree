@@ -1,7 +1,8 @@
 <template>
     <div>
       <v-card
-        width="300"
+        min-width="300"
+        max-width="380"
         class="pt-3"
       >
         <div class="agent">
@@ -12,12 +13,16 @@
             4.5
             <span class="green--text text--lighten-1">(455)</span>
           </p>
-          <div class="agent-info-tel">
+          <v-card-text v-if="!loggedIn">
+            <small class="font-weight-light d-flex text-center my-3 grey--text">Log in first please, to communicate with agent..</small>
+          </v-card-text>
+          
+          <div class="agent-info-tel" v-if="loggedIn">
             <p>+254 ... ... ...</p>
-            <a href="#">Show Number</a>
+            <router-link to="/login">Show Number</router-link>
           </div>
         </div>
-        <v-card-text background-color="grey darken-1">
+        <v-card-text v-if="loggedIn" background-color="grey darken-1">
           <a href="" class="btn-block d-flex" background-color="green accent-1">
             <v-icon>
               {{ mdiMessage }}
@@ -39,6 +44,7 @@
 
 <script>
 import { mdiStar, mdiMessage, mdiMagnify } from '@mdi/js'
+import { mapGetters } from "vuex"
 
 export default {
   name: 'agent-card',
@@ -60,7 +66,7 @@ export default {
     .avator {
       height: 5.4em;
       width: 5.4em;
-      background: url('../assets/face.jpg') no-repeat center;
+      background: url('../assets/face.png') no-repeat center;
       background-size: cover;
       border-radius: 50%;
       margin: auto;

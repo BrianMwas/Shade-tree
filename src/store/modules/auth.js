@@ -139,8 +139,8 @@ const auth = {
         }
       })
     },
-    replaceForgotPassword({ dispatch, commit }, token, data) {
-      authService.passwordChange(token, data.newPassword, data.repeatPassword)
+    replaceForgotPassword({ dispatch, commit }, payload) {
+      authService.changePassword(payload.token, payload.data.newPassword, payload.data.repeatPassword)
       .then(response => {
         router.push('/login');
         dispatch('alert/successAlert', { mKey: getRandomInt(), message: `${response.data.message}`, type: 'success' }, { root: true })

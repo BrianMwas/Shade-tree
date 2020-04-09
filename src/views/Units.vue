@@ -39,7 +39,7 @@
         
 
         <div class="p-2">
-          <v-carousel :show-arrows="false" height="400" cycle>
+          <v-carousel dark :show-arrows="false" height="400" cycle>
             <v-carousel-item
               v-for="(item,i) in imageItems"
               :key="i"
@@ -62,12 +62,44 @@
           {{alert.message}}
           <v-btn flat color="primary" @click.native="alert.stage = false">Close</v-btn>
         </v-snackbar>
-        <v-container>
+        <v-container style="position: relative">
+          <div class="text-right">
+            <v-dialog 
+              v-model="dialog"
+              width="400"
+
+              >
+                <template v-slot:activator="{ on }">
+                  <v-btn class="ml-3" fab color="blue" dark v-on="on">
+                    <v-icon>
+                      $custom
+                    </v-icon>
+                  </v-btn>
+                </template>
+                <v-card>
+                  <v-toolbar color="blue">
+                    <v-toolbar-title  class="white--text">
+                      Filter
+                    </v-toolbar-title>
+                  </v-toolbar>
+                  <v-card-text>
+                    <v-radio-group v-model="sort" :mandatory="false">
+                      <v-radio label="Latest" value="createdAt"></v-radio>
+                      <v-radio label="Price" value="price"></v-radio>
+                      <v-radio label="Term" value="term"></v-radio>
+                      <v-radio label="Bathrooms" value="Bathrooms"></v-radio>
+                      <v-radio label="Bedrooms" value="rooms"></v-radio>
+                    </v-radio-group>
+                  </v-card-text>
+                </v-card>
+              </v-dialog>
+          </div>
           
-          <div v-if="gettingUnits" class="grid">
+                <div v-if="gettingUnits" class="grid">
                     <v-sheet
                       color="grey lighten-4"
                       class="px-3 pt-3 pb-3"
+                      data-aos="fade-down"
                       >
                       <v-skeleton-loader
                         class="mx-auto"
@@ -78,6 +110,8 @@
                     <v-sheet
                         color="grey lighten-4"
                         class="px-3 pt-3 pb-3"
+                      data-aos="fade-down"
+
                       >
                       <v-skeleton-loader
                         class="mx-auto"
@@ -86,6 +120,19 @@
                       ></v-skeleton-loader>
                     </v-sheet>
                     <v-sheet
+                        color="grey lighten-4"
+                      data-aos="fade-down"
+
+                        class="px-3 pt-3 pb-3"
+                      >
+                      <v-skeleton-loader
+                        class="mx-auto"
+                        max-width="300"
+                        type="card"
+                      ></v-skeleton-loader>
+                    </v-sheet>
+                    <v-sheet
+                      data-aos="fade-down"
                         color="grey lighten-4"
                         class="px-3 pt-3 pb-3"
                       >
@@ -96,6 +143,7 @@
                       ></v-skeleton-loader>
                     </v-sheet>
                     <v-sheet
+                      data-aos="fade-down"
                         color="grey lighten-4"
                         class="px-3 pt-3 pb-3"
                       >
@@ -106,16 +154,7 @@
                       ></v-skeleton-loader>
                     </v-sheet>
                     <v-sheet
-                        color="grey lighten-4"
-                        class="px-3 pt-3 pb-3"
-                      >
-                      <v-skeleton-loader
-                        class="mx-auto"
-                        max-width="300"
-                        type="card"
-                      ></v-skeleton-loader>
-                    </v-sheet>
-                    <v-sheet
+                      data-aos="fade-down"
                         color="grey lighten-4"
                         class="px-3 pt-3 pb-3"
                       >
@@ -134,129 +173,136 @@
                   </div>
                   
                 </div>
-                <div v-else class="grid" >
-                  <home-unit
-                    v-for="home in units.results"
-                    :key="home.id"
-                    :unit="home"
-                  ></home-unit>
+                <div v-else>
+                  <h4 class="green--text text-darken-5 m-3">{{ sort }}</h4>
+                  <v-divider class="grey my-3"></v-divider>
+                  <div  class="grid" >
+                    <home-unit
+                      v-for="home in units.results"
+                      :key="home.id"
+                      :unit="home"
+                    ></home-unit>
+                  </div>
                 </div>
+                
         </v-container>
         
-          <!-- <div class="homes">
-            <div class="sidebar">
-              <h2 class="header black--text">Filter</h2>
-              <v-card tile flat>
-                <v-card-text>
-                  <h4 class="black--text font-weight-light">By Date</h4>
-                  <v-radio-group :mandatory="false" v-model="dateSelection">
-                    <v-radio label="Latest" value="latest" color="primary"></v-radio>
-                    <v-radio label="Earliest" value="Earliest" color="primary"></v-radio>
-                  </v-radio-group>
-                  <h4 class="black--text font-weight-light">By Price</h4>
-                  <v-radio-group :mandatory="false" v-model="pricingSelection">
-                    <v-radio label="Highest" value="high-priced" color="primary"></v-radio>
-                    <v-radio label="Low" value="low-priced" color="primary"></v-radio>
-                  </v-radio-group>
-                </v-card-text>
-              </v-card>
-            </div>
-            <div class="units">
-              <div class="header">
-                  <h2 class="heading mx-5 black--text">{{ pricingSelection || 'AllUnits' }}</h2> 
-              </div>
-              <div class="results"> -->
-                
-              <!-- </div> -->
-              <!-- <div class="footer"> -->
-                <div class="text-center my-8">
-                  <v-pagination
-                    v-model="units.pageNumber"
-                    :length="units.pageCount"
-                    :prev-icon="menuLeft"
-                    :next-icon="menuRight"
-                  ></v-pagination>
-                </div>
-              <!-- </div> -->
-            <!-- </div>
-          </div> -->
+        
+          <div class="text-center my-8">
+            <v-pagination
+              v-model="units.pageNumber"
+              :length="units.pageCount"
+              :prev-icon="menuLeft"
+              :next-icon="menuRight"
+              @input="getUnits"
+            ></v-pagination>
+          </div>
+           
       </v-content>
       <Footer/>
       </div>
 </template>
 
 <script>
-import NavBar from '@/components/NavBar.vue'
-import Footer from '@/components/Footer.vue'
-import Card from '@/components/HomeCard.vue'
-import AdvertHeader from '@/components/AdvertHeader.vue'
-import { mdiMagnify, mdiClose, mdiSortDescending, mdiMenuLeft, mdiMenuRight } from '@mdi/js';
-import Search from '@/components/Search.vue'
+  import NavBar from '@/components/NavBar.vue'
+  import Footer from '@/components/Footer.vue'
+  import Card from '@/components/HomeCard.vue'
+  import { mdiMagnify, mdiClose, mdiSortDescending, mdiMenuLeft, mdiMenuRight } from '@mdi/js';
+  import Search from '@/components/Search.vue';
+  import AOS from "aos";
 
-import { mapState, mapActions, createNamespacedHelpers } from 'vuex';
-const { mapGetters } = createNamespacedHelpers('auth');
+  import { mapState, mapActions, createNamespacedHelpers } from 'vuex';
+  const { mapGetters } = createNamespacedHelpers('auth');
 
 
-export default {
-  name: 'Units',
-  components: {
-    NavBar,
-    Footer,
-    'home-unit': Card,
-    AdvertHeader,
-    Search
-  },
-  data () {
-    return {
-      snackbar: false,
-      text: 'My timeout is set to 2000.',
-      timeout: 2000,
-      mdiMagnify,
-      headerImg: 'backround: url(@/assets/brick-wall.jpg)',
-      mdiClose,
-      page : 1,
-      sortIcon: mdiSortDescending,
-      menuLeft: mdiMenuLeft,
-      menuRight: mdiMenuRight,
-      filter: "@/assets/filter.svg",
-      items: ["Date", "Rating", "Price", "Location"],
-      imageItems: [
-          {
-            src: 'https://source.unsplash.com/random/livingroom',
-          },
-          {
-            src: 'https://source.unsplash.com/random/daily?livingroom',
-          },
-          {
-            src: 'https://source.unsplash.com/random/?house',
-          },
-          {
-            src: 'https://source.unsplash.com/random/weekly?livingroom',
-          },
-        ],
-        pricingSelection: null,
-        dateSelection: null,
-    }
-  },
-  methods : {
-    searchInfo () {
-      console.log("Search", this.search)
-      this.search = ''
+  export default {
+    name: 'Units',
+    components: {
+      NavBar,
+      Footer,
+      'home-unit': Card,
+      Search
     },
-    ...mapActions('auth', ['logOutUser']),
-    ...mapActions('unit', ['initUnits']),
-  },
-  computed: {
-    ...mapState({
-        loggedIn: state => state.auth.status,
-        settingProfile: state => state.profile.settingUserProfile,
-        units: state => state.unit.units,
-        gettingUnits:state => state.unit.gettingUnits,
-        alerts: state => state.alert.Messages
-      }),
-    ...mapGetters(['loggedInUser', 'loggedInUserType', 'logged'])   
+    data () {
+      return {
+        snackbar: false,
+        text: 'My timeout is set to 2000.',
+        timeout: 2000,
+        dialog: false,
+        mdiMagnify,
+        headerImg: 'backround: url(@/assets/brick-wall.jpg)',
+        mdiClose,
+        sort: 'All',
+       
+
+        sortIcon: mdiSortDescending,
+        menuLeft: mdiMenuLeft,
+        menuRight: mdiMenuRight,
+        filter: "@/assets/filter.svg",
+        items: ["Date", "Rating", "Price", "Location"],
+        imageItems: [
+            {
+              src: 'https://source.unsplash.com/weekly?livingroom',
+            },
+            {
+              src: 'https://source.unsplash.com/weekly?livingroom',
+            },
+            {
+              src: 'https://source.unsplash.com/weekly?lawn',
+            },
+            {
+              src: 'https://source.unsplash.com/weekly?home',
+            },
+          ],
+          pricingSelection: null,
+          dateSelection: null,
+      }
+    },
+    methods : {
+      searchInfo () {
+        console.log("Search", this.search)
+        this.search = ''
+      },
+      ...mapActions('auth', ['logOutUser']),
+      ...mapActions('unit', ['initUnits']),
+      getUnits() {
+        // Units will begin from the latest
+        let sortBy;
+        if(this.sort == "Latest") {
+          sortBy = "createdAt"
+        }
+
+        let payload = {
+          sortBy,
+          pageNumber: this.units.pageNumber
+        }
+        this.initUnits(payload.sortBy, payload.page)
+      }
+    },
+    computed: {
+      ...mapState({
+          loggedIn: state => state.auth.status,
+          settingProfile: state => state.profile.settingUserProfile,
+          units: state => state.unit.units,
+          gettingUnits:state => state.unit.gettingUnits,
+          alerts: state => state.alert.Messages
+        }),
+      ...mapGetters(['loggedInUser', 'loggedInUserType', 'logged'])   
+    },
+    // Controls pagination for the units
+    // watch: {
+    //   pagination: {
+    //     handler() {
+    //       this.getUnits()
+    //     },
+    //     deep: true
+    //   }
+    // },
+    created () {
+      this.getUnits()
+      AOS.init();
+    }
   }
-}
 </script>
 
 <style lang="scss" scoped>
@@ -281,10 +327,10 @@ export default {
     display: grid;
     grid-template-columns: 20% 80%;
     padding: 1.5em;
-   
+    
 
     .sidebar {
-      backround: white;
+      background: white;
 
       @include media('<medium') {
         display: none;

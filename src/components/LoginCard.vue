@@ -53,13 +53,13 @@
                 <v-btn depressed color="success" type="submit" :disabled="submitStatus !== 'OKAY' && submitStatus === 'ERROR'" :loading="submitStatus === 'PENDING'">Login</v-btn>
 
             </form>
-            <div class="text-center d-block">
+            <div class="my-5">
                 <ul>
                     <li>
-                        <router-link to="signup">Don't have an account? Sign Up here</router-link>
+                        Don't have an account ?<router-link to="signup"> Sign Up here</router-link>
                     </li>
                     <li>
-                            <router-link to="change-password-request">Forgot password? Change It here</router-link>
+                           Forgot password <router-link to="change-password-request"> Change It here</router-link>
                     </li>
                 </ul>
                  
@@ -112,11 +112,12 @@ export default {
             this.$v.$touch();
             if(this.$v.$invalid) {
                 this.submitStatus = "ERROR"
-                navigator.vibrate([150, 150, 150]);
+                
             } else {
                 this.submitStatus = "PENDING";
                 this.submitStatus = "OKAY"
-                this.loginUser(data)
+                // this.loginUser(data)
+                console.log("login", data)
                 this.email = this.password = this.confirmation = "";
                 this.$v.$reset()
             }
@@ -163,11 +164,8 @@ export default {
         border-radius: 10px !important;
     }
 
-    .d-block {
-        padding: 1em 0;
-       ul li {
-           list-style: none;
-       }
+    ul li {
+        list-style: none;
     }
 
     li a:hover {

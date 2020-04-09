@@ -57,6 +57,15 @@
                     </v-list-item-content>
                   </v-list-item>
                 </v-list-group>
+
+                <v-list-item to="/units">
+                    <v-list-item-icon>
+                      <v-icon color="blue">{{ mdiHome }}</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-content>
+                    <v-list-item-title >Units</v-list-item-title>
+                      </v-list-item-content>
+                    </v-list-item>
                 
                 <div v-if="loggedIn">
                     <v-list-item to="/dashboard">
@@ -153,7 +162,7 @@
 <script>
 import { mdiMagnify, mdiFaceProfile, mdiViewDashboard,
  mdiPencil, mdiMenu, mdiEqualizerOutline, mdiPhoneAlert, mdiNewspaper, 
-mdiAccount, mdiLogin, mdiLogout,  mdiPhone,mdiSettingsBox  } from '@mdi/js'
+mdiAccount, mdiLogin, mdiLogout,  mdiPhone,mdiSettingsBox, mdiHome  } from '@mdi/js'
 import { mapState } from 'vuex'
 import { createNamespacedHelpers } from 'vuex'
 const { mapActions, mapGetters } = createNamespacedHelpers('auth')
@@ -170,6 +179,8 @@ export default {
     return {
       title: 'Shade tree',
       drawer: false,
+
+      // Icons 
       menu: mdiMenu,
       pencil: mdiPencil,
       mdiLogin,
@@ -177,9 +188,13 @@ export default {
       mdiFaceProfile,
       mdiLogout,
       mdiPhone,
+      mdiHome,
       mdiViewDashboard,
       setting: mdiSettingsBox,
+
+      // Rest of the data
       allUnits: null,
+      // Links
       items: [
           {
             action: mdiEqualizerOutline,
@@ -188,26 +203,16 @@ export default {
             active: true,
             
             items: [
-              { title: 'Single rooms', link: 'single-rooms' },
-              { title: 'Double rooms', link: 'double-rooms' },
-              { title: 'Master ensuite', link: 'master-ensuite' },
-              { title: 'Bedsitter', link: 'bedsitter'},
-              { title: 'Stalls', link: 'stalls' },
-              { title: 'Workspaces', link: 'workspaces' }
+              { title: 'Apartment', link: '/units/search?category=Apartment' },
+              { title: 'Master ensuite', link: '/units/search?category=Mansionette' },
+              { title: 'Bedsitter', link: '/units/search?category=Bedsitter'},
+                { title: 'Single room', link: '/units/search?category=Single room'},
+                  { title: 'Double room', link: '/units/search?category=Double room'},
+              { title: 'Stalls', link: '/units/search?category=Stall' },
+              { title: 'Workspaces', link: '/units/search?category=Workspace' }
             ],
           },
-          // {
-          //   action: mdiShopping,
-          //   show: true,
-          //   title: 'Products',
-          //   items: [
-          //     {title : 'Garden flowers'},
-          //     {title: 'Green plants' },
-          //     {title : 'Wallpapers' },
-          //     { title: 'Paint' },
-          //     { title: 'Plant pots' }
-          //   ]
-          // },
+    
           {
             action: mdiNewspaper,
             show: true,
@@ -257,7 +262,6 @@ export default {
   },
   created() {
     this.setUnits()
-
   }
 }
 </script>

@@ -1,5 +1,5 @@
 import axios from 'axios';
-const baseUrl = "http://localhost:8500/api/v1/"
+const baseUrl = process.env.VUE_API_URL
 const config = {
     headers: {
         'Content-Type': 'application/json'
@@ -22,7 +22,7 @@ function getUnitsTotal () {
 function getAllUnits(sortBy, pageNumber) {
     if(sortBy == undefined) {
         sortBy = 'createdAt'
-    } 
+    }
     if(pageNumber == undefined) {
         pageNumber = 1
     }
@@ -39,7 +39,7 @@ async function getSingleUnit(unitId) {
 
 
  function addNewUnit(companySlug, data) {
-	
+
     let url = buildUrl(`company/${companySlug}/new-unit`);
     console.log("the data", data);
     console.log("the other info", url)
@@ -87,7 +87,7 @@ function deleteUnit(unitId) {
 
 
 function getUnitsByCategory(category) {
-    let url = buildUrl(`units/category?category=${category}`);
+    let url = buildUrl(`units-search?category=${category}`);
     return axios.get(url, config);
 }
 

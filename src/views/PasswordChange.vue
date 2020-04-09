@@ -48,8 +48,8 @@
 		                    v-model.trim="$v.repeatPassword.$model"
 		                    id="repeatPassword"
 		                    :error-messages="repeatPasswordErrors"
-		                    :type="repeatPassword ? 'text' : 'password'"
-		                    :append-icon="repeatPassword ? passwordEyeCancel: passwordShowIcon"
+		                    :type="passwordShow ? 'text' : 'password'"
+		                    :append-icon="passwordShow ? passwordEyeCancel: passwordShowIcon"
 		                    @click:append="repeatPassword = !repeatPassword"
 		                    autocomplete="on"
 		                    required
@@ -60,7 +60,7 @@
 		                  depressed
 		                  dark type="submit" 
 		                  :disabled="submitStatus == 'OKAY' && submitStatus !== 'ERROR' && submitStatus == 'null'" 
-		                  :loading="submitStatus === 'PENDING' && status.registering"
+		                  :loading="submitStatus === 'PENDING'"
 		                  >Change password</v-btn>
 						</v-form>
 					</v-card-text>
@@ -117,9 +117,10 @@
 		          this.submitStatus = "ERROR"
 		        } else {
 		            this.submitStatus = "PENDING";
-		            this.replaceForgotPassword(this.$route.params.token, data);
+					this.replaceForgotPassword({ token : this.$route.params.token, data });
+					// console.log("data", data)
 
-		            this.repeatPassword = false;
+		            this.submitStatus = 'OKAY';
 		            this.passwordShow = false;
 		            this.newPassword = this.repeatPassword = "";
 		            this.$v.$reset()

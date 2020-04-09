@@ -26,6 +26,14 @@ export default [
         }
     },
     {
+        path: '/units/search',
+        name: 'Categories',
+        view: 'UnitSearch',
+        meta: {
+            guest: true
+        }
+    },
+    {
         path: '/units/:id',
         name: 'single-unit',
         view: 'SingleUnit',

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseUrl = "http://localhost:8500/api/v1/"
+const baseUrl = process.env.VUE_API_URL
 const config = {
     headers: {
         'Content-Type': 'application/json'

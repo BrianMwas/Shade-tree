@@ -12,6 +12,7 @@ const profile = {
 	state: {
 		savedUnits: {
 		},
+		thumbnailURL: null,
 		currentUserProfile: null,
 		settingUserProfile: null,
 		settingUserProfileFail: null,
@@ -41,6 +42,9 @@ const profile = {
 			state.settingUserProfile = false
 			state.settingUserProfileFail = true
 		},
+		setUserThumbnail(state, url) {
+			state.thumnailURL = url;
+		},
 		saveUnitRequest(state) {
 			state.savingUnit = true
 		},
@@ -67,7 +71,7 @@ const profile = {
 			state.sendMessageRequest = true
 		},
 		setSendMessagesSuccess(state, messages) {
-			state.messages['sent'].push(messages)
+			[...state.messages['sent'], messages]
 			state.sendMessageRequest = false
 			state.sendMessageFail = false
 		},
@@ -77,10 +81,9 @@ const profile = {
 		}
 	},
 	actions: {
-		initClientMessages({state, commit}) {
+		initClientMessages({commit}) {
 			let userId = window.$cookies.get('user')._id;
 
-			if(state.messages['client'].length <= 0) {
 				profileService.getMessagesToMe(userId)
 				.then(messages => {
 					
@@ -89,12 +92,10 @@ const profile = {
 				.catch(error => {
 					commit('setClientMessagesFail')
 				})
-			}
 		},
-		initSentMessages({ state, commit }) {
+		initSentMessages({ commit }) {
 			let userId = window.$cookies.get('user')._id;
 
-			if (state.messages['sentMessages'].length <= 0) {
 				profileService.getMessagesFromMe(userId)
 					.then(messages => {
 						if(messages.message) {
@@ -105,9 +106,9 @@ const profile = {
 					.catch(error => {
 						commit('setSentMessagesFail', error)
 					})
-			}
+			
 		},
-		 initProfile({ state, commit }) {
+		 initProfile({ commit }) {
 			if(!window.$cookies.isKey('userProfile')) {
 				commit('set_currentUserProfileRequest')
 				let userId = window.$cookies.get('user')._id;
@@ -145,6 +146,19 @@ const profile = {
 				}, { root: true })
 			})
 		},
+		setUserProfileImage({ commit, dispatch }, payload) {
+			profileService.addUserProfileImage(payload.userId, payload.file)
+			.then(results => {
+				if(results.data.message) {
+					dispatch('alert/errorAlert', { mKey: getRandomInt(), message: results.data.message, type: 'error', stage: true, duration: 10000 }, { root: true })
+				}
+				commit("setUserThumbnail", results.data.data.url);
+			})
+			.catch(error => {
+				commit('set_currentUserProfileFail');
+				dispatch('alert/errorAlert', { mKey: getRandomInt(), message: error, type: 'error', stage: true, duration: 10000 }, { root: true })
+			})
+		},
 		setUserProfile({dispatch, commit}, data) {
 			commit('set_currentUserProfileRequest')
 			profileService.addUserProfile(data)
@@ -155,6 +169,15 @@ const profile = {
 			.catch(error => {
 				commit('set_currentUserProfileFail');
 				dispatch('alert/errorAlert', { mKey: getRandomInt(), message: error, type: 'error', stage: true, duration: 10000 }, {root: true})
+			})
+		},
+		updateUserProfile({ commit }, payload) { 
+			profileService.updateProfile(payload.userId, payload.data)
+			.then(results => {
+
+			})
+			.catch(error => {
+
 			})
 		},
 		setCompanyProfile({dispatch, commit}, data) {

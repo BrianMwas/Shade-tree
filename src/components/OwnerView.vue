@@ -9,7 +9,7 @@
             class="mt-5"
             >
             {{message.message}}
-            <v-btn class="white--text" :color="message.type" @click.native="message.stage = false">Close</v-btn>
+            <v-btn class="white--text" text @click.native="message.stage = false">Close</v-btn>
             </v-snackbar>
                 <v-tabs v-model="tab" right>
                   <v-tab>
@@ -186,67 +186,20 @@
                      </div>
                     </v-tab-item>
                     <v-tab-item>
+                        
+                        <v-row v-if="units.length > 0">
+                            <v-col 
+                            cols="12"
+                             md="6" 
+                             lg="4"
+                             v-for="unit in units"
+                            :key="unit._id"
+                             >
+                                <edit-unit :updateUnit="unit"></edit-unit>
+                             </v-col>
+                        </v-row>
         
-                        <v-expansion-panels v-if="units.length > 0" class="w-50">
-                            <v-expansion-panel
-                                v-for="unit in units"
-                                :key="unit._id"
-                            >   
-                                <v-expansion-panel-header>
-                                    <span class="subtitle">{{unit.name}}</span>
-                                </v-expansion-panel-header>
-                                <v-expansion-panel-content>
-                                <v-card flat>
-                                    <v-row v-if="unit.images">
-                                        <v-col
-                                            v-for="image in unit.images"
-                                            :key="image._id"
-                                            cols="12"
-                                            md="4"
-                                        >
-                                                <v-img
-                                                  :src="image.url"
-                                                  aspect-ratio="1"
-                                                ></v-img>
-                                        </v-col>
-                                    </v-row>
-                                    <v-card-text>
-                                        <p>{{ unit.description }}</p>
-                                        <p>{{ unit.price }}</p>
-                                        <p>{{ unit.streetname }}</p>
-                                        <p>{{ unit.unitNumber }}</p>
-                                    </v-card-text>
-                                </v-card>
-                                <v-card flat>
-                                    <v-card-text class="p-3">
-                                    <picture-input 
-                                        ref="pictureInput" 
-                                        @change="onChange" 
-                                        @remove="onRemoved"
-                                        width="300" 
-                                        height="300" 
-                                        margin="16" 
-                                        buttonClass="button button-primary"
-                                        accept="image/jpeg,image/png" 
-                                        size="10" 
-                                        radius="50"
-                                        :removable="true"
-                                        :customStrings="{
-                                        upload: '<h1>Upload!</h1>',
-                                        drag: 'Drag the unit image here',
-                                        tap: 'Tap here to select a photo.'
-                                        }">
-                                    </picture-input>
-                                    
-                                        <button @click="addImage(unit._id)" class="button button-block button-primary my-5" :disabled="!image">
-                                        Add Image
-                                        </button>
-                                    
-                                    </v-card-text>
-                                </v-card>
-                                </v-expansion-panel-content>
-                            </v-expansion-panel>
-                        </v-expansion-panels>
+                        
                         <v-card v-else>
                             <v-card-text class="text-center">
                                 <p class="black--text">
@@ -272,52 +225,60 @@
 
 <script>
 
-import PictureInput from 'vue-picture-input';
 import { mapActions, mapState } from "vuex";
-import { mdiPlusCircle, mdiMessage, mdiDeleteCircle  } from "@mdi/js";
+import { mdiPlusCircle, mdiMessage, mdiDeleteCircle, mdiCancel  } from "@mdi/js";
+import { validationMixin } from "vuelidate"
+const { minLength, maxLength, required, between, numeric } = require("vuelidate/lib/validators")
+import EditUnit from "./EditUnit"
+
 
 export default {
     props: ["units", "loggedInUser", "company", "agents"],
     name: "owner-view",
     components: {
-        PictureInput
+        EditUnit
     },
     data () {
         return {
-            image: null,
+           
             tab: null,
             mdiDeleteCircle,
              mdiPlusCircle,
-             mdiMessage
+             mdiMessage,
+             clear: mdiCancel,
+            rules: [v => v.length <= 50 || 'Maximum 15 characters please.'],
+
+            roomNumber: [1, 2, 3, 4, 6, 8, 10],
+            bathroomNumber: [1, 2, 3, 4, 5],
+            termsAll: ['morgage', 'rent', 'purchase'],
+            categories: ["Apartment", "Mansionette", "Bedsitter", "Single room", "Double room", "Stall", "Workspace"],
+            security: ["Bad", "Fair", "Good", "Very Good"],
+            Years: ["2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019"],
+
+             name: '',
+            description: '',
+            streetname: '',
+            rooms: 1,
+            bathrooms: 1,
+            area: '',
+            terms: ['rent'],
+            category: "",
+            priceAnnual: '',
+            priceMonth: '',
+            completionYear: "",
+            securityLevel: "",
+            parking: "",
+            unitNumber: 1,
+            submitStatus: null
         }
     },
     methods: {
-        ...mapActions("unit", ["addUnitImages"]),
         ...mapActions("company", ["addAgent", "removeAgent", "initCompanyAgents"]),
-        onChange () {
-          console.log('New picture selected!')
-          if (this.$refs.pictureInput.image) {
-            console.log('Picture loaded.')
-          } else {
-            console.log('FileReader API not supported: use the <form>, Luke!')
-          }
-        },
-        onRemoved() {
-          this.image = '';
-        },
+        
         showCompany() {
             return this.companies.find(company => company.owner == this.loggedInUser._id )
-        },
-        addImage(unitId) {
-            if(this.image) {
-                let data = {
-                    image : this.image,
-                    companySlug: this.company.slug,
-                    unitId,
-                }
-                this.addUnitImage(data)
-            }
-        },
+        }
+        ,
         addSingleAgent(agentId) {
             let data = {
                 companySlug: this.company.slug,

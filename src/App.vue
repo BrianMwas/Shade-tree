@@ -13,7 +13,5 @@ export default {
 <style  lang='scss'>
   @import '@/scss/global.scss';
 
-  .v-application {
-    font-family: 'PT sans', sans-serif;
-  }
+  
 </style>

@@ -1,15 +1,33 @@
 <template>
     <div>
        <NavBar v-if="loggedIn" #loggedInRoutes>
-          <v-btn text>
-           <router-link to="/map" class="link">map</router-link>
+           <v-btn v-if="loggedInUserType == 'admin'">
+                <router-link to="/admin">Admin</router-link>
+            </v-btn>
+            <v-btn text>
+                <router-link to="/units" class="link">Units</router-link>
+            </v-btn>
+            <v-btn text>
+                <router-link to="/blogs" class="link">Blogs</router-link>
+            </v-btn>
+         <v-btn v-if="loggedInUserType == 'owner'" text>
+           <router-link to="/newunit" class="link">Add Unit</router-link>
          </v-btn>
-         <v-btn text>
-           <router-link to="/logout" class="link">Log out</router-link>
-         </v-btn>
-         <v-btn text>
-           <router-link to="/logout" class="link">Add Unit</router-link>
-         </v-btn>
+         <v-menu  transition="slide-y-transition" open-on-click>
+            <template v-slot:activator="{ on }">
+              <v-btn text dark v-on="on">
+                {{ loggedInUser.username }}
+              </v-btn>
+            </template>
+            <v-list>
+              <v-list-item to="/dashboard/userprofile">
+                Profile
+              </v-list-item>
+              <v-list-item @click="logOutUser">
+                Log out
+              </v-list-item>
+            </v-list>
+          </v-menu>
         </NavBar>
         <NavBar v-else #default>
             <v-btn text>
@@ -165,6 +183,7 @@
 <script>
 import NavBar from '@/components/NavBar.vue'
 import Footer from '@/components/Footer.vue'
+import { mapState, mapGetters, mapActions } from "vuex"
 
 export default {
     name: 'about',
@@ -174,7 +193,7 @@ export default {
     },
     data () {
         return  {
-            loggedIn: false,
+            
             fullname: '',
             email: '',
             message: ''
@@ -190,8 +209,16 @@ export default {
 
             console.table(data);
             this.fullname = this.email = this.message = ""
-        }
-    } 
+        },
+        ...mapActions('auth', ['logOutUser'])
+    },
+    computed: {
+        ...mapState({
+            loggedIn : state => state.auth.status
+        }),
+      ...mapGetters('auth', ['loggedInUser', 'loggedInUserType', 'logged']),
+
+    }
 }
 </script>
 
@@ -209,5 +236,13 @@ export default {
             margin: 1em;
             line-height: 2;
         }
+    }
+
+    .v-expansion-panel--active > .v-expansion-panel-header {
+        font-weight: 700;
+    }
+
+    .v-expansion-panel-content__wrap {
+        font-size: 13px;
     }
 </style>

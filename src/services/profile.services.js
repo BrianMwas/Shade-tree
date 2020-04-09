@@ -4,6 +4,7 @@ import axios from 'axios'
 export const profileService = {
 	addUserProfile,
 	updateUserProfile,
+	addUserProfileImage,
 	getUserProfile,
 	addCompanyProfile,
 	updateCompanyProfile,
@@ -14,7 +15,7 @@ export const profileService = {
 	deleteMessage
 }
 
-const baseUrl = "http://localhost:8500/api/v1/"
+const baseUrl = process.env.VUE_API_URL
 
 
 function buildUrl(url) {
@@ -33,7 +34,7 @@ async function addUserProfile(userId, data) {
 }
 
 function updateUserProfile(userId, data) {
-	let url = buildUrl('user/profileUpdate')
+	let url = buildUrl('user/profileUpdate');
 }
 
 
@@ -45,11 +46,23 @@ async function getMessagesToMe(userId) {
 async function getMessagesFromMe(userId) {
 	let url = await buildUrl(`user/messages/fromMe?from=${userId}&date=${date}`);
 	return axios.get(url, config)
-}	
+}
 
 async function sendMessage(from, to, message) {
 	let url = await buildUrl(`user/messages/send?from=${from}&to=${to}`);
 	return axios.post(url, message, config);
+}
+
+function addUserProfileImage(userId, file) {
+	let url = buildUrl(`user/${userId}`);
+	let formData = new FormData();
+	formData.append(file, "image")
+	let config = {
+		headers: {
+			'content-type': 'multipart/form-data'
+		}
+	}
+	return axios.post(url, formData, config)
 }
 
 

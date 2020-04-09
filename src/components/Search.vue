@@ -7,13 +7,11 @@
             label="Search"
         
             autocomplete="off"
-          
             width="400"
             dense
             :append-icon="mdiCancel"
             @click:append="reset"
             max-width="200"
-            
             @blur="searchResultsVisible = false"
             @focus="searchResultsVisible = true"
             @keydown.esc="searchResultsVisible = false"
@@ -32,12 +30,14 @@
                 v-for="(unit, i) in searchResults" 
                 :key="unit.item.id" 
                 :href="/units/ + unit.item._id" 
-                :class="{'blue lighten-3' : i == highlightedIndex}"
+                :class="{'green lighten-3' : i == highlightedIndex}"
                 @mousedown.prevent="searchResultsVisible == true">
                     <span>
                         {{unit.item.name}}
                     </span>
-                    
+                    <span>
+                        Ksh {{unit.item.price}}
+                    </span>
                     <span>
                         <h5 color="grey darken-4">{{unit.item.streetname}}</h5>
                         <p>{{unit.item.description}}</p>
@@ -180,6 +180,15 @@ export default {
             }
 
             div a > span:nth-child(2) {
+                font-size: .95rem;
+                font-weight: light;
+                color: whitesmoke;
+                padding: .65em;
+                border-radius: 5px;
+                background-color: transparent !important;
+            }
+
+            div a > span:nth-child(3) {
                 font-weight: normal;
                 font-size: 1.1rem;
                 color: color(typography, 4);
