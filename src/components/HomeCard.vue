@@ -1,5 +1,5 @@
 <template>
-  <v-hover 
+  <v-hover
     v-slot:default="{ hover }"
     close-delay="200">
     <v-card
@@ -32,7 +32,7 @@
                     right
                     absolute
                     @click="gotoUnit(unit.id)"
-                    
+
                 >
                     <v-icon color="white">{{ arrowRight }}</v-icon>
                 </v-btn>
@@ -106,10 +106,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  @import '@/scss/global.scss';
-  
+
+
   .card-price {
-    color: color(green, 2) !important;
+    color: green !important;
     font-family: 'Nunito' sans-serif !important;
     font-size: 1.25rem;
   }

@@ -15,7 +15,7 @@
             <v-btn text>
               <router-link to="/units" class="link">units</router-link>
             </v-btn>
-            
+
             <v-btn text>
               <router-link to="/blogs" class="link">blogs</router-link>
             </v-btn>
@@ -53,9 +53,9 @@
                   {{ post.meta.next_post.title }}
                 </router-link>
             </v-container>
-           
+
         </v-content>
-         <Footer/> 
+         <Footer/>
     </div>
 </template>
 
@@ -105,5 +105,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  @import '@/scss/global.scss';
+
 </style>

@@ -5,7 +5,7 @@ import modulesCache from './modules'
 
 Vue.use(Vuex)
 const store =  new Vuex.Store({
-	strict: process.env.NODE_ENV !== 'production',
+	strict: process.env.BASE_URL.NODE_ENV !== 'production',
   	modules: modulesCache
 });
 

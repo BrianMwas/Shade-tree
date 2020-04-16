@@ -16,7 +16,7 @@
             <v-btn text>
               <router-link to="/units" class="link">units</router-link>
             </v-btn>
-           
+
             <v-btn text>
               <router-link to="/blogs" class="link">blogs</router-link>
             </v-btn>
@@ -29,29 +29,29 @@
         </NavBar>
       <v-content app>
         <div class="container">
-          <v-card 
+          <v-card
             width="100%"
             class="mt-3"
           >
           <carousel
-            
+
           >
             <slide>
-              <v-img 
+              <v-img
               height="400"
               src="@/assets/seat.jpg"
               aspect-ratio="16/9"
             ></v-img>
             </slide>
             <slide>
-              <v-img 
+              <v-img
               height="400"
               src="@/assets/seat.jpg"
               aspect-ratio="16/9"
             ></v-img>
             </slide>
           </carousel>
-            
+
           </v-card>
 
           <v-row>
@@ -99,7 +99,7 @@
                         <v-icon large color="green darken-1">{{bathroom}}</v-icon>
                         <p class="grey--text h5 font-weight-light">Bathrooms<span class="green--text font-weight-normal ml-2">{{ unit.bathrooms }} </span></p>
                       </div>
-                      
+
                     </v-col>
                     <v-col
                       cols="12"
@@ -122,7 +122,7 @@
                         <v-icon large color="grey darken-1">{{park}}</v-icon>
                         <p class="grey--text h5 font-weight-light">Parking <span class="green--text font-weight-normal">{{unit.parking}}</span></p>
                       </div>
-                    
+
                     </v-col>
                     <v-col
                       cols="12"
@@ -134,11 +134,11 @@
                         <v-icon large color="blue darken-1">{{shield}}</v-icon>
                         <p class="grey--text h5 font-weight-light">Safety <span class="green--text font-weight-normal">{{unit.securityLevel}}</span></p>
                       </div>
-                    
+
                     </v-col>
                   </v-row>
                   </v-card-text>
-                  
+
               </v-card>
             </v-col>
             <v-col cols="12" sm="12" md="4" lg="4">
@@ -148,14 +148,14 @@
                 </v-card-title>
                 <v-card-text>
                   <p>{{unit.description}}</p>
-                  
-                  
+
+
                   <button class="button button-primary button-block" @click="saveUnitLocally" v-if="logged">Save unit</button>
                   <button class="button text-center" v-else>Please log in to save a unit</button>
 
                 </v-card-actions>
                 </v-card-text>
-                
+
               </v-card>
             </v-col>
           </v-row>
@@ -244,7 +244,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  @import '@/scss/global.scss';
+
+  @import '@/scss/abstracts/_include_media.scss';
 
   .button:focus {
     outline: none;
@@ -263,7 +264,7 @@ export default {
   .unit-details {
     display: inline-block;
   }
-  
+
 
   .rd {
     @include media('<=medium') {

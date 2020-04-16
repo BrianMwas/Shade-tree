@@ -1,5 +1,5 @@
 import axios from 'axios';
-const baseUrl = process.env.VUE_API_URL
+const baseUrl = process.env.VUE_APP_BASE_URL
 const config = {
     headers: {
         'Content-Type': 'application/json'
@@ -26,7 +26,9 @@ function getAllUnits(sortBy, pageNumber) {
     if(pageNumber == undefined) {
         pageNumber = 1
     }
-    const url = buildUrl(`units?sortBy=${sortBy}&pageNumber=${pageNumber}`)
+    const url = buildUrl(`units?sortBy=${sortBy}&pageNumber=${pageNumber}`);
+
+    console.log("url", url)
 
 	return axios.get(url, config);
 }

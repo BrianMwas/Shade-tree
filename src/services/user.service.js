@@ -10,7 +10,7 @@ export const userService = {
 }
 
 
-const baseUrl = process.env.VUE_API_URL
+const baseUrl = process.env.VUE_APP_BASE_URL
 const config = {
 	// withCredentials: true,
     headers: {

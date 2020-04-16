@@ -5,7 +5,7 @@
             <v-text-field
             v-model="search"
             label="Search"
-        
+
             autocomplete="off"
             width="400"
             dense
@@ -26,10 +26,10 @@
         <!-- Results -->
         <div v-if="search.length > 0 && searchResultsVisible" class="searchResults">
             <div ref="results">
-                <a 
-                v-for="(unit, i) in searchResults" 
-                :key="unit.item.id" 
-                :href="/units/ + unit.item._id" 
+                <a
+                v-for="(unit, i) in searchResults"
+                :key="unit.item.id"
+                :href="/units/ + unit.item._id"
                 :class="{'green lighten-3' : i == highlightedIndex}"
                 @mousedown.prevent="searchResultsVisible == true">
                     <span>
@@ -130,7 +130,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-    @import '@/scss/global.scss';
+
+    @import '@/scss/abstracts/_include_media.scss';
 
     .lightblue {
         background-color: lightblue !important;

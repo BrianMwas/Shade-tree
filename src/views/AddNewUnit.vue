@@ -26,7 +26,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-    @import '@/scss/global.scss';
+
 
     .my-16 {
         margin: 16 auto;
@@ -34,6 +34,6 @@ export default {
 
     .mx-a {
         margin-left: auto;
-        margin-right: auto; 
+        margin-right: auto;
     }
 </style>

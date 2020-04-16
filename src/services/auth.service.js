@@ -1,6 +1,6 @@
 // import axios from './api'
 import axios from 'axios'
-const baseUrl = process.env.VUE_API_URL
+const baseUrl = process.env.VUE_APP_BASE_URL
 const config = {
     headers: {
         'Content-Type': 'application/json'

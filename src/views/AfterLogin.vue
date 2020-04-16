@@ -1,8 +1,8 @@
 <template>
     <div class="h-100">
         <v-content app dark>
-            <div 
-            class="p-3 container" 
+            <div
+            class="p-3 container"
             color="white"
             v-if="loggedInUserType == 'owner'">
             <v-card
@@ -24,12 +24,12 @@
                 </v-card-subtitle>
                 <v-card-text>
                     <div v-if="Messages.length > 0">
-                        <v-alert 
-                            class="my-5 mx-3" 
-                            border="left" 
-                            close-label="Close alert" 
-                            
-                            :type="message.type" 
+                        <v-alert
+                            class="my-5 mx-3"
+                            border="left"
+                            close-label="Close alert"
+
+                            :type="message.type"
                             dismissible
                             v-for="message in Messages"
                             :key="message.mKey"
@@ -93,8 +93,8 @@
                             :error-messages="phoneNumberErrors"
                             hint="Tel number please enter in this format +254705458766"
                         ></v-text-field>
-                        <v-btn 
-                        color="primary" 
+                        <v-btn
+                        color="primary"
                         :disabled="companySubmitStatus == 'ERROR'"
                         :loading="addingCompany == true"
                         type="submit"
@@ -118,14 +118,14 @@
                     class="mt-5"
                     contain
                 ></v-img>
-                
+
                 <v-card-text>
                     <router-link class="button button-block mb-2" to="/newunit">Continue to add new unit</router-link>
                     <router-link class="button button-block button-primary" to="/units">Browse units</router-link>
                 </v-card-text>
             </v-card>
-            
-            
+
+
         </div>
         <div v-if="loggedInUserType == 'user'">
             <v-card max-width="400">
@@ -146,7 +146,7 @@
             </v-card>
         </div>
         </v-content>
-        
+
     </div>
 </template>
 
@@ -191,7 +191,7 @@ export default {
         },
         phoneNumber: {
             required,
-           
+
             max: maxLength(15),
             min: minLength(10)
         }
@@ -235,7 +235,7 @@ export default {
             addingCompany: state => state.company.addingCompany,
             companies: state => state.company.companies,
         }),
-        
+
         emailErrors () {
             const errors = [];
             if(!this.$v.email.$dirty) {
@@ -289,7 +289,7 @@ export default {
             if(!this.$v.phoneNumber.$dirty) {
                 return errors;
             }
-            
+
 
             if(!this.$v.phoneNumber.max || !this.$v.phoneNumber.min) {
                 errors.push("PLease enter a valid phone number")
@@ -306,7 +306,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '@/scss/global.scss';
+
 
 .h-100 {
     display: flex;

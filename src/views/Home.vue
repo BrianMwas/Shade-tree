@@ -91,7 +91,7 @@
                         </div>
                     </v-container>
                 </section>
-            </div>   
+            </div>
         </main>
           <!-- Footer -->
         <Footer />
@@ -142,5 +142,5 @@ export default {
         }
     }
 
-  
+
 </style>

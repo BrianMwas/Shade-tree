@@ -1,5 +1,5 @@
 <template>
-    <div>      
+    <div>
         <!-- Routes only visible when user is logged in -->
         <NavBar v-if="logged" #loggedInRoutes>
           <v-btn text>
@@ -8,7 +8,7 @@
           <v-btn text>
             <router-link to="/units" class="link">units</router-link>
           </v-btn>
-         
+
            <v-btn text>
             <router-link to="/blogs" class="link">blogs</router-link>
            </v-btn>
@@ -36,21 +36,7 @@
 
       <v-content dark transition="fade-transition" app class="position-relative">
 
-        
 
-        <div class="p-2">
-          <v-carousel dark :show-arrows="false" height="400" cycle>
-            <v-carousel-item
-              v-for="(item,i) in imageItems"
-              :key="i"
-              :src="item.src"
-              reverse-transition="fade-transition"
-              transition="fade-transition"
-
-            ></v-carousel-item>
-           </v-carousel>
-        </div>
-        
         <v-snackbar
           v-for="alert in alerts"
           :key="alert.mKey"
@@ -64,7 +50,7 @@
         </v-snackbar>
         <v-container style="position: relative">
           <div class="text-right">
-            <v-dialog 
+            <v-dialog
               v-model="dialog"
               width="400"
 
@@ -94,7 +80,7 @@
                 </v-card>
               </v-dialog>
           </div>
-          
+
                 <div v-if="gettingUnits" class="grid">
                     <v-sheet
                       color="grey lighten-4"
@@ -168,10 +154,10 @@
                 <div class="h-50" v-else-if="units.results.length <= 0">
                   <div class="mt-16">
                     <p class="my-3 text-center">No units yet, Be the first to add one</p>
-                    
+
                     <router-link class="button button-primary text-center" to="/login">Add A unit</router-link>
                   </div>
-                  
+
                 </div>
                 <div v-else>
                   <h4 class="green--text text-darken-5 m-3">{{ sort }}</h4>
@@ -184,10 +170,10 @@
                     ></home-unit>
                   </div>
                 </div>
-                
+
         </v-container>
-        
-        
+
+
           <div class="text-center my-8">
             <v-pagination
               v-model="units.pageNumber"
@@ -197,7 +183,7 @@
               @input="getUnits"
             ></v-pagination>
           </div>
-           
+
       </v-content>
       <Footer/>
       </div>
@@ -233,7 +219,7 @@
         headerImg: 'backround: url(@/assets/brick-wall.jpg)',
         mdiClose,
         sort: 'All',
-       
+
 
         sortIcon: mdiSortDescending,
         menuLeft: mdiMenuLeft,
@@ -287,7 +273,7 @@
           gettingUnits:state => state.unit.gettingUnits,
           alerts: state => state.alert.Messages
         }),
-      ...mapGetters(['loggedInUser', 'loggedInUserType', 'logged'])   
+      ...mapGetters(['loggedInUser', 'loggedInUserType', 'logged'])
     },
     // Controls pagination for the units
     // watch: {
@@ -306,8 +292,8 @@
 </script>
 
 <style lang="scss" scoped>
-  @import '@/scss/global.scss';
 
+  @import '@/scss/abstracts/_include_media.scss';
 
   .h-50 {
     height: 50vh;
@@ -327,7 +313,7 @@
     display: grid;
     grid-template-columns: 20% 80%;
     padding: 1.5em;
-    
+
 
     .sidebar {
       background: white;
@@ -339,10 +325,10 @@
     }
 
     .units {
-      
+
       display: grid;
       grid-template-columns: 1fr;
-     
+
       .header {
         grid-row: span 1;
       }
@@ -367,7 +353,7 @@
     margin: auto;
     padding: 0 10%;
   }
- 
+
 
   .text-dark {
     color: color(typography, 4);
@@ -391,7 +377,7 @@
        flex-direction: column !important;
     }
   }
- 
+
 
   @supports (display: grid) {
     .grid {
@@ -412,7 +398,7 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: space-evenly;
-      
+
       @include media('>medium') {
         flex-direction: row;
       }
@@ -427,7 +413,7 @@
     position: relative;
 
     h2 {
-      margin-top: 0; 
+      margin-top: 0;
     }
 
     &::after {
@@ -442,7 +428,7 @@
       left: 0;
     }
   }
-  
+
 
   .v-image__image--cover  {
     backround-size: 100% auto !important;
